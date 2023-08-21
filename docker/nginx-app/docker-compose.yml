@@ -2,8 +2,18 @@ version: "3"
 services:
   webapp:
     build: ./webapp # 根据指定目录下的Dockerfile构建镜像
-    links:
-      - webserver # 允许一个容器能够访问另一个容器，并在它们之间建立网络连接
+    # build: #进一步扩展
+    #   context: ./webapp
+    #   dockerfile: Dockerfile
+    #   image: myimage:tag
+
+    #! links: # links指令已被弃用
+    #!   - webserver # 允许一个容器能够访问另一个容器，并在它们之间建立网络连接
+
+    # 来指定服务webapp依赖于webserver服务。这样在启动时，
+    # Docker Compose会确保先启动webserver服务，然后再启动webapp服务
+    depends_on:
+      - webserver
     ports:
       - "4534:4534"
   webserver:

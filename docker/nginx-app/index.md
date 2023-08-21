@@ -56,22 +56,23 @@ server {
 `doker-compose up` 使用 docker-compose 启动容器
 
 ```yml
-version: "3" #? 用最新就行了
+version: "3"
 services:
-  web: # 容器名
-    # image: nginx # 镜像
+  webapp:
     build: ./webapp # 根据指定目录下的Dockerfile构建镜像
-    ports: # 端口映射
+    # links: # links指令已被弃用
+    #   - webserver # 允许一个容器能够访问另一个容器，并在它们之间建立网络连接
+
+    # 来指定服务webapp依赖于webserver服务。这样在启动时，
+    # Docker Compose会确保先启动webserver服务，然后再启动webapp服务
+    depends_on:
+      - webserver
+    ports:
       - "4534:4534"
-    links:
-      - webserver # 允许一个容器能够访问另一个容器，并在它们之间建立网络连接
-    # volumes: # 通过数据卷的方式共享配置
-    #   - ./nginx/conf.d:/etc/nginx/conf.d #通过数据卷的方式共享配置
-  webserver: # 容器名(一个node后台服务)
-    # image: app
+  webserver:
     build: ./webserver # 根据指定目录下的Dockerfile构建镜像
-    expose: # 暴露容器给link到当前容器的容器， 和ports的区别是，expose不会将端口暴露给主机。
-      - "3000"
+    expose:
+      - "3000" # 暴露容器给link到当前容器的容器使用
 ```
 
 - 步骤 1：`docker-compose build`(可选)构建镜像
