@@ -1,35 +1,21 @@
-# 安装 Nginx
+# 使用 docker 部署 nginx 应用
 
-### 1、下载镜像
+### 1、使用 `dockerfile` 制作镜像
 
-- 镜像(一个微型 Linux 系统？)
+#### webapp
 
-```bash
-docker pull nginx:latest
-# docker pull nginx[:版本号]
-```
-
-### 2、命令运行容器
-
-```bash
-docker run --name nginx-test -p 8080:80 -d nginx
-
-```
-
-### 3、使用 `dockerfile` 制作镜像
-
-`dockerfile`
+`dockerfile`:webapp
 
 ```dockerfile
 FROM nginx
-
-# 复制文件到容器
-COPY ./webapp.conf /etc/nginx/conf.d/webapp.conf
-# 需要在nginx配置文件中加入这个配置 include conf.d/*.conf;
+# nginx配置
+COPY ./nginx/webapp.conf /etc/nginx/conf.d/webapp.conf
+# 这个www目录就是当前打包出来的应用(一个普通的vue3应用)
+COPY ./www /usr/share/nginx/html
 #! 用于向用户和其他开发人员传达容器内应用程序所监听的端口。
 #! 它本身并不会在构建或运行镜像时触发任何动作。
 #! EXPOSE 仅仅是一个元数据，用于提供关于容器的信息
-EXPOSE 8080
+# EXPOSE 4534
 ```
 
 `webapp.conf`
@@ -44,6 +30,7 @@ server {
     root   /usr/share/nginx/html;
     index  index.html index.htm;
   }
+  # 测试反向代理
   location /api {
     # webserver 表示一个容器
     proxy_pass http://webserver:3000;
@@ -51,9 +38,45 @@ server {
 }
 ```
 
-### 4、使用 `dockder compose` 管理容器
+#### webserver
 
-`doker-compose up` 使用 docker-compose 启动容器
+`index.js`
+
+```js
+const express = require("express");
+const app = express();
+const port = 3000;
+
+app.get("/api/list", (req, res) => {
+  res.send({
+    success: true,
+    data: [
+      { name: "vue", value: 1 },
+      { name: "react", value: 2 },
+      { name: "ng", value: 3 },
+      { name: "express", value: 4 },
+      { name: "nestjs", value: 5 },
+    ],
+    msg: "",
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
+```
+
+`dockerfile`:webserver
+
+```dockerfile
+FROM node:16
+WORKDIR /app
+COPY . .
+RUN npm install
+CMD ["npm", "start"]
+```
+
+### 2、使用 `dockder compose` 管理容器
 
 ```yml
 version: "3"
@@ -72,8 +95,8 @@ services:
   webserver:
     build: ./webserver # 根据指定目录下的Dockerfile构建镜像
     expose:
-      - "3000" # 暴露容器给link到当前容器的容器使用
+      - "3000" # 暴露容器给依赖当前容器的容器使用
 ```
 
-- 步骤 1：`docker-compose build`(可选)构建镜像
+- 步骤 1：`docker-compose build`(第一次启动容器前需要)构建镜像
 - 步骤 2：`docker-compose up -d`后台启动容器

@@ -19,4 +19,4 @@ services:
   webserver:
     build: ./webserver # 根据指定目录下的Dockerfile构建镜像
     expose:
-      - "3000" # 暴露容器给link到当前容器的容器使用
+      - "3000" # 暴露容器给依赖当前容器的容器使用
