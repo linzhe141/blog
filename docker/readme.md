@@ -50,3 +50,8 @@
 - `docker exec -it 容器名(或容器id) /bin/bash # 进入容器`
 
   输入`exit` 退出容器；如果运行容器时没有使用`-d`，那么退出时，容器也会关闭
+
+### 3、docker-compose 操作
+
+- `docker-compose build #(可选)构建镜像`
+- `docker-compose up -d #后台启动容器`
