@@ -54,4 +54,7 @@
 ### 3、docker-compose 操作
 
 - `docker-compose build #(可选)构建镜像`
-- `docker-compose up -d #后台启动容器`
+- `docker-compose up #前台启动相关容器`
+- `docker-compose up -d #后台启动相关容器`
+- `docker-compose stop  #关闭相关容器`
+- `docker-compose stop  #关闭并删除相关容器`
