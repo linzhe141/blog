@@ -1,0 +1,244 @@
+# Promise/A+ 笔记
+
+根据[Promises/A+中文官网](https://promisesaplus.com.cn)，进行了简单的总结，本文的 `promise` 没有特别强调的情况下，都是指代码演示中 `new Promise 的实例`
+
+### 1、promise 流程
+
+`[[Resolve]](promise, x)`表示
+
+```javascript
+new Promise((resolve, reject) => {
+  resolve(x); // or reject(x);
+});
+```
+
+- 如果 `x` 是一个 `promise`，采用其状态
+
+  ```javascript
+  new Promise((resolve) => {
+    // 如果x是一个promise
+    // 如果x处于待定状态，则promise必须保持待定状态，直到x被实现或拒绝。
+    // 如果x被实现，用相同的值实现promise。
+    resolve(
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(100);
+        }, 1000 * 10);
+      })
+    );
+  }).then((res) => {
+    // 十秒后输出 res1 100
+    console.log("res1", res);
+  });
+  new Promise((resolve) => {
+    // 如果x被拒绝，用相同的原因拒绝promise。
+    resolve(
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject(100);
+        }, 1000 * 10);
+      })
+    );
+  }).then(
+    // 不会执行
+    (res) => {
+      console.log("res1", res);
+    },
+    (error) => {
+      // 十秒后输出 error 100
+      console.log("error", error);
+    }
+  );
+  ```
+
+- 如果 `x` 是一个`对象或函数(thenable)`,先都考虑对象，函数同理（很少见）
+
+  ```javascript
+  new Promise((resolve) => {
+    // thenable
+    //! 如果then不是一个函数，则以x来实现promise
+    resolve({
+      then: 100,
+    });
+  }).then((res) => {
+    // 输出 res1 {then: 100}
+    console.log("res1", res);
+  });
+
+  new Promise((resolve) => {
+    // thenable
+    // 如果获取属性x .then导致抛出异常e，则以e为原因拒绝promise
+    resolve(
+      Object.defineProperty({}, "then", {
+        get() {
+          throw 1;
+        },
+      })
+    );
+  }).then(
+    // 不会执行
+    (res) => {
+      console.log("res1", res);
+    },
+    (e) => {
+      // 输出 error 1
+      console.log("error", e);
+    }
+  );
+
+  new Promise((resolve) => {
+    // thenable
+    // 如果then是一个函数，则以x作为this，第一个参数为resolvePromise，第二个参数为rejectPromise
+    resolve({
+      result: 100,
+      then(resolve, reject) {
+        // 如果/当resolvePromise被调用并传入值y，运行[[Resolve]](promise, y)
+        resolve(this.result);
+      },
+    });
+  }).then((res) => {
+    // 输出 res1 100
+    console.log("res1", res);
+  });
+  ```
+
+### 2、then 方法
+
+```javascript
+promise2 = promise.then(onFulfilled, onRejected);
+```
+
+- `then` 必须返回 `promise`, 可以链式调用
+- `onFulfilled` 和 `onRejected` 都是可选参数
+
+  如果 `onFulfilled` 不是一个函数，它必须被忽略,如果 `onRejected` 不是一个函数，它必须被忽略。
+
+  ```javascript
+  new Promise((resolve, reject) => {
+    resolve(1);
+  })
+    .then(122, 2333) /// 不是函数直接被忽略
+    // 输出res---> 1
+    .then((res) => console.log("res--->", res));
+  ```
+
+- 如果 `onFulfilled` 是一个函数，如果返回一个值 `x`，则运行 `[[Resolve]](promise2, x)`
+
+  它必须在 `promise` 实现后调用，并以 `promise` 的值作为其第一个参数。
+
+  ```js
+  new Promise((resolve, reject) => {
+    resolve(1);
+  })
+    //这个res就是promise实现后的值（1）
+    // 输出res---> 1
+    .then((res) => console.log("res--->", res));
+  ```
+
+- 如果 `onRejected` 是一个函数，如果返回一个值 `x`，则运行 `[[Resolve]](promise2, x)`
+
+  它必须在 `promise` 被拒绝后调用，并以 `promise` 的原因作为其第一个参数。
+
+  ```js
+  new Promise((resolve, reject) => {
+    // 原因
+    reject(100);
+  }).then(
+    // 不会执行
+    (res) => {
+      console.log("res1", res);
+    },
+    //这个error就是promise被拒绝后的值原因（1）
+    (error) => {
+      // 输出 error 100
+      console.log("error", error);
+    }
+  );
+  ```
+
+### 3、案例（根据上述要点）
+
+- 案列 1
+
+  ```js
+  // onFulfilled 和 onRejected 都是函数，都会进行[[Resolve]](promise2, x:函数返回值)
+  new Promise((resolve, reject) => {
+    reject(100);
+  })
+    .then(
+      // 不会执行
+      (res) => {
+        console.log("res1", res);
+        // [[Resolve]](promise2, x:undefined)
+      },
+      (error) => {
+        // 输出 error 100
+        console.log("error", error);
+        // [[Resolve]](promise2, x:undefined)
+      }
+    )
+    .then(
+      (res) => {
+        // 因为上面的onRejected，resolve了undefined，所以这个会执行
+        // 输出 res1 undefined
+        console.log("res1", res);
+      },
+      // 这个不会执行
+      (error) => {
+        console.log("error", error);
+      }
+    );
+  ```
+
+- 案列 2
+
+  ```js
+  // 如果 x 一个新的 promise，按照上述，promise就会实现新的promise实现的值：xxxxxxx
+  new Promise((resolve, reject) => {
+    resolve(
+      new Promise((resolve) => {
+        resolve("xxxxxxx");
+      })
+    );
+  }).then(
+    (res) => {
+      // 输出 res1 xxxxxxx
+      console.log("res1", res);
+    },
+    // 不会执行
+    (error) => {
+      console.log("error", error);
+    }
+  );
+  //! 如果 promise 拒绝了 x，并且这个 x 是一个新的 promise
+  new Promise((resolve, reject) => {
+    reject(
+      new Promise((resolve) => {
+        resolve("xxxxxxx");
+      })
+    );
+  }).then(
+    // 不会执行
+    (res) => {
+      console.log("res1", res);
+    },
+    (error) => {
+      // 这个error就是拒绝的原因，就是那个新的promise
+      // 输出 error reject的promise
+      console.log("error", error);
+    }
+  );
+  ```
+
+- 案例 3
+  ```js
+  // 如果promise和x引用同一个对象，则以TypeError为原因拒绝promise
+  // 这种情况会无限循环，所以promise会报错
+  //! Uncaught (in promise) TypeError: Chaining cycle detected for promise #<Promise>
+  const promise = new Promise((resolve, reject) => {
+    resolve(100);
+  });
+  const p1 = promise.then((value) => {
+    return p1;
+  });
+  ```
