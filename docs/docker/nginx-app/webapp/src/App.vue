@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted, ref } from "vue";
-const list = ref([]);
+import { onMounted, ref } from 'vue'
+const list = ref([])
 onMounted(async () => {
-  list.value = await (await fetch("/api/list")).json();
-});
+  list.value = await (await fetch('/api/list')).json()
+})
 </script>
 
 <template>

@@ -1,7 +1,10 @@
 ---
 outline: deep
 ---
+
 # 使用 docker 部署 nginx 应用
+
+[案例源码](https://github.com/linzhe141/blog/tree/main/docs/docker/nginx-app)
 
 ### 1、使用 `dockerfile` 制作镜像
 
@@ -46,27 +49,27 @@ server {
 `index.js`
 
 ```js
-const express = require("express");
-const app = express();
-const port = 3000;
+const express = require('express')
+const app = express()
+const port = 3000
 
-app.get("/api/list", (req, res) => {
+app.get('/api/list', (req, res) => {
   res.send({
     success: true,
     data: [
-      { name: "vue", value: 1 },
-      { name: "react", value: 2 },
-      { name: "ng", value: 3 },
-      { name: "express", value: 4 },
-      { name: "nestjs", value: 5 },
+      { name: 'vue', value: 1 },
+      { name: 'react', value: 2 },
+      { name: 'ng', value: 3 },
+      { name: 'express', value: 4 },
+      { name: 'nestjs', value: 5 },
     ],
-    msg: "",
-  });
-});
+    msg: '',
+  })
+})
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+  console.log(`Example app listening on port ${port}`)
+})
 ```
 
 `dockerfile`:webserver
@@ -82,7 +85,7 @@ CMD ["npm", "start"]
 ### 2、使用 `dockder compose` 管理容器
 
 ```yml
-version: "3"
+version: '3'
 services:
   webapp:
     build: ./webapp # 根据指定目录下的Dockerfile构建镜像
@@ -94,11 +97,11 @@ services:
     depends_on:
       - webserver
     ports:
-      - "4534:4534"
+      - '4534:4534'
   webserver:
     build: ./webserver # 根据指定目录下的Dockerfile构建镜像
     expose:
-      - "3000" # 暴露容器给依赖当前容器的容器使用
+      - '3000' # 暴露容器给依赖当前容器的容器使用
 ```
 
 - 步骤 1：`docker-compose build`(第一次启动容器前需要)构建镜像
