@@ -9,13 +9,12 @@ export default defineConfig({
       'link',
       {
         rel: 'icon',
-        type: 'image/jpg',
-        sizes: '16x16',
-        href: '/icon.jpg',
+        href: '/logo.jpg',
       },
     ],
   ],
   themeConfig: {
+    logo: { src: '/logo.jpg', width: 24, height: 24 },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
