@@ -1,3 +1,6 @@
+---
+outline: deep
+---
 # Promise/A+ 笔记
 
 根据[Promises/A+中文官网](https://promisesaplus.com.cn)，进行了简单的总结，本文的 `promise` 没有特别强调的情况下，都是指代码演示中 `new Promise 的实例`

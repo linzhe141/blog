@@ -1,3 +1,6 @@
+---
+outline: deep
+---
 # 使用 docker 部署 nginx 应用
 
 ### 1、使用 `dockerfile` 制作镜像
