@@ -4,6 +4,17 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'linzhe-blog',
   description: 'linzhe的个人笔记汇总',
+  head: [
+    [
+      'link',
+      {
+        rel: 'icon',
+        type: 'image/jpg',
+        sizes: '16x16',
+        href: '/icon.jpg',
+      },
+    ],
+  ],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
