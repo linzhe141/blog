@@ -1,7 +1,6 @@
 import fs from 'fs-extra'
 import path from 'path'
 import { NextResponse } from 'next/server'
-import { it } from 'node:test'
 const blogDirName = 'blog'
 async function getBlogUrlList(
   dir: string,
