@@ -1,3 +1,3 @@
-# linzhe-blog
+# 基于nextjs的博客项目
 
-使用`vercel`部署的个人笔记站点 [链接](https://blog-linzhe141.vercel.app/)
+https://colinhemphill.com/blog/markdown-syntax-highlighting-with-the-nextjs-app-router

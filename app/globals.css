@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --text: #213547;
+}
+body {
+  color: var(--text);
+}

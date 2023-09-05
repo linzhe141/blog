@@ -1,15 +1,45 @@
 {
-  "name": "linzhe-blog",
+  "name": "next-learning",
+  "version": "0.1.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "lint": "prettier --write ."
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prettier-lint": "prettier --write ."
   },
-  "devDependencies": {
+  "dependencies": {
+    "@mdx-js/loader": "^2.3.0",
+    "@mdx-js/react": "^2.3.0",
+    "@next/mdx": "^13.4.19",
+    "@tailwindcss/typography": "^0.5.9",
+    "@types/fs-extra": "^11.0.1",
+    "@types/mdx": "^2.0.7",
+    "@types/node": "20.5.6",
+    "@types/react": "18.2.21",
+    "@types/react-dom": "18.2.7",
+    "autoprefixer": "10.4.15",
+    "eslint": "8.47.0",
+    "eslint-config-next": "13.4.19",
+    "eslint-config-prettier": "^9.0.0",
+    "fs-extra": "^11.1.1",
+    "gray-matter": "^4.0.3",
+    "highlight.js": "^11.8.0",
+    "immer": "^10.0.2",
+    "next": "13.4.19",
+    "postcss": "8.4.28",
     "prettier": "^3.0.2",
-    "vitepress": "1.0.0-rc.4"
+    "prettier-plugin-tailwindcss": "^0.5.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "rehype-highlight": "^6.0.0",
+    "remark": "^14.0.3",
+    "remark-slug": "^7.0.1",
+    "tailwind-highlightjs": "^2.0.1",
+    "tailwindcss": "3.3.3",
+    "typescript": "5.2.2",
+    "use-immer": "^0.9.0",
+    "zustand": "^4.4.1"
   }
 }
