@@ -7,10 +7,16 @@ import { NavData } from '@/components/layout/types'
 export default function Home() {
   const router = useRouter()
   const navList = useStore((state) => state.navList)
-  function getDefaultUrl(data: NavData[]) {
+  function getDefaultUrl(data: NavData[]): string | null {
     if (data.length) {
       const target = data[0]
-      return target.url
+      if (target.isLink) {
+        return target.url
+      }
+      if (target.children) {
+        const result = getDefaultUrl(target.children)
+        if (result) return result
+      }
     }
     return null
   }
@@ -18,7 +24,10 @@ export default function Home() {
     <div className='flex h-screen items-center justify-center bg-green-400'>
       <div className='flex flex-col items-center justify-center'>
         <Underline height={8}>
-          <div onClick={() => router.push(getDefaultUrl(navList) ?? '')} className='flex flex-col justify-center items-center'>
+          <div
+            onClick={() => router.push(getDefaultUrl(navList) ?? '')}
+            className='flex flex-col items-center justify-center'
+          >
             <Image
               className='mr-2 rounded-full'
               width={120}
