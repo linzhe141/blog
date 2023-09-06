@@ -29,6 +29,9 @@ const config: Config = {
                 display: 'none',
               },
             },
+            '.hljs-comment': {
+              color: 'red !important',
+            },
           },
         },
       },
