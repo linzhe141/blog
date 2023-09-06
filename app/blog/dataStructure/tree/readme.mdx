@@ -1,0 +1,79 @@
+# 二叉树的遍历
+`前中后，分别代表父节点在遍历时的顺序`
+### 1、前序遍历
+
+前序遍历就是先遍历自己，再遍历左子树，后遍历右子树
+
+记忆技巧 前序遍历就是父节点在最前面，所以就是中左右，如下就是1->2->3
+
+```js
+//    1
+//   /  \
+//  2    3
+```
+
+```ts
+function preorderTraversal(root: TreeNode | null): number[] {
+  if (!root) return []
+  return dfs(root)
+}
+function dfs(node: TreeNode, result: number[] = []) {
+  // 先自己，依次左子节点，右子节点
+  result.push(node.val)
+  if (node.left) dfs(node.left, result)
+  if (node.right) dfs(node.right, result)
+  return result
+}
+```
+
+### 2、中序遍历
+
+中序遍历就是先遍历左子树，再遍历自己，后遍历右子树
+
+记忆技巧 中序遍历就是父节点在中间，所有就是左中右，如下就是2->1->3
+
+```js
+//    1
+//   /  \
+//  2    3
+```
+
+```ts
+function inorderTraversal(root: TreeNode | null): number[] {
+  if (!root) return []
+  return dfs(root)
+}
+function dfs(node: TreeNode, result: number[] = []) {
+  // 先左子节点，依次自己，右子节点
+  if (node.left) dfs(node.left, result)
+  result.push(node.val)
+  if (node.right) dfs(node.right, result)
+  return result
+}
+```
+
+### 3、后序遍历
+
+后序遍历就是先遍历左子树，再遍历右子树，最后遍历自己
+
+记忆技巧 后序遍历就是父节点在最后面，所有就是左右中，如下就是2->3->1
+
+```js
+//    1
+//   /  \
+//  2    3
+```
+
+```ts
+function postorderTraversal(root: TreeNode | null): number[] {
+  if (!root) return []
+  return dfs(root)
+}
+function dfs(node: TreeNode, result: number[] = []) {
+  // 依次左，右子节点，最后自己
+  if (node.left) dfs(node.left, result)
+  if (node.right) dfs(node.right, result)
+  result.push(node.val)
+  return result
+}
+```
