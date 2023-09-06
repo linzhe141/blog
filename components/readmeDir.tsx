@@ -1,20 +1,18 @@
 'use client'
-import { useReadme } from '@/hooks/useReadme'
 type Props = {
-  url: string
+  data: any[]
   beforeJump?: (...args: any) => void
 }
-export default function ReadmeDir({ url, beforeJump }: Props) {
-  const { dirStructure } = useReadme({ url })
+export default function ReadmeDir({ data, beforeJump }: Props) {
   function clickHandle() {
     beforeJump && beforeJump()
   }
   return (
     <div>
-      {dirStructure.map((item) => (
+      {data.map((item) => (
         <div
           key={item}
-          className='text-sm mb-4'
+          className='mb-4 text-sm'
           onClick={(e) => {
             e.stopPropagation()
             clickHandle()

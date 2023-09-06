@@ -1,6 +1,7 @@
 'use client'
 import Nav from '@/components/layout/nav'
 import ReadmeDir from '@/components/readmeDir'
+import { useReadme } from '@/hooks/useReadme'
 import Content from '@/components/layout/content'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -14,6 +15,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [showReadmeDir, setShowReadmeDir] = useState(false)
   const navList = useStore((state) => state.navList)
   const pathname = usePathname()
+  const { dirStructure } = useReadme({ url: pathname })
+
   function closeNav() {
     if (showNav) {
       setShowNav(false)
@@ -98,7 +101,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               beforeJump={() => {
                 setShowReadmeDir(false)
               }}
-              url={pathname}
+              data={dirStructure}
             />
           </div>
           <div
@@ -136,7 +139,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           className={`hidden bg-white xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[280px] xl:border-l-[1px] xl:px-[50px]`}
         >
           <div className='mb-4 hidden xl:block'></div>
-          <ReadmeDir url={pathname} />
+          <ReadmeDir data={dirStructure} />
         </div>
       </div>
     </main>
