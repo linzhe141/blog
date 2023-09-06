@@ -1,0 +1,132 @@
+import React from 'react'
+import Underline from '@/components/underline'
+
+# vue2.6.14(composition api)使用vuecli 打包出来的commonjs模式的库报错
+
+<div className="flex">
+  <span>
+    <Underline>
+      <a href='https://github.com/vuejs/composition-api/issues/987'>
+        <span>issues</span>
+      </a>
+    </Underline>
+  </span>
+</div>
+
+记录在vue2.6.14(composition api)使用vuecli 打包出来的commonjs模式的库报错的排查过程，并找到解决方案
+
+
+报错`Error: [vue-composition-api] must call Vue.use(VueCompositionAPI) before using any functio`
+### 1、客户端
+- 1、main.js
+
+  ```js
+  import Vue from "vue";
+  import App from "./App.vue";
+  import VueCompositionAPI from "@vue/composition-api";
+  
+  Vue.use(VueCompositionAPI);
+   Vue({
+    render: (h) => h(App),
+  }).$mount("#app");
+  
+  ```
+- 2、app.vue
+
+  ```html
+  <template>
+    <div id="app">
+      <TestDisplay></TestDisplay>
+    </div>
+  </template>
+  
+  <script setup>
+  import { TestDisplay } from "zzz";
+  </script>
+  
+  <style></style>
+  ```
+### 2、lib
+- 1、组件TestDisplay 
+
+  ```html
+  <template>
+    <div>{{ test.text }}</div>
+  </template>
+  <script>
+  import { reactive } from "@vue/composition-api";
+  export default {
+    setup() {
+      const test = reactive({ text: "xxxxxxxx" });
+      console.log("only for setup", test);
+      return { test };
+    },
+  };
+  </script>
+- 2、vue.config.js
+  ```js
+  const { defineConfig } = require("@vue/cli-service");
+  module.exports = defineConfig({
+    parallel: false,
+    configureWebpack: {
+      externals: {
+        "@vue/composition-api": "@vue/composition-api",
+      },
+    },
+  });
+  
+  ```
+- 3、 `"build": "vue-cli-service build --mode production --target lib src/index.js"`
+
+
+报错vue.runtime.esm.js:619  [Vue warn]: Error in data(): "Error: [vue-composition-api] must call Vue.use(VueCompositionAPI) before using any function."
+
+我排查了下好像是因为库文件和客户端使用的入口不一样导致这个问题的，客户端使用mjs，库使用commonjs
+![image](https://github.com/vuejs/composition-api/assets/40790268/f3e9a67e-7d59-4bc6-98c5-3b4c44d47c74)
+
+
+但是我把main.js 修改成`const VueCompositionAPI = require("@vue/composition-api");`，这样确实不会报`Error: [vue-composition-api] must call Vue.use(`错误了
+*但是composition-api就会报错`TypeError: Cannot read properties of undefined (reading 'text')"`*
+
+
+### 3、尝试用vite构建了一个es的包，可以正常使用
+```js
+// vite.config.js
+import { defineConfig } from "vite";
+import { createVuePlugin } from "vite-plugin-vue2";
+import { resolve } from "path";
+export default defineConfig({
+  build: {
+    lib: {
+      entry: "./src/index.js",
+    },
+    minify: false,
+    rollupOptions: {
+      external: ["@vue/composition-api"],
+      output: [
+        {
+          format: "es",
+          dir: resolve(__dirname, "./dist/es"),
+        },
+      ],
+    },
+  },
+  plugins: [createVuePlugin(/* options */)],
+});
+
+```
+
+### 4、解决方案
+在客户端使用alias将@vue/composition-api，都统一成commonjs模块，就可以正常使用了，根本原因就是入口不一致导致
+```js
+ configureWebpack: {
+    resolve: {
+      alias: {
+        "@vue/composition-api": path.join(
+          __dirname,
+          "./node_modules/@vue/composition-api/index.js"
+        ),
+      },
+    },
+  },
+```
