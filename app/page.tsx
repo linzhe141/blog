@@ -28,13 +28,13 @@ export default function Home() {
             onClick={() => router.push(getDefaultUrl(navList) ?? '')}
             className='flex flex-col items-center justify-center'
           >
-            <Image
+            {/* <Image
               className='mr-2 rounded-full'
               width={120}
               height={120}
               src={'/logo.jpg'}
               alt='logo'
-            />
+            /> */}
             <h1 className='mb-4 cursor-pointer text-9xl'>blog</h1>
           </div>
         </Underline>
