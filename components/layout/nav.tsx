@@ -27,8 +27,8 @@ export default function Nav({ beforeJump, data }: NavPros) {
   function clickHandle(nav: NavItemProps) {
     if (nav.isLink) {
       router.push(nav.url)
+      beforeJump && beforeJump()
     }
-    beforeJump && beforeJump()
   }
   function setDefaultData(
     data: NavItemProps,
@@ -39,7 +39,7 @@ export default function Nav({ beforeJump, data }: NavPros) {
     const result = { ...data }
     result.expanded = false
     result.level = level
-    //! 先进行递归，再从叶子节点一层层出来
+    //! 先进行递归，再从叶子节点一层层出来 类比 二叉树的后序遍历
     if (result.children) {
       //! immutable copy
       result.children = result.children.map((item) =>
