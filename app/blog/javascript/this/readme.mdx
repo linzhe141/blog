@@ -47,7 +47,7 @@ bar() // "oops, global" 这种形式其实是默认调用，所有指向window
 
 这种情况下，当调用这个函数时，this指向调用的那个对象，也就是obj
 
-### 2、显式调用
+### 3、显式调用
 
 ```js
 function foo() {
@@ -63,7 +63,7 @@ foo.call(obj) // 2
 ```
 
 ```js
-// ps：如果call(apply同理)，如果第一个参数为null，则会不忽略
+// ps：如果call(apply同理)，如果第一个参数为null，则会忽略
 function foo() {
   console.log(this.a)
 }
