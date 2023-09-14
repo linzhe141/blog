@@ -1,0 +1,130 @@
+# this 笔记
+
+根据`《你不知道的JavaScript（上卷）》`进行了简单的总结
+
+重点：判断一个运行中函数的 this 绑定，就需要找到这个函数的直接调用位置，`即this只能在调用时确定`
+
+### 1、默认调用
+
+```js
+function foo() {
+  console.log(this.a)
+}
+const a = 10
+// 直接调用，没用任何的修饰
+foo() // 10
+```
+
+这种情况下，当调用这个函数时，this指向当前的上下文，也就是window，如果使用了严格模式，那么this指向的是undefined，就会报错
+
+### 2、隐式调用
+
+```js
+function foo() {
+  console.log(this.a)
+}
+const obj = {
+  a: 2,
+  foo,
+}
+const a = 10
+// 通过对象作为属性时调用
+obj.foo() // 2
+```
+
+```js
+function foo() {
+  console.log(this.a)
+}
+const obj = {
+  a: 2,
+  foo: foo,
+}
+const bar = obj.foo // 简单的理解，其实就是一个取值，再赋值的操作，和this没有任何关系
+const a = 'oops, global'
+bar() // "oops, global" 这种形式其实是默认调用，所有指向window
+```
+
+这种情况下，当调用这个函数时，this指向调用的那个对象，也就是obj
+
+### 2、显式调用
+
+```js
+function foo() {
+  console.log(this.a)
+}
+const obj = {
+  a: 2,
+  foo,
+}
+const a = 10
+// 通过call或apply，手动给函数指定this，就是传进来的第一个参数
+foo.call(obj) // 2
+```
+
+```js
+// ps：如果call(apply同理)，如果第一个参数为null，则会不忽略
+function foo() {
+  console.log(this.a)
+}
+const a = 2
+foo.call(null) // 2
+```
+
+```js
+//ps: 硬绑定后，不能再修改它的 this
+function foo() {
+  console.log(this.a)
+}
+const obj = {
+  a: 2,
+}
+const bar = function () {
+  foo.call(obj)
+}
+bar() // 2
+const a = 100
+setTimeout(bar, 100) // 2
+// 硬绑定的 bar 不可能再修改它的 this
+bar.call(window) // 2
+```
+
+这种情况下，当调用这个函数时，this指向call的第一个参数，也就是obj
+
+### 4、new调用
+
+JavaScript中的函数，并没有所谓的构造函数的概念，只是这个函数能用new进行构造调用，创建新对象
+
+```js
+function foo(a) {
+  this.a = a
+}
+// 通过new调用
+const bar = new foo(2)
+console.log(bar.a) // 2
+```
+
+这种情况下，当调用这个函数时，this指向新创建的那个对象
+
+### 5、优先级
+
+优先级如下
+
+- 1. 函数是否在 new 中调用（new 绑定）？如果是的话 this 绑定的是新创建的对象
+
+  `const bar = new foo()`
+
+- 2. 函数是否通过 call、apply（显式绑定）或者硬绑定调用？如果是的话，this 绑定的是
+     指定的对象
+
+  `const bar = foo.call(obj2)`
+
+- 3. 函数是否在某个上下文对象中调用（隐式绑定）？如果是的话，this 绑定的是那个上
+     下文对象
+
+  `const bar = obj1.foo()`
+
+- 4. 如果都不是的话，使用默认绑定。如果在严格模式下，就绑定到 undefined，否则绑定到
+     全局对象。
+
+  `const bar = foo()`

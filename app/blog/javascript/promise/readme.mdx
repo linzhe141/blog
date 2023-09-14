@@ -6,7 +6,7 @@
 
 `[[Resolve]](promise, x)`表示
 
-```javascript
+```js
 new Promise((resolve, reject) => {
   resolve(x) // or reject(x);
 })
@@ -14,7 +14,7 @@ new Promise((resolve, reject) => {
 
 - 如果 `x` 是一个 `promise`，采用其状态
 
-  ```javascript
+  ```js
   new Promise((resolve) => {
     // 如果x是一个promise
     // 如果x处于待定状态，则promise必须保持待定状态，直到x被实现或拒绝。
@@ -53,7 +53,7 @@ new Promise((resolve, reject) => {
 
 - 如果 `x` 是一个`对象或函数(thenable)`,先都考虑对象，函数同理（很少见）
 
-  ```javascript
+  ```js
   new Promise((resolve) => {
     // thenable
     //! 如果then不是一个函数，则以x来实现promise
@@ -104,7 +104,7 @@ new Promise((resolve, reject) => {
 
 ### 2、then 方法
 
-```javascript
+```js
 promise2 = promise.then(onFulfilled, onRejected)
 ```
 
@@ -113,7 +113,7 @@ promise2 = promise.then(onFulfilled, onRejected)
 
   如果 `onFulfilled` 不是一个函数，它必须被忽略,如果 `onRejected` 不是一个函数，它必须被忽略。
 
-  ```javascript
+  ```js
   new Promise((resolve, reject) => {
     resolve(1)
   })
