@@ -4,13 +4,13 @@
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",
-    "dev": "dotenv -e .env.dev.local && next dev",
+    "dev": "dotenv -e .env.dev.local -- next dev",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "prettier-lint": "prettier --write .",
-    "migrate": "dotenv -e .env.local && prisma migrate dev",
-    "migrate:dev": "dotenv -e .env.dev.local && prisma migrate dev --name=dev"
+    "migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "migrate:dev": "dotenv -e .env.dev.local -- prisma migrate dev --name=dev"
   },
   "dependencies": {
     "@mdx-js/loader": "^2.3.0",
