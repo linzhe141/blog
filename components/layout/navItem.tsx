@@ -9,7 +9,7 @@ export default function NavItem(props: NavItemProps) {
     url,
     level,
     children,
-    isLink,
+    linked,
     expanded,
     expandChangeHandle,
     clickHandle,
@@ -52,9 +52,9 @@ export default function NavItem(props: NavItemProps) {
 
     return allExpanded + (target.children?.length ?? 0)
   }
-  function clickHandler(isLink: boolean) {
+  function clickHandler(linked: boolean) {
     clickHandle && clickHandle(props)
-    if (!isLink) {
+    if (!linked) {
       expandChangeHandle && expandChangeHandle(props)
     }
   }
@@ -67,9 +67,9 @@ export default function NavItem(props: NavItemProps) {
           level !== 1 && pathname === url ? 'border-l-2 border-green-400' : ''
         }`}
         style={{ paddingLeft: 12 * level + 'px' }}
-        onClick={() => clickHandler(isLink)}
+        onClick={() => clickHandler(linked)}
       >
-        {isLink ? (
+        {linked ? (
           <Underline offset={-8}>
             <div>{label}</div>
           </Underline>

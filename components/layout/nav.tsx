@@ -25,7 +25,7 @@ export default function Nav({ beforeJump, data }: NavPros) {
     })
   }
   function clickHandle(nav: NavItemProps) {
-    if (nav.isLink) {
+    if (nav.linked) {
       router.push(nav.url)
       beforeJump && beforeJump()
     }

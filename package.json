@@ -3,16 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "dotenv -e .env.dev.local -- next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier-lint": "prettier --write ."
+    "prettier-lint": "prettier --write .",
+    "migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "migrate:dev": "dotenv -e .env.dev.local -- prisma migrate dev --name=dev"
   },
   "dependencies": {
     "@mdx-js/loader": "^2.3.0",
     "@mdx-js/react": "^2.3.0",
     "@next/mdx": "^13.4.19",
+    "@prisma/client": "^5.3.0",
     "@tailwindcss/typography": "^0.5.9",
     "@types/fs-extra": "^11.0.1",
     "@types/mdx": "^2.0.7",
@@ -31,6 +34,7 @@
     "postcss": "8.4.28",
     "prettier": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.5.3",
+    "prisma": "^5.3.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "rehype-highlight": "^6.0.0",
