@@ -2,7 +2,6 @@ import fs from 'fs-extra'
 import path from 'path'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/prisma'
-import { headers } from 'next/headers'
 
 const blogDirName = 'blog'
 async function getBlogUrlList(
@@ -91,7 +90,6 @@ async function add2DB(list: any[]) {
 function formatMenu(data: any[], result: any[] = [], map = new Map()) {
   for (const item of data) {
     let menu = {
-      id: item.id,
       label: item.label,
       linked: item.linked,
       name: item.name,
@@ -112,40 +110,9 @@ function formatMenu(data: any[], result: any[] = [], map = new Map()) {
 export async function GET(request: Request) {
   const blogPath = path.resolve(process.cwd(), 'app/' + blogDirName)
   const blogUrlList = await getBlogUrlList(blogPath)
-
-  // vercel pgsql 使用
   // const flatList = getFlatList(blogUrlList)
   // await add2DB(flatList)
-  // const menuList = await prisma.menu.findMany({
-  //   orderBy: {
-  //     id: 'asc',
-  //   },
-  // })
+  // const menuList = await prisma.menu.findMany()
   // return NextResponse.json({ data: formatMenu(menuList) })
   return NextResponse.json({ data: blogUrlList })
-}
-
-export async function POST(request: Request) {
-  const headersList = headers()
-  const requestKey = headersList.get('authorization') ?? ''
-  const target = await prisma.requsetKey.findFirst({
-    where: {
-      key: requestKey,
-    },
-  })
-  if (!target) {
-    return NextResponse.json({ code: 401, msg: '认证失败！' })
-  }
-  const { data } = await request.json()
-  await prisma.$transaction(
-    data.map((item: { id: number; label: string }) =>
-      prisma.menu.update({
-        where: { id: item.id },
-        data: {
-          label: item.label,
-        },
-      })
-    )
-  )
-  return NextResponse.json({ data: true })
 }
