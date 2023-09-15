@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import message from '@/components/message'
 type Props = {
-  setAuth: (value:boolean)=>void
+  setAuth: (value: boolean) => void
 }
-export default function Auth({setAuth}:Props) {
+export default function Auth({ setAuth }: Props) {
   const [key, setKey] = useState('')
   const [disabled, setDisabled] = useState(true)
   async function submit() {
@@ -30,7 +30,7 @@ export default function Auth({setAuth}:Props) {
     setKey(value)
     setDisabled(value === '')
   }
-  
+
   return (
     <div className='fixed bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center bg-gray-300'>
       <div className='flex h-[200px] w-[500px] flex-col items-center justify-center rounded bg-slate-100'>

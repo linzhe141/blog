@@ -70,7 +70,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             </span>
           </Underline>
           <Underline>
-            <span className='font-semibold ml-4' onClick={() => router.push('/setting')}>
+            <span
+              className='ml-4 font-semibold'
+              onClick={() => router.push('/setting')}
+            >
               setting
             </span>
           </Underline>
