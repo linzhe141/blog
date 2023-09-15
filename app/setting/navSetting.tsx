@@ -23,11 +23,11 @@ export default function NavSetting({ setAuth }: Props) {
   async function submit() {
     setDisabled(true)
     const data = await (
-      await fetch('/api/nav', {
+      await fetch('/api/menu', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          authorization: localStorage.getItem('requestKey') ?? '',
+          authorization: localStorage.getItem('requestKey') ?? 'null',
         },
         body: JSON.stringify({ data: formatParams(navList) }),
       })

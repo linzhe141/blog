@@ -9,6 +9,8 @@ import Icon from '../icon/Icon'
 import Image from 'next/image'
 import Underline from '../underline'
 import { useStore } from '@/store/store'
+import { usePrisma } from '@/config'
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const [showNav, setShowNav] = useState(false)
@@ -69,14 +71,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               home
             </span>
           </Underline>
-          <Underline>
-            <span
-              className='ml-4 font-semibold'
-              onClick={() => router.push('/setting')}
-            >
-              setting
-            </span>
-          </Underline>
+          {usePrisma && (
+            <Underline className='ml-4'>
+              <span
+                className='font-semibold'
+                onClick={() => router.push('/setting')}
+              >
+                setting
+              </span>
+            </Underline>
+          )}
           <a
             className='ml-4 cursor-pointer'
             href='https://github.com/linzhe141'

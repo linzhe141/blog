@@ -12,7 +12,9 @@ export default function Setting() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ key: localStorage.getItem('requestKey') }),
+        body: JSON.stringify({
+          key: localStorage.getItem('requestKey') ?? 'null',
+        }),
       })
     ).json()
     setAuth(data.data)

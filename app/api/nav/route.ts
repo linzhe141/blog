@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/prisma'
-import { headers } from 'next/headers'
+import { usePrisma } from '@/config'
 
 const blogDirName = 'blog'
 async function getBlogUrlList(
@@ -112,40 +112,17 @@ function formatMenu(data: any[], result: any[] = [], map = new Map()) {
 export async function GET(request: Request) {
   const blogPath = path.resolve(process.cwd(), 'app/' + blogDirName)
   const blogUrlList = await getBlogUrlList(blogPath)
-
-  // vercel pgsql 使用
-  // const flatList = getFlatList(blogUrlList)
-  // await add2DB(flatList)
-  // const menuList = await prisma.menu.findMany({
-  //   orderBy: {
-  //     id: 'asc',
-  //   },
-  // })
-  // return NextResponse.json({ data: formatMenu(menuList) })
-  return NextResponse.json({ data: blogUrlList })
-}
-
-export async function POST(request: Request) {
-  const headersList = headers()
-  const requestKey = headersList.get('authorization') ?? ''
-  const target = await prisma.requsetKey.findFirst({
-    where: {
-      key: requestKey,
-    },
-  })
-  if (!target) {
-    return NextResponse.json({ code: 401, msg: '认证失败！' })
+  if (usePrisma) {
+    // vercel pgsql 使用
+    const flatList = getFlatList(blogUrlList)
+    await add2DB(flatList)
+    const menuList = await prisma.menu.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    })
+    return NextResponse.json({ data: formatMenu(menuList) })
+  } else {
+    return NextResponse.json({ data: blogUrlList })
   }
-  const { data } = await request.json()
-  await prisma.$transaction(
-    data.map((item: { id: number; label: string }) =>
-      prisma.menu.update({
-        where: { id: item.id },
-        data: {
-          label: item.label,
-        },
-      })
-    )
-  )
-  return NextResponse.json({ data: true })
 }
