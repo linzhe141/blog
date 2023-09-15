@@ -19,3 +19,8 @@ model Menu {
   name     String  @unique
   parentId Int
 }
+
+model RequsetKey {
+  id  Int    @id @default(autoincrement())
+  key String @unique
+}

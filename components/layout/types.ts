@@ -10,6 +10,7 @@ export type NavItemProps = {
   navList?: NavItemProps[]
 }
 export type NavData = {
+  id: number
   linked: boolean
   label: string
   url: string

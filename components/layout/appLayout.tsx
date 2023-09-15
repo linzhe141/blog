@@ -69,6 +69,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               home
             </span>
           </Underline>
+          <Underline>
+            <span className='font-semibold ml-4' onClick={() => router.push('/setting')}>
+              setting
+            </span>
+          </Underline>
           <a
             className='ml-4 cursor-pointer'
             href='https://github.com/linzhe141'

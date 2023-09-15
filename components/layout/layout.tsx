@@ -3,7 +3,7 @@ import { usePathname } from 'next/navigation'
 import AppLayout from '@/components/layout/appLayout'
 import { useEffect } from 'react'
 import { useStore } from '@/store/store'
-const otherLayoutList = ['/']
+const otherLayoutList = ['/', '/setting']
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const setNavList = useStore((state) => state.setNavList)
