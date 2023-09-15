@@ -112,16 +112,17 @@ function formatMenu(data: any[], result: any[] = [], map = new Map()) {
 export async function GET(request: Request) {
   const blogPath = path.resolve(process.cwd(), 'app/' + blogDirName)
   const blogUrlList = await getBlogUrlList(blogPath)
-  // //vercel pgsql 使用
-  const flatList = getFlatList(blogUrlList)
-  await add2DB(flatList)
-  const menuList = await prisma.menu.findMany({
-    orderBy: {
-      id: 'asc',
-    },
-  })
-  return NextResponse.json({ data: formatMenu(menuList) })
-  // return NextResponse.json({ data: blogUrlList })
+  return NextResponse.json({ data: blogUrlList })
+
+  // vercel pgsql 使用
+  // const flatList = getFlatList(blogUrlList)
+  // await add2DB(flatList)
+  // const menuList = await prisma.menu.findMany({
+  //   orderBy: {
+  //     id: 'asc',
+  //   },
+  // })
+  // return NextResponse.json({ data: formatMenu(menuList) })
 }
 
 export async function POST(request: Request) {
