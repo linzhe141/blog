@@ -112,6 +112,7 @@ function formatMenu(data: any[], result: any[] = [], map = new Map()) {
 export async function GET(request: Request) {
   const blogPath = path.resolve(process.cwd(), 'app/' + blogDirName)
   const blogUrlList = await getBlogUrlList(blogPath)
+  console.log('blogUrlList--->', blogUrlList)
   return NextResponse.json({ data: blogUrlList })
 
   // vercel pgsql 使用
