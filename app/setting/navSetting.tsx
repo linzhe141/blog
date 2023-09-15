@@ -62,6 +62,7 @@ export default function NavSetting({ setAuth }: Props) {
   }, [data])
   return (
     <div className='flex flex-col items-center justify-center'>
+      <div className='mb-4 text-lg font-semibold'>菜单配置</div>
       <div className='w-[400px]'>
         {navList.map((item) => (
           <TreeNode
