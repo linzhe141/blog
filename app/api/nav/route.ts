@@ -35,14 +35,14 @@ async function getBlogUrlList(
         const target = item.children.find((it) => it.url.includes('page.tsx'))
         if (target) {
           // @ts-ignore 标记使用
-          item.flag = true
+          item.mark = true
           if (parent) {
             // @ts-ignore 作为标记临时使用
-            parent.flag = true
+            parent.mark = true
           }
         }
         // @ts-ignore 作为标记临时使用
-        item.children = item.children.filter((it) => it.flag === true)
+        item.children = item.children.filter((it) => it.mark === true)
       }
     }
   }
@@ -125,35 +125,35 @@ export async function GET(request: Request) {
         id: 'asc',
       },
     })
-    const result:Result<NavData[]> = {code: 200, data: formatMenu(menuList) }
+    const result: Result<NavData[]> = { code: 200, data: formatMenu(menuList) }
     return NextResponse.json(result)
   } else {
-    const result: Result<NavData[]> = {code: 200, data: blogUrlList }
+    const result: Result<NavData[]> = { code: 200, data: blogUrlList }
     return NextResponse.json(result)
   }
 }
 
-// export async function POST(request: Request) {
-//   const headersList = headers()
-//   const requestKey = headersList.get('authorization')!
-//   const target = await prisma.requsetKey.findFirst({
-//     where: {
-//       key: requestKey,
-//     },
-//   })
-//   if (!target) {
-//     return NextResponse.json({ code: 401, msg: '认证失败！' })
-//   }
-//   const { data } = await request.json()
-//   await prisma.$transaction(
-//     data.map((item: { id: number; label: string }) =>
-//       prisma.menu.update({
-//         where: { id: item.id },
-//         data: {
-//           label: item.label,
-//         },
-//       })
-//     )
-//   )
-//   return NextResponse.json({ data: true })
-// }
+export async function POST(request: Request) {
+  const headersList = headers()
+  const requestKey = headersList.get('authorization')!
+  const target = await prisma.requsetKey.findFirst({
+    where: {
+      key: requestKey,
+    },
+  })
+  if (!target) {
+    return NextResponse.json({ code: 401, msg: '认证失败！' })
+  }
+  const { data } = await request.json()
+  await prisma.$transaction(
+    data.map((item: { id: number; label: string }) =>
+      prisma.menu.update({
+        where: { id: item.id },
+        data: {
+          label: item.label,
+        },
+      })
+    )
+  )
+  return NextResponse.json({ data: true })
+}
