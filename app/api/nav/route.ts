@@ -34,7 +34,7 @@ async function getBlogUrlList(
       if (item.children) {
         const target = item.children.find((it) => it.url.includes('page.tsx'))
         if (target) {
-          // @ts-ignore 标记使用
+          // @ts-ignore 作为标记临时使用
           item.mark = true
           if (parent) {
             // @ts-ignore 作为标记临时使用
@@ -42,7 +42,7 @@ async function getBlogUrlList(
           }
         }
         // @ts-ignore 作为标记临时使用
-        item.children = item.children.filter((it) => it.mark === true)
+        // item.children = item.children.filter((it) => it.mark === true)
       }
     }
   }
