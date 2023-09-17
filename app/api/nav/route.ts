@@ -128,10 +128,20 @@ export async function GET(request: Request) {
     const result: Result<NavData[]> = { code: 200, data: formatMenu(menuList) }
     return NextResponse.json(result)
   } else {
-    const result: Result<NavData[]> = {
+    const test = []
+    for (const name of await fs.readdir(
+      path.resolve(process.cwd(), 'app/blog/data_structure/tree')
+    )) {
+      test.push(name)
+    }
+    // const result: Result<NavData[]> = {
+    //   code: 200,
+    //   data: blogUrlList,
+    // }
+    const result = {
       code: 200,
       data: blogUrlList,
-      cwd: process.cwd(),
+      test: test,
     }
     return NextResponse.json(result)
   }
