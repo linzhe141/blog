@@ -4,17 +4,18 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/prisma'
 import { usePrisma } from '@/config'
 import { headers } from 'next/headers'
-
+import type { NavData, Result } from '@/types'
+import type { Menu } from '@prisma/client'
 const blogDirName = 'blog'
 async function getBlogUrlList(
   dir: string,
-  result: any[] = [],
-  parent: any = null
+  result: NavData[] = [],
+  parent: NavData | null = null
 ) {
   for (const name of await fs.readdir(dir)) {
     const fileStat = await fs.stat(path.resolve(dir, name))
     const isDirectory = fileStat.isDirectory()
-    let item: any = { label: name, name, url: name }
+    const item = { label: name, name, url: name } as NavData
     if (item.url.indexOf(blogDirName) !== 1) {
       item.url = `/${blogDirName}/${item.url}`
     }
@@ -31,16 +32,17 @@ async function getBlogUrlList(
     if (isDirectory) {
       await getBlogUrlList(path.resolve(dir, name), result, item)
       if (item.children) {
-        const target = item.children.find((it: any) =>
-          it.url.includes('page.tsx')
-        )
+        const target = item.children.find((it) => it.url.includes('page.tsx'))
         if (target) {
+          // @ts-ignore 标记使用
           item.flag = true
           if (parent) {
+            // @ts-ignore 作为标记临时使用
             parent.flag = true
           }
         }
-        item.children = item.children.filter((it: any) => it.flag === true)
+        // @ts-ignore 作为标记临时使用
+        item.children = item.children.filter((it) => it.flag === true)
       }
     }
   }
@@ -48,12 +50,13 @@ async function getBlogUrlList(
 }
 
 function getFlatList(
-  data: any[],
-  result: any[] = [],
+  data: NavData[],
+  result: (NavData & { parentName: string | null })[] = [],
   parentName: string | null = null
 ) {
   for (const item of data) {
     result.push({
+      id: 0,
       name: item.name,
       url: item.url,
       label: item.label,
@@ -66,7 +69,7 @@ function getFlatList(
   }
   return result
 }
-async function add2DB(list: any[]) {
+async function add2DB(list: (NavData & { parentName: string | null })[]) {
   for (const menu of list) {
     const data = await prisma.menu.findUnique({ where: { name: menu.name } })
     let parentData = null
@@ -89,7 +92,7 @@ async function add2DB(list: any[]) {
   }
 }
 
-function formatMenu(data: any[], result: any[] = [], map = new Map()) {
+function formatMenu(data: Menu[], result: NavData[] = [], map = new Map()) {
   for (const item of data) {
     let menu = {
       id: item.id,
@@ -122,34 +125,35 @@ export async function GET(request: Request) {
         id: 'asc',
       },
     })
-    return NextResponse.json({ data: formatMenu(menuList), xx: usePrisma })
+    const result:Result<NavData[]> = {code: 200, data: formatMenu(menuList) }
+    return NextResponse.json(result)
   } else {
-    return NextResponse.json({ data: blogUrlList, yy: usePrisma })
+    const result: Result<NavData[]> = {code: 200, data: blogUrlList }
+    return NextResponse.json(result)
   }
 }
 
-export async function POST(request: Request) {
-  // const headersList = headers()
-  // const requestKey = headersList.get('authorization')!
-  // const target = await prisma.requsetKey.findFirst({
-  //   where: {
-  //     key: requestKey,
-  //   },
-  // })
-  // if (!target) {
-  //   return NextResponse.json({ code: 401, msg: '认证失败！' })
-  // }
-  // const { data } = await request.json()
-  // await prisma.$transaction(
-  //   data.map((item: { id: number; label: string }) =>
-  //     prisma.menu.update({
-  //       where: { id: item.id },
-  //       data: {
-  //         label: item.label,
-  //       },
-  //     })
-  //   )
-  // )
-  // return NextResponse.json({ data: true })
-  return NextResponse.json({ data: true })
-}
+// export async function POST(request: Request) {
+//   const headersList = headers()
+//   const requestKey = headersList.get('authorization')!
+//   const target = await prisma.requsetKey.findFirst({
+//     where: {
+//       key: requestKey,
+//     },
+//   })
+//   if (!target) {
+//     return NextResponse.json({ code: 401, msg: '认证失败！' })
+//   }
+//   const { data } = await request.json()
+//   await prisma.$transaction(
+//     data.map((item: { id: number; label: string }) =>
+//       prisma.menu.update({
+//         where: { id: item.id },
+//         data: {
+//           label: item.label,
+//         },
+//       })
+//     )
+//   )
+//   return NextResponse.json({ data: true })
+// }

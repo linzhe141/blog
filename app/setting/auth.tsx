@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import message from '@/components/message'
+import type { Result } from '@/types'
 type Props = {
   setAuth: (value: boolean) => void
 }
@@ -8,7 +9,7 @@ export default function Auth({ setAuth }: Props) {
   const [disabled, setDisabled] = useState(true)
   async function submit() {
     setDisabled(true)
-    const data = await (
+    const data: Result<boolean> = await(
       await fetch('/api/requestKey', {
         method: 'POST',
         headers: {

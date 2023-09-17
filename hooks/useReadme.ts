@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-
+import type { Result } from '@/types'
 type Props = {
   url: string
 }
 export function useReadme({ url }: Props) {
-  const [dirStructure, setDirStructure] = useState([])
+  const [dirStructure, setDirStructure] = useState<string[]>([])
   async function getDirStructure() {
-    const { data } = await (await fetch(`/api/readme?url=${url}`)).json()
+    const { data }:Result<string[]> = await (await fetch(`/api/readme?url=${url}`)).json()
     setDirStructure(data)
   }
   useEffect(() => {

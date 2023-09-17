@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation'
-import { NavItemProps } from './types'
+import type { NavItemProps } from '@/types'
 import Icon from '../icon/Icon'
 import Underline from '../underline'
 // 虽然NavItem是递归组件，但是如果多余两层实在太丑了

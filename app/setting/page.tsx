@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react'
 import Auth from './auth'
 import NavSetting from './navSetting'
+import type { Result } from '@/types'
 export default function Setting() {
   const [auth, setAuth] = useState(true)
 
   async function checkStatus() {
-    const data = await (
+    const data: Result<boolean> = await (
       await fetch('/api/requestKey', {
         method: 'POST',
         headers: {

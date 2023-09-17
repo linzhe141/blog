@@ -4,14 +4,13 @@ import matter from 'gray-matter'
 import { NextResponse } from 'next/server'
 import { remark } from 'remark'
 import slug from 'remark-slug'
-
+import type { Result } from '@/types'
 function getDirStructure(root: any) {
-  // if(node.type)
   return root.children
     .filter((item: any) => item.type === 'heading' && item.depth === 3)
     .map((item: any) =>
       item.children.reduce((title: string, it: any) => (title += it.value), '')
-    )
+    ) as string[]
 }
 export async function GET(request: Request) {
   const searchParams = new URLSearchParams(request.url.split('?')[1])
@@ -23,7 +22,6 @@ export async function GET(request: Request) {
   const processor = remark().use(slug)
   //! mdx的 ast
   const tree = processor.parse(content)
-  return NextResponse.json({
-    data: getDirStructure(tree),
-  })
+  const result: Result<string[]> = {code: 200, data: getDirStructure(tree)}
+  return NextResponse.json(result)
 }

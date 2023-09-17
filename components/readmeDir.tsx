@@ -1,6 +1,6 @@
 'use client'
 type Props = {
-  data: any[]
+  data: string[]
   beforeJump?: (...args: any) => void
 }
 export default function ReadmeDir({ data, beforeJump }: Props) {

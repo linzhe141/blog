@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { NavData } from '../components/layout/types'
+import type { NavData } from '@/types'
 
 interface Store {
   navList: NavData[]

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/prisma'
 import { headers } from 'next/headers'
-
+import type { Result } from '@/types'
 //? 拆分出来就可以了，难道一个route只能写一个请求处理函数?
 export async function POST(request: Request) {
   const headersList = headers()
@@ -12,7 +12,12 @@ export async function POST(request: Request) {
     },
   })
   if (!target) {
-    return NextResponse.json({ code: 401, msg: '认证失败！' })
+    const result: Result<boolean> = {
+      code: 401,
+      msg: '认证失败！',
+      data: false,
+    }
+    return NextResponse.json(result)
   }
   const { data } = await request.json()
   await prisma.$transaction(
@@ -25,5 +30,9 @@ export async function POST(request: Request) {
       })
     )
   )
-  return NextResponse.json({ data: true })
+  const result: Result<boolean> = {
+    code: 200,
+    data: true,
+  }
+  return NextResponse.json(result)
 }

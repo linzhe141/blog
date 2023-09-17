@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/prisma'
-
+import type { Result } from '@/types'
 export async function POST(request: Request) {
   const data = await request.json()
   const target = await prisma.requsetKey.findFirst({
@@ -12,5 +12,6 @@ export async function POST(request: Request) {
   if (target) {
     success = true
   }
-  return NextResponse.json({ data: success })
+  const result:Result<boolean> = {code: 200, data: success}
+  return NextResponse.json(result)
 }

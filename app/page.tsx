@@ -3,7 +3,7 @@ import Underline from '@/components/underline'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useStore } from '@/store/store'
-import { NavData } from '@/components/layout/types'
+import type { NavData } from '@/types'
 export default function Home() {
   const router = useRouter()
   const navList = useStore((state) => state.navList)

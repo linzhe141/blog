@@ -3,13 +3,14 @@ import { usePathname } from 'next/navigation'
 import AppLayout from '@/components/layout/appLayout'
 import { useEffect } from 'react'
 import { useStore } from '@/store/store'
+import type { Result, NavData } from '@/types'
 const otherLayoutList = ['/', '/setting']
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const setNavList = useStore((state) => state.setNavList)
 
   async function init() {
-    const data = await (await fetch('/api/nav')).json()
+    const data: Result<NavData[]> = await (await fetch('/api/nav')).json()
     setNavList(data.data)
   }
   useEffect(() => {

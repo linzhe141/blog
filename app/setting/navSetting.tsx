@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import message from '@/components/message'
 import { useStore } from '@/store/store'
 import { useImmer } from 'use-immer'
+import type { Result } from '@/types'
 type Props = {
   setAuth: (value: boolean) => void
 }
@@ -11,7 +12,10 @@ export default function NavSetting({ setAuth }: Props) {
 
   const [disabled, setDisabled] = useState(false)
 
-  function formatParams(data: TreeData[], result: any[] = []) {
+  function formatParams(
+    data: TreeData[],
+    result: { id: number; label: string }[] = []
+  ) {
     for (const item of data) {
       result.push({ id: item.id, label: item.label })
       if (item.children.length) {
@@ -22,7 +26,7 @@ export default function NavSetting({ setAuth }: Props) {
   }
   async function submit() {
     setDisabled(true)
-    const data = await (
+    const data: Result<boolean> = await (
       await fetch('/api/menu', {
         method: 'POST',
         headers: {
@@ -33,7 +37,7 @@ export default function NavSetting({ setAuth }: Props) {
       })
     ).json()
     if (data.code === 401) {
-      message({ type: 'error', text: data.msg })
+      message({ type: 'error', text: data.msg! })
       setAuth(false)
     }
     if (data.data) {

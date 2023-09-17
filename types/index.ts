@@ -13,12 +13,17 @@ export type NavData = {
   id: number
   linked: boolean
   label: string
+  name: string
   url: string
-  level?: number
-  expanded?: boolean
   children?: NavData[]
 }
 export type NavPros = {
   data: NavData[]
   beforeJump?: (...args: any) => void
+}
+
+export type Result<T> = {
+  code: 200 | 401
+  msg?: string
+  data: T
 }
