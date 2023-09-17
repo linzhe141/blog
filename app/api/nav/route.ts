@@ -128,7 +128,11 @@ export async function GET(request: Request) {
     const result: Result<NavData[]> = { code: 200, data: formatMenu(menuList) }
     return NextResponse.json(result)
   } else {
-    const result: Result<NavData[]> = { code: 200, data: blogUrlList }
+    const result: Result<NavData[]> = {
+      code: 200,
+      data: blogUrlList,
+      cwd: process.cwd(),
+    }
     return NextResponse.json(result)
   }
 }
