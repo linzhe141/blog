@@ -114,60 +114,49 @@ function formatMenu(data: Menu[], result: NavData[] = [], map = new Map()) {
 }
 
 export async function GET(request: Request) {
-  // const blogPath = path.resolve(process.cwd(), 'app/' + blogDirName)
-  // const blogUrlList = await getBlogUrlList(blogPath)
-  // if (usePrisma) {
-  //   // vercel pgsql 使用
-  //   const flatList = getFlatList(blogUrlList)
-  //   await add2DB(flatList)
-  //   const menuList = await prisma.menu.findMany({
-  //     orderBy: {
-  //       id: 'asc',
-  //     },
-  //   })
-  //   const result: Result<NavData[]> = { code: 200, data: formatMenu(menuList) }
-  //   return NextResponse.json(result)
-  // } else {
-  //   const result: Result<NavData[]> = {
-  //     code: 200,
-  //     data: blogUrlList,
-  //   }
-  //   return NextResponse.json(result)
-  // }
-  const test = []
-  for (const name of await fs.readdir(
-    path.resolve(process.cwd(), 'app/blog/data_structure/tree')
-  )) {
-    test.push(name)
+  const blogPath = path.resolve(process.cwd(), 'app/' + blogDirName)
+  const blogUrlList = await getBlogUrlList(blogPath)
+  if (usePrisma) {
+    // vercel pgsql 使用
+    const flatList = getFlatList(blogUrlList)
+    await add2DB(flatList)
+    const menuList = await prisma.menu.findMany({
+      orderBy: {
+        id: 'asc',
+      },
+    })
+    const result: Result<NavData[]> = { code: 200, data: formatMenu(menuList) }
+    return NextResponse.json(result)
+  } else {
+    const result: Result<NavData[]> = {
+      code: 200,
+      data: blogUrlList,
+    }
+    return NextResponse.json(result)
   }
-  const result = {
-    code: 200,
-    test: test,
-  }
-  return NextResponse.json(result)
 }
 
-export async function POST(request: Request) {
-  // const headersList = headers()
-  // const requestKey = headersList.get('authorization')!
-  // const target = await prisma.requsetKey.findFirst({
-  //   where: {
-  //     key: requestKey,
-  //   },
-  // })
-  // if (!target) {
-  //   return NextResponse.json({ code: 401, msg: '认证失败！' })
-  // }
-  // const { data } = await request.json()
-  // await prisma.$transaction(
-  //   data.map((item: { id: number; label: string }) =>
-  //     prisma.menu.update({
-  //       where: { id: item.id },
-  //       data: {
-  //         label: item.label,
-  //       },
-  //     })
-  //   )
-  // )
-  return NextResponse.json({ data: true })
-}
+// export async function POST(request: Request) {
+//   const headersList = headers()
+//   const requestKey = headersList.get('authorization')!
+//   const target = await prisma.requsetKey.findFirst({
+//     where: {
+//       key: requestKey,
+//     },
+//   })
+//   if (!target) {
+//     return NextResponse.json({ code: 401, msg: '认证失败！' })
+//   }
+//   const { data } = await request.json()
+//   await prisma.$transaction(
+//     data.map((item: { id: number; label: string }) =>
+//       prisma.menu.update({
+//         where: { id: item.id },
+//         data: {
+//           label: item.label,
+//         },
+//       })
+//     )
+//   )
+//   return NextResponse.json({ data: true })
+// }
