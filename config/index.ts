@@ -1,1 +1,1 @@
-export const usePrisma = process.env.USE_PRISMA === 'true'
+export const usePrisma = false

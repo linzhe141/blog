@@ -5,11 +5,11 @@ import { useReadme } from '@/hooks/useReadme'
 import Content from '@/components/layout/content'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import Icon from '../icon/Icon'
-import Image from 'next/image'
+import Icon from '@/components/icon/Icon'
 import Underline from '../underline'
 import { useStore } from '@/store/store'
 import { usePrisma } from '@/config'
+import Header from '@/components/layout/header'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -46,50 +46,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [showNav])
   return (
     <main className='flex h-screen flex-col'>
-      <div className='fixed flex w-full items-center justify-between border-b-[1px] bg-white p-4 shadow-md shadow-gray-400'>
-        <div>
-          <Underline>
-            <div
-              className=' flex items-center'
-              onClick={() => router.push('/')}
+      <Header>
+        <Underline>
+          <span className='font-semibold' onClick={() => router.push('/')}>
+            home
+          </span>
+        </Underline>
+        {usePrisma && (
+          <Underline className='ml-4'>
+            <span
+              className='font-semibold'
+              onClick={() => router.push('/setting')}
             >
-              <Image
-                className='mr-2'
-                width={24}
-                height={24}
-                src={'/logo.jpg'}
-                alt='logo'
-              />
-              <span className='font-semibold'>linzhe-blog</span>
-            </div>
-          </Underline>
-        </div>
-
-        <div className='flex items-center'>
-          <Underline>
-            <span className='font-semibold' onClick={() => router.push('/')}>
-              home
+              setting
             </span>
           </Underline>
-          {usePrisma && (
-            <Underline className='ml-4'>
-              <span
-                className='font-semibold'
-                onClick={() => router.push('/setting')}
-              >
-                setting
-              </span>
-            </Underline>
-          )}
-          <a
-            className='ml-4 cursor-pointer'
-            href='https://github.com/linzhe141'
-            title='linzhe141 github'
-          >
-            <Icon type='github' />
-          </a>
-        </div>
-      </div>
+        )}
+      </Header>
       <div className='mt-[57px] flex h-10 items-center justify-between overflow-hidden border-b-[1px] px-2 xl:h-0 xl:border-b-0'>
         <div
           className='flex cursor-pointer items-center'

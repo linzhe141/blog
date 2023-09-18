@@ -1,25 +1,12 @@
 'use client'
 import Underline from '@/components/underline'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { useStore } from '@/store/store'
-import type { NavData } from '@/types'
+import { getDefaultUrl } from '@/utils'
 export default function Home() {
   const router = useRouter()
   const navList = useStore((state) => state.navList)
-  function getDefaultUrl(data: NavData[]): string | null {
-    if (data.length) {
-      const target = data[0]
-      if (target.linked) {
-        return target.url
-      }
-      if (target.children) {
-        const result = getDefaultUrl(target.children)
-        if (result) return result
-      }
-    }
-    return null
-  }
+
   return (
     <div className='flex h-screen items-center justify-center bg-green-400'>
       <div className='flex flex-col items-center justify-center'>
@@ -28,13 +15,6 @@ export default function Home() {
             onClick={() => router.push(getDefaultUrl(navList) ?? '')}
             className='flex flex-col items-center justify-center'
           >
-            {/* <Image
-              className='mr-2 rounded-full'
-              width={120}
-              height={120}
-              src={'/logo.jpg'}
-              alt='logo'
-            /> */}
             <h1 className='mb-4 cursor-pointer text-9xl'>blog</h1>
           </div>
         </Underline>

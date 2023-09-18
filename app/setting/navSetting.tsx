@@ -1,14 +1,22 @@
+'use client'
 import { useState, useEffect } from 'react'
 import message from '@/components/message'
 import { useStore } from '@/store/store'
 import { useImmer } from 'use-immer'
-import type { Result } from '@/types'
+import type { Result, NavData } from '@/types'
+import { useRouter } from 'next/navigation'
+import Underline from '@/components/underline'
+import { getDefaultUrl } from '@/utils'
+import Header from '@/components/layout/header'
 type Props = {
   setAuth: (value: boolean) => void
 }
 export default function NavSetting({ setAuth }: Props) {
-  const data = useStore((state) => state.navList) as unknown as TreeData[]
-  const [navList, setNavList] = useImmer(data)
+  const router = useRouter()
+
+  const navList = useStore((state) => state.navList)
+  const setNavList = useStore((state) => state.setNavList)
+  const [treeData, setTreeData] = useImmer(navList)
 
   const [disabled, setDisabled] = useState(false)
 
@@ -33,7 +41,9 @@ export default function NavSetting({ setAuth }: Props) {
           'Content-Type': 'application/json',
           authorization: localStorage.getItem('requestKey') ?? 'null',
         },
-        body: JSON.stringify({ data: formatParams(navList) }),
+        body: JSON.stringify({
+          data: formatParams(treeData as unknown as TreeData[]),
+        }),
       })
     ).json()
     if (data.code === 401) {
@@ -42,6 +52,8 @@ export default function NavSetting({ setAuth }: Props) {
     }
     if (data.data) {
       message({ type: 'success', text: '菜单目录修改成功！' })
+      const data: Result<NavData[]> = await (await fetch('/api/nav')).json()
+      setNavList(data.data)
     }
     setDisabled(false)
   }
@@ -56,19 +68,30 @@ export default function NavSetting({ setAuth }: Props) {
     }
   }
   function changeNameHandle(id: number, value: string) {
-    setNavList((draft) => {
-      setLabel(draft, id, value)
+    setTreeData((draft) => {
+      setLabel(draft as unknown as TreeData[], id, value)
     })
   }
+
   useEffect(() => {
-    setNavList(data)
+    setTreeData(navList)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
+  }, [navList])
   return (
-    <div className='flex flex-col items-center justify-center'>
+    <div className='flex h-screen w-screen flex-col items-center justify-center'>
+      <Header>
+        <Underline>
+          <span
+            className='font-semibold'
+            onClick={() => router.push(getDefaultUrl(navList) ?? '')}
+          >
+            blog
+          </span>
+        </Underline>
+      </Header>
       <div className='mb-4 text-lg font-semibold'>菜单配置</div>
       <div className='w-[400px]'>
-        {navList.map((item) => (
+        {treeData.map((item) => (
           <TreeNode
             id={item.id}
             key={item.id}
