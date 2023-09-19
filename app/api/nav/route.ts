@@ -36,6 +36,9 @@ async function getBlogUrlList(
         if (target) {
           // @ts-ignore 作为标记临时使用
           item.mark = true
+        }
+        // @ts-ignore 作为标记临时使用
+        if (item.mark) {
           if (parent) {
             // @ts-ignore 作为标记临时使用
             parent.mark = true
