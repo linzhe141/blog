@@ -18,10 +18,11 @@ const config: Config = {
               color: 'rgba(74, 222, 128,1)',
               '&:hover': {},
             },
-            code: {
+            'p > code': {
               padding: '2px 4px',
-              backgroundColor: 'red',
-              color: 'white !important',
+              borderRadius: '6px',
+              backgroundColor: '#fff',
+              color: '#000 !important',
               '&::before': {
                 display: 'none',
               },

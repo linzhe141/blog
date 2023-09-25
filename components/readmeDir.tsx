@@ -9,10 +9,10 @@ export default function ReadmeDir({ data, beforeJump }: Props) {
   }
   return (
     <div>
-      {data.map((item) => (
+      {data.map((item, i) => (
         <div
           key={item}
-          className='mb-4 text-sm'
+          className={`${i != 0 ? 'mt-4' : ''} text-sm`}
           onClick={(e) => {
             e.stopPropagation()
             clickHandle()

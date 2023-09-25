@@ -11,7 +11,11 @@ import { useStore } from '@/store/store'
 import { usePrisma } from '@/config'
 import Header from '@/components/layout/header'
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function BlogLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const router = useRouter()
   const [showNav, setShowNav] = useState(false)
   const [showReadmeDir, setShowReadmeDir] = useState(false)
@@ -75,8 +79,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           className='flex cursor-pointer items-center'
           onClick={() => setShowReadmeDir(true)}
         >
-          <span className='ml-2'>On this page </span>
-          <Icon type='arrow' />
+          {dirStructure.length > 0 && (
+            <>
+              <span className='ml-2'>On this page </span>
+              <Icon type='arrow' />
+            </>
+          )}
           <div
             className={`absolute left-8 right-8 top-[110px] z-10 rounded bg-slate-100 p-4 shadow-md shadow-gray-400 ${
               showReadmeDir ? 'scale-y-100' : 'scale-0 '

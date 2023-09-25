@@ -1,6 +1,6 @@
 'use client'
 import { usePathname } from 'next/navigation'
-import AppLayout from '@/components/layout/appLayout'
+import BlogLayout from '@/components/layout/blogLayout'
 import { useEffect } from 'react'
 import { useStore } from '@/store/store'
 import type { Result, NavData } from '@/types'
@@ -20,6 +20,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return otherLayoutList.includes(pathname) ? (
     children
   ) : (
-    <AppLayout>{children}</AppLayout>
+    <BlogLayout>{children}</BlogLayout>
   )
 }
