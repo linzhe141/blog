@@ -1,0 +1,78 @@
+# 使用vscode调试vue@2.7源码
+
+### 1、下载源码，并安装依赖
+
+```bash
+  # 1
+  git clone https://github.com/vuejs/vue.git
+  # 2
+  pnpm install
+```
+
+### 2、开启sourcemap
+
+默认的`dev`脚本没有对应sourcemap文件,需要修改`srcipts/config.js(rollup配置)的output选项，新增sourcemap:true`
+
+- 新增sourcemap
+
+  ```js
+  // srcipts/config.js
+  ...
+  output: {
+    file: opts.dest,
+    format: opts.format,
+    banner: opts.banner,
+    name: opts.moduleName || 'Vue',
+    exports: 'auto',
+    // 新增sourcemap
+    sourcemap: true
+  }
+  ...
+  ``` 
+- 生成开发环境的打包文件
+
+  ```bash
+  pnpm dev 
+  ```
+
+### 3、新增测试入口文件index.html
+
+在examples目录中新增index.html作为测试的入口
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app"><test :msg="message"></test></div>
+    <script>
+      const { reactive, h, ref } = Vue
+      const vm = new Vue({
+        components: {
+          test: {
+            props: ['msg'],
+            template: `<div>{{msg.text}}</div>`,
+          },
+        },
+        data() {
+          return {
+            message: { text: 'Hello World!' },
+          }
+        },
+      })
+      vm.$mount('#app')
+      window.vm = vm
+    </script>
+  </body>
+</html>
+```
+
+### 4、开启调试
+
+在vscode中打开新增的index.html文件，按`F5`即可打开调试模式

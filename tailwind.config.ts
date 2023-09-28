@@ -19,10 +19,12 @@ const config: Config = {
               '&:hover': {},
             },
             'p > code': {
+              margin: '0px 4px',
               padding: '2px 4px',
               borderRadius: '6px',
               backgroundColor: '#fff',
-              color: '#000 !important',
+              border: '1px solid',
+              color: 'rgba(74, 222, 128,1) !important',
               '&::before': {
                 display: 'none',
               },

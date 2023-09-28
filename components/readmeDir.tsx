@@ -3,6 +3,7 @@ type Props = {
   data: string[]
   beforeJump?: (...args: any) => void
 }
+import Underline from '@/components/underline';
 export default function ReadmeDir({ data, beforeJump }: Props) {
   function clickHandle() {
     beforeJump && beforeJump()
@@ -18,7 +19,9 @@ export default function ReadmeDir({ data, beforeJump }: Props) {
             clickHandle()
           }}
         >
-          <a href={`#${item}`}>{item}</a>
+          <Underline>
+            <a href={`#${item}`}>{item}</a>
+          </Underline>
         </div>
       ))}
     </div>
