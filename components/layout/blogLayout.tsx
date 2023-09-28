@@ -86,7 +86,7 @@ export default function BlogLayout({
             </>
           )}
           <div
-            className={`absolute left-8 right-8 top-[110px] z-10 rounded bg-slate-100 p-4 shadow-md shadow-gray-400 ${
+            className={`absolute left-8 right-8 top-[110px] z-10 rounded bg-white p-4 shadow-md shadow-gray-400 ${
               showReadmeDir ? 'scale-y-100' : 'scale-0 '
             } origin-top-right transition-all duration-300`}
           >
