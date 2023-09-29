@@ -117,7 +117,7 @@ export default function BlogLayout({
           <div className='flex flex-row-reverse px-4 py-2 xl:hidden'>
             <div
               onClick={closeNav}
-              className='cursor-pointer rounded-full p-1 transition-all duration-200 hover:rotate-90 hover:bg-green-100 hover:text-green-400'
+              className='cursor-pointer rounded-full p-1 transition-all duration-200 hover:rotate-180 hover:bg-green-100 hover:text-green-400'
             >
               <Icon type='close' />
             </div>
