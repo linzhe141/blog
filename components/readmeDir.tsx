@@ -3,10 +3,11 @@ type Props = {
   data: string[]
   beforeJump?: (...args: any) => void
 }
-import Underline from '@/components/underline';
+import Underline from '@/components/underline'
 export default function ReadmeDir({ data, beforeJump }: Props) {
-  function clickHandle() {
+  function clickHandle(url: string) {
     beforeJump && beforeJump()
+    document.getElementById(url)?.scrollIntoView({ behavior: 'smooth' })
   }
   return (
     <div>
@@ -16,11 +17,11 @@ export default function ReadmeDir({ data, beforeJump }: Props) {
           className={`${i != 0 ? 'mt-4' : ''} text-sm`}
           onClick={(e) => {
             e.stopPropagation()
-            clickHandle()
+            clickHandle(item)
           }}
         >
           <Underline>
-            <a href={`#${item}`}>{item}</a>
+            <a>{item}</a>
           </Underline>
         </div>
       ))}
