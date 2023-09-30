@@ -8,7 +8,7 @@ export default function Home() {
   const navList = useStore((state) => state.navList)
 
   return (
-    <div className='flex h-screen items-center justify-center bg-gradient-to-b from-green-300 to-green-400'>
+    <div className='flex h-screen items-center justify-center bg-green-400 '>
       <div className='flex flex-col items-center justify-center'>
         <Underline height={8}>
           <div
