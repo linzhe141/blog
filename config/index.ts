@@ -1,1 +1,1 @@
-export const usePrisma = false
+export const usePrisma = true
