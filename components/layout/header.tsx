@@ -26,13 +26,14 @@ export default function Header({ children }: Props) {
 
       <div className='flex items-center'>
         {children}
-        <a
+        <Link
           className='ml-4 cursor-pointer'
           href='https://github.com/linzhe141'
           title='linzhe141 github'
+          target='_blank'
         >
           <Icon type='github' />
-        </a>
+        </Link>
       </div>
     </div>
   )
