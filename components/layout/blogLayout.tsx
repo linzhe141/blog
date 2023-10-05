@@ -11,6 +11,7 @@ import Underline from '../underline'
 import { useStore } from '@/store/store'
 import { usePrisma } from '@/config'
 import Header from '@/components/layout/header'
+import Skeleton from 'react-loading-skeleton'
 
 export default function BlogLayout({
   children,
@@ -58,10 +59,7 @@ export default function BlogLayout({
         </Underline>
         {usePrisma && (
           <Underline className='ml-4'>
-            <Link
-              className='font-semibold'
-              href='/setting'
-            >
+            <Link className='font-semibold' href='/setting'>
               setting
             </Link>
           </Underline>
@@ -123,7 +121,11 @@ export default function BlogLayout({
             </div>
           </div>
           <div className='mb-4 hidden xl:block'></div>
-          <Nav beforeJump={beforeJumpHandle} data={navList} />
+          {navList.length > 0 ? (
+            <Nav beforeJump={beforeJumpHandle} data={navList} />
+          ) : (
+            <Skeleton count={10} />
+          )}
         </div>
         <div className='flex-1 overflow-auto p-5 xl:pr-[300px]'>
           <Content>{children}</Content>
@@ -132,7 +134,11 @@ export default function BlogLayout({
           className={`hidden bg-white xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[280px] xl:border-l-[1px] xl:px-[50px]`}
         >
           <div className='mb-4 hidden xl:block'></div>
-          <ReadmeDir data={dirStructure} />
+          {dirStructure.length > 0 ? (
+            <ReadmeDir data={dirStructure} />
+          ) : (
+            <Skeleton count={5} />
+          )}
         </div>
       </div>
     </main>

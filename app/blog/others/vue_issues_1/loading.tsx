@@ -1,3 +1,4 @@
-export default function Loading(){
-  return <div>loading...</div>
+import BlogLoading from '@/components/blogLoading'
+export default function Loading() {
+  return <BlogLoading></BlogLoading>
 }

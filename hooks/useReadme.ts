@@ -6,7 +6,10 @@ type Props = {
 export function useReadme({ url }: Props) {
   const [dirStructure, setDirStructure] = useState<string[]>([])
   async function getDirStructure() {
-    const { data }:Result<string[]> = await (await fetch(`/api/readme?url=${url}`)).json()
+    setDirStructure([])
+    const { data }: Result<string[]> = await (
+      await fetch(`/api/readme?url=${url}`)
+    ).json()
     setDirStructure(data)
   }
   useEffect(() => {

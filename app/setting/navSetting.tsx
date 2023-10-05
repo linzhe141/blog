@@ -11,7 +11,6 @@ type Props = {
   setAuth: (value: boolean) => void
 }
 export default function NavSetting({ setAuth }: Props) {
-
   const navList = useStore((state) => state.navList)
   const setNavList = useStore((state) => state.setNavList)
   const [treeData, setTreeData] = useImmer(navList)
@@ -79,16 +78,13 @@ export default function NavSetting({ setAuth }: Props) {
     <div className='flex h-screen w-screen flex-col items-center justify-center'>
       <Header>
         <Underline>
-          <Link
-            className='font-semibold'
-            href={getDefaultUrl(navList) ?? ''}
-          >
+          <Link className='font-semibold' href={getDefaultUrl(navList) ?? ''}>
             blog
           </Link>
         </Underline>
       </Header>
       <div className='mb-4 text-lg font-semibold'>菜单配置</div>
-      <div className='w-[400px]'>
+      <div className='h-[600px] w-[400px] overflow-auto'>
         {treeData.map((item) => (
           <TreeNode
             id={item.id}
