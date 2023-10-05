@@ -9,7 +9,7 @@ export default function Auth({ setAuth }: Props) {
   const [disabled, setDisabled] = useState(true)
   async function submit() {
     setDisabled(true)
-    const data: Result<boolean> = await(
+    const data: Result<boolean> = await (
       await fetch('/api/requestKey', {
         method: 'POST',
         headers: {

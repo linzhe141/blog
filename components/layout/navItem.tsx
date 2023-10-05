@@ -73,7 +73,7 @@ export default function NavItem(props: NavItemProps) {
       >
         {linked ? (
           <Underline offset={-8}>
-            <Link className='w-full block' href={url}>
+            <Link className='block w-full' href={url}>
               {label}
             </Link>
           </Underline>

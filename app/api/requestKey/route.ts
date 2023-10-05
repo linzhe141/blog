@@ -12,6 +12,6 @@ export async function POST(request: Request) {
   if (target) {
     success = true
   }
-  const result:Result<boolean> = {code: 200, data: success}
+  const result: Result<boolean> = { code: 200, data: success }
   return NextResponse.json(result)
 }

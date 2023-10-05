@@ -22,6 +22,6 @@ export async function GET(request: Request) {
   const processor = remark().use(slug)
   //! mdx的 ast
   const tree = processor.parse(content)
-  const result: Result<string[]> = {code: 200, data: getDirStructure(tree)}
+  const result: Result<string[]> = { code: 200, data: getDirStructure(tree) }
   return NextResponse.json(result)
 }
