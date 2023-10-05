@@ -3,7 +3,8 @@ import Nav from '@/components/layout/nav'
 import ReadmeDir from '@/components/readmeDir'
 import { useReadme } from '@/hooks/useReadme'
 import Content from '@/components/layout/content'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import Icon from '@/components/icon/Icon'
 import Underline from '../underline'
@@ -16,7 +17,6 @@ export default function BlogLayout({
 }: {
   children: React.ReactNode
 }) {
-  const router = useRouter()
   const [showNav, setShowNav] = useState(false)
   const [showReadmeDir, setShowReadmeDir] = useState(false)
   const navList = useStore((state) => state.navList)
@@ -52,18 +52,18 @@ export default function BlogLayout({
     <main className='flex h-screen flex-col'>
       <Header>
         <Underline>
-          <span className='font-semibold' onClick={() => router.push('/')}>
+          <Link className='font-semibold' href='/'>
             home
-          </span>
+          </Link>
         </Underline>
         {usePrisma && (
           <Underline className='ml-4'>
-            <span
+            <Link
               className='font-semibold'
-              onClick={() => router.push('/setting')}
+              href='/setting'
             >
               setting
-            </span>
+            </Link>
           </Underline>
         )}
       </Header>

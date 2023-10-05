@@ -1,11 +1,10 @@
 import NavItem from './navItem'
 import { useEffect } from 'react'
 import type { NavItemProps, NavPros } from '@/types'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useImmer } from 'use-immer'
 export default function Nav({ beforeJump, data }: NavPros) {
   const pathname = usePathname()
-  const router = useRouter()
   const [navList, setNavList] = useImmer(data as unknown as NavItemProps[])
 
   function setExpanded(data: NavItemProps[], nav: NavItemProps) {
@@ -26,7 +25,6 @@ export default function Nav({ beforeJump, data }: NavPros) {
   }
   function clickHandle(nav: NavItemProps) {
     if (nav.linked) {
-      router.push(nav.url)
       beforeJump && beforeJump()
     }
   }

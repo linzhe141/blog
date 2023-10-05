@@ -1,18 +1,16 @@
-'use client'
 import { useState, useEffect } from 'react'
 import message from '@/components/message'
 import { useStore } from '@/store/store'
 import { useImmer } from 'use-immer'
 import type { Result, NavData } from '@/types'
-import { useRouter } from 'next/navigation'
 import Underline from '@/components/underline'
+import Link from 'next/link'
 import { getDefaultUrl } from '@/utils'
 import Header from '@/components/layout/header'
 type Props = {
   setAuth: (value: boolean) => void
 }
 export default function NavSetting({ setAuth }: Props) {
-  const router = useRouter()
 
   const navList = useStore((state) => state.navList)
   const setNavList = useStore((state) => state.setNavList)
@@ -81,12 +79,12 @@ export default function NavSetting({ setAuth }: Props) {
     <div className='flex h-screen w-screen flex-col items-center justify-center'>
       <Header>
         <Underline>
-          <span
+          <Link
             className='font-semibold'
-            onClick={() => router.push(getDefaultUrl(navList) ?? '')}
+            href={getDefaultUrl(navList) ?? ''}
           >
             blog
-          </span>
+          </Link>
         </Underline>
       </Header>
       <div className='mb-4 text-lg font-semibold'>菜单配置</div>

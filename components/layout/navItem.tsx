@@ -1,6 +1,8 @@
 import { usePathname } from 'next/navigation'
 import type { NavItemProps } from '@/types'
 import Icon from '../icon/Icon'
+import Link from 'next/link'
+
 import Underline from '../underline'
 // 虽然NavItem是递归组件，但是如果多余两层实在太丑了
 export default function NavItem(props: NavItemProps) {
@@ -71,7 +73,7 @@ export default function NavItem(props: NavItemProps) {
       >
         {linked ? (
           <Underline offset={-8}>
-            <div>{label}</div>
+            <Link href={url}>{label}</Link>
           </Underline>
         ) : (
           <div>{label}</div>

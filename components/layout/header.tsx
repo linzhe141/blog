@@ -1,5 +1,5 @@
 'use client'
-import { useRouter, usePathname } from 'next/navigation'
+import Link from 'next/link'
 import Icon from '@/components/icon/Icon'
 import Image from 'next/image'
 import Underline from '../underline'
@@ -7,12 +7,11 @@ type Props = {
   children: React.ReactNode
 }
 export default function Header({ children }: Props) {
-  const router = useRouter()
   return (
     <div className='fixed top-0 flex w-full items-center justify-between border-b-[1px] bg-white p-4 shadow-md shadow-gray-400'>
       <div>
         <Underline>
-          <div className=' flex items-center' onClick={() => router.push('/')}>
+          <Link className=' flex items-center' href='/'>
             <Image
               className='mr-2'
               width={24}
@@ -21,7 +20,7 @@ export default function Header({ children }: Props) {
               alt='logo'
             />
             <span className='font-semibold'>linzhe-blog</span>
-          </div>
+          </Link>
         </Underline>
       </div>
 

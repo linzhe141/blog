@@ -32,6 +32,7 @@
     "highlight.js": "^11.8.0",
     "immer": "^10.0.2",
     "next": "13.4.19",
+    "next13-progressbar": "^1.0.3",
     "postcss": "8.4.28",
     "prettier": "^3.0.2",
     "prettier-plugin-tailwindcss": "^0.5.3",
