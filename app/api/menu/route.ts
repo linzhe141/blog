@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/prisma'
+import { prisma } from '@/db/prisma'
 import { headers } from 'next/headers'
 import type { Result } from '@/types'
 //? 拆分出来就可以了，难道一个route只能写一个请求处理函数?

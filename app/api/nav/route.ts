@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import { NextResponse } from 'next/server'
-import { prisma } from '@/prisma'
+import { prisma } from '@/db/prisma'
 import { usePrisma } from '@/config'
 import { headers } from 'next/headers'
 import type { NavData, Result } from '@/types'
