@@ -1,0 +1,90 @@
+# vue3中使用ref作为reactive的参数笔记
+
+```ts
+const refValue = ref({ path: '/test' })
+const reactiveValue = reactive(refValue)
+//? const reactiveValue: Ref<{
+//?    path: string;
+//? }>
+```
+
+从ts类型来看，十分疑惑这个reactiveValue的类型`为什么是一个ref?`
+
+### 1、App.vue
+
+```html
+<template>
+  <div>{{ reactiveValue.path }}</div>
+</template>
+
+<script lang="ts">
+  import { ref, reactive } from 'vue'
+  export default {
+    setup() {
+      const refValue = ref({ path: '/test' })
+      debugger
+      const reactiveValue = reactive(refValue)
+      console.log('xxxx', reactiveValue.value === refValue.value) // true
+      setTimeout(() => (refValue.value = { path: 'FDASFDAS' }), 3000) // rerender
+      return {
+        reactiveValue,
+      }
+    },
+  }
+</script>
+```
+
+### 2、debug后发现
+
+```js
+function createReactiveObject(
+  target, // 传入的是一个ref
+  isReadonly2,
+  baseHandlers,
+  collectionHandlers,
+  proxyMap
+) {
+  // 跳过
+  if (!isObject(target)) {
+    if (!!(process.env.NODE_ENV !== 'production')) {
+      console.warn(`value cannot be made reactive: ${String(target)}`)
+    }
+    return target
+  }
+  // 跳过,不是reactive,没有这些属性
+  if (target['__v_raw'] && !(isReadonly2 && target['__v_isReactive'])) {
+    return target
+  }
+  const existingProxy = proxyMap.get(target)
+  // 跳过 这个ref的代理并不存在
+  if (existingProxy) {
+    return existingProxy
+  }
+
+  const targetType = getTargetType(target)
+  // 跳过
+  if (targetType === 0 /* INVALID */) {
+    return target
+  }
+  //! 发现就是再次对ref进行了一次代理（单从使用来说，可以看成一个ref）
+  //! UnwrapRefSimple<T>是一个很复杂的类型体操用于解包ref，但是只针对本文，不会走这个分支
+  //! export type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRefSimple<T>
+  //! export declare function reactive<T extends object>(target: T): UnwrapNestedRefs<T>;
+  //! 所以ts的推导的类型是一个ref，并且在模板中使用也进行了解包(unwrap)
+  //! const reactiveValue: Ref<{
+  //!   path: string;
+  //! }>
+
+  //! 类别
+  //! var refValue = {__v_is_ref: true, value: new Proxy({value: {path:'test'},{})}
+  //! var reactiveValue = new Proxy(refValue, {})
+  //! reactiveValue.value === refValue.value // true
+  const proxy = new Proxy(
+    target,
+    targetType === 2 /* COLLECTION */ ? collectionHandlers : baseHandlers
+  )
+
+  proxyMap.set(target, proxy)
+  return proxy
+}
+```

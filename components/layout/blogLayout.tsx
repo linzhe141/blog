@@ -108,7 +108,7 @@ export default function BlogLayout({
       </div>
       <div className='flex h-0 flex-1 overflow-auto'>
         <div
-          className={`fixed bottom-0 top-0 z-[1] overflow-auto border-r-[1px] bg-white xl:static xl:min-w-[300px] xl:px-[50px] ${
+          className={`fixed bottom-0 top-0 z-[1] overflow-auto border-r-[1px] bg-white xl:static xl:min-w-[380px] xl:px-[50px] ${
             showNav ? 'left-0 right-0' : 'left-[-300px] '
           } transition-[left] duration-300`}
         >
