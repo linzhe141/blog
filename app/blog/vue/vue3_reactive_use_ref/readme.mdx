@@ -51,7 +51,7 @@ function createReactiveObject(
     }
     return target
   }
-  // 跳过,不是reactive,没有这些属性
+  // 跳过，不是reactive或ractive的代理，没有这些属性
   if (target['__v_raw'] && !(isReadonly2 && target['__v_isReactive'])) {
     return target
   }
