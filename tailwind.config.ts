@@ -13,6 +13,7 @@ const config: Config = {
         DEFAULT: {
           css: {
             // 限定在 .prose 类名下的 a 元素
+            '--tw-prose-bullets': 'rgba(74, 222, 128,1)',
             a: {
               textDecoration: 'underline dotted',
               color: 'rgba(74, 222, 128,1)',
@@ -34,6 +35,9 @@ const config: Config = {
             },
             '.hljs-comment': {
               color: 'red !important',
+            },
+            ul: {
+              listStyleType: 'disclosure-closed',
             },
           },
         },

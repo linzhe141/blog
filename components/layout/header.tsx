@@ -18,6 +18,7 @@ export default function Header({ children }: Props) {
               height={24}
               src={'/logo.jpg'}
               alt='logo'
+              unoptimized
             />
             <span className='font-semibold'>linzhe-blog</span>
           </Link>

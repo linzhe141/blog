@@ -1,79 +1,116 @@
-# 使用vscode调试vue@2.7源码
+import Image from 'next/image'
 
-### 1、下载源码，并安装依赖
+# 使用vscode调试vue源码
 
-```bash
+### 1、vue@2.7（简单粗暴的方式😂）
+
+- 下载源码，并安装依赖
+
+  ```bash
   # 1
   git clone https://github.com/vuejs/vue.git
   # 2
   pnpm install
-```
-
-### 2、开启sourcemap
-
-默认的`dev`脚本没有对应sourcemap文件,需要修改`srcipts/config.js(rollup配置)的output选项，新增sourcemap:true`
-
-- 新增sourcemap
-
-  ```js
-  // srcipts/config.js
-  ...
-  output: {
-    file: opts.dest,
-    format: opts.format,
-    banner: opts.banner,
-    name: opts.moduleName || 'Vue',
-    exports: 'auto',
-    // 新增sourcemap
-    sourcemap: true
-  }
-  ...
   ```
 
-- 生成开发环境的打包文件
+- 开启sourcemap，默认的`dev`脚本没有对应sourcemap文件,需要修改`srcipts/config.js(rollup配置)的output选项，新增sourcemap:true`
+
+  - 新增sourcemap
+
+    ```js
+    // srcipts/config.js
+    ...
+    output: {
+      file: opts.dest,
+      format: opts.format,
+      banner: opts.banner,
+      name: opts.moduleName || 'Vue',
+      exports: 'auto',
+      // 新增sourcemap
+      sourcemap: true
+    }
+    ...
+    ```
+
+  - 生成开发环境的打包文件
+
+    ```bash
+    pnpm dev
+    ```
+
+  - 新增测试入口文件index.html(不考虑sfc，直接使用模板)
+
+    ```html
+    <!-- examples/index.html -->
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <script src="../dist/vue.js"></script>
+      </head>
+      <body>
+        <div id="app"><test :msg="message"></test></div>
+        <script>
+          const { reactive, h, ref } = Vue
+          const vm = new Vue({
+            components: {
+              test: {
+                props: ['msg'],
+                template: `<div>{{msg.text}}</div>`,
+              },
+            },
+            data() {
+              return {
+                message: { text: 'Hello World!' },
+              }
+            },
+          })
+          vm.$mount('#app')
+          window.vm = vm
+        </script>
+      </body>
+    </html>
+    ```
+
+  - 开启调试
+
+    在vscode中打开新增的index.html文件，按`F5`即可打开调试模式
+
+### 2、vue@3（vitest方式）
+
+- 下载源码，并安装依赖
 
   ```bash
-  pnpm dev
+  # 1
+  git clone https://github.com/vuejs/core.git
+  # 2
+  pnpm install
   ```
 
-### 3、新增测试入口文件index.html
+- 安装vscode的`vitest`扩展插件
 
-在examples目录中新增index.html作为测试的入口
+  新增单元测试入口文件，比如`dev.spec.ts`
 
-```html
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="../dist/vue.js"></script>
-  </head>
-  <body>
-    <div id="app"><test :msg="message"></test></div>
-    <script>
-      const { reactive, h, ref } = Vue
-      const vm = new Vue({
-        components: {
-          test: {
-            props: ['msg'],
-            template: `<div>{{msg.text}}</div>`,
-          },
-        },
-        data() {
-          return {
-            message: { text: 'Hello World!' },
-          }
-        },
-      })
-      vm.$mount('#app')
-      window.vm = vm
-    </script>
-  </body>
-</html>
-```
+  ```ts
+  // packages/reactivity/__test__/dev.spec.ts
+  // 假设测试将ref作为reactive的参数的整个流程
+  import { reactive, ref } from '../src'
+  test('reative use ref', () => {
+    const refValue = ref({ path: '/test' })
+    const reactiveValue = reactive(refValue)
+    expect(reactiveValue.value).toBe(refValue.value)
+  })
+  ```
 
-### 4、开启调试
+  使用vitest插件后，按照下图操作即可进行debug
 
-在vscode中打开新增的index.html文件，按`F5`即可打开调试模式
+  <Image
+    width={700}
+    height={240}
+    src={'/blog/how-to-debug-by-vitest-with-vscode.jpg'}
+    alt='how-to-debug-by-vitest-with-vscode'
+    unoptimized
+  />
