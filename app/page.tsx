@@ -15,7 +15,8 @@ export default function Home() {
             href={getDefaultUrl(navList) ?? ''}
             className='flex flex-col items-center justify-center'
           >
-            <h1 className='mb-4 cursor-pointer text-9xl'>blog</h1>
+            <h1 className='mb-4 text-9xl'>blog</h1>
+            <span className='text-xl'>好记性不如烂笔头</span>
           </Link>
         </Underline>
       </div>
