@@ -9,11 +9,21 @@ function generateId(children: React.ReactNode) {
   const text = renderToString(<Title>{children}</Title>)
   return text.replace(/<code>|<\/code>/g, '')
 }
+function getCodeLanguage(children: any) {
+  const [_, language] = children?.props.className.split('language-')
+  return language as string
+}
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     // Allows customizing built-in components, e.g. to add styling.
     h1: ({ children }) => <h1 id={generateId(children)}>{children}</h1>,
     h3: ({ children }) => <h3 id={generateId(children)}>{children}</h3>,
+    pre: ({ children }) => (
+      <pre className='relative'>
+        <div className='absolute right-5'>{getCodeLanguage(children)}</div>
+        {children}
+      </pre>
+    ),
     ...components,
   }
 }
