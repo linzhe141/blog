@@ -7,3 +7,30 @@
 body {
   color: var(--text);
 }
+@property --gradient-end {
+  syntax: '<percentage>';
+  initial-value: 10%;
+  inherits: false;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    --gradient-end: 10%;
+  }
+  50% {
+    --gradient-end: 90%;
+  }
+  100% {
+    --gradient-end: 10%;
+  }
+}
+
+.gradient {
+  background-image: linear-gradient(
+    to right,
+    rgba(74, 222, 128, 0.5) 0%,
+    white var(--gradient-end),
+    rgba(74, 222, 128, 0.5) 100%
+  );
+  animation: gradientAnimation 2s infinite;
+}
