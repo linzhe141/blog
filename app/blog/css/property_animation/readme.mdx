@@ -1,18 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-:root {
-  --text: #213547;
-}
-body {
-  color: var(--text);
-}
+# 使用css自定义属性实现动画
+
+### 1、定义属性名
+
+```css
 @property --gradient-end {
   syntax: '<percentage>';
   initial-value: 10%;
   inherits: false;
 }
+```
 
+### 2、编写动画
+
+```css
+/* 抛光动画 */
 @keyframes gradientAnimation {
   0% {
     --gradient-end: 10%;
@@ -34,3 +35,8 @@ body {
   );
   animation: gradientAnimation 2s infinite;
 }
+```
+
+### 3、动画效果如下
+
+<div className={`gradient mt-2 h-2 w-[400px]`}></div>
