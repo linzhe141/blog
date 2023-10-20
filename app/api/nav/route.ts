@@ -6,6 +6,9 @@ import { usePrisma } from '@/config'
 import { headers } from 'next/headers'
 import type { NavData, Result } from '@/types'
 import type { Menu } from '@prisma/client'
+
+export const dynamic = 'force-dynamic'
+
 const blogDirName = 'blog'
 async function getBlogUrlList(
   dir: string,
