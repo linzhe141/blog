@@ -1,0 +1,84 @@
+# vue-router@4的导航守卫原理
+
+它通过调用navigate函数来执行用户注册的导航守卫（beforeEachHooks作为示例），
+并按照守卫的顺序逐个执行。如果所有守卫都执行成功，则输出"成功导航"；
+如果任何一个守卫执行失败，则抛出"Invalid navigation guard"错误。
+
+### 1、注册的守卫钩子函数
+
+```js
+const beforeEachHooks = [
+  (to, from) => console.log('hooks1', to, from),
+  async (to, from) => {
+    console.log('hooks2', to, from)
+    await 1
+    return false
+  },
+  (to, from) => console.log('hooks3', to, from),
+]
+```
+
+### 2、导航入口
+
+```js
+navigate('to', 'from')
+  .then(() => {
+    console.log('成功导航')
+  })
+  .catch((error) => console.log(error))
+```
+
+### 3、核心原理
+
+```js
+function runGuardQueue(guards) {
+  /**
+   * p0 = Promise.resolve()
+   * p1 = p0.then(()=>guard())
+   * p2 = p1.then(()=>guard())
+   */
+  //! mdn 有详细描述 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_promises
+  //! 本质等价于一直给Promise.resolve()加then方法
+  //! Promise.resolve() // 初始值
+  //!   .then(() => new Promise((resolve, reject) => {resolve()/reject()})) //第一次迭代
+  //!   .then(() => new Promise((resolve, reject) => {resolve()/reject()})) //第二次迭代
+  //!   .then(() => new Promise((resolve, reject) => {resolve()/reject()})) //第三次迭代
+
+  //! 最后处理
+  //! (一直加then的promise)
+  //!   .then(res => console.log('res'))   // 导航成功
+  //!   .catch(error=>console.log(error))  // 导航失败
+  return guards.reduce(
+    //! 最新的vue-router，next不是必须调用的了
+    //! 最新文档 https://router.vuejs.org/zh/guide/advanced/navigation-guards.html
+    (promise, guard) => promise.then(() => guard()),
+    Promise.resolve()
+  )
+}
+function guardToPromise(guard, to, from) {
+  return () =>
+    new Promise((resolve, reject) => {
+      const next = (valid) => {
+        if (valid === false) {
+          reject('Invalid navigation guard')
+        }
+        resolve()
+      }
+      const fnReturn = guard(to, from)
+      //! 如果用户的返回值是false，就reject，那么runGuardQueue就会被中断了
+      //! 因为这个 runGuardQueue 只对 resolve(promise.then) 进行迭代
+
+      //! 源码还包装了一层 Promise,因为这个hook可以支持异步(fnReturn可能是一个promise)
+      //! 用户在hook中，可以做异步逻辑，比如异步判断用户状态，根据状态做相应的调整
+      Promise.resolve(fnReturn).then(next)
+    })
+}
+
+function navigate(to, from) {
+  let guards = []
+  for (const guard of beforeEachHooks) {
+    guards.push(guardToPromise(guard, to, from))
+  }
+  return runGuardQueue(guards)
+}
+```
