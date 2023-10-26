@@ -1,0 +1,140 @@
+# 为什么vue是组件级别的更新
+
+首先在react中，如果一个父组件更新了，默认情况下（没有做memo之类的性能优化）其包含的所有子组件都会更新，无论这些子组件是否依赖了父组件的状态，
+但在vue中仅仅只会更新父组件组件，如果有需要，子组件才会更新，比如依赖了父组件的状态发生了变化
+
+### 1、比如这么一个组件
+
+```html
+<div id="app">
+  {{message.text}}
+  <test :msg="message"></test>
+  <linzhe></linzhe>
+</div>
+<script type="module">
+  import Vue from './vue.esm.js'
+  const vm = new Vue({
+    components: {
+      test: {
+        props: ['msg'],
+        template: `<div>{{msg.text}}</div>`,
+      },
+      linzhe: {
+        template: `<div>linzhe</div>`,
+      },
+    },
+    data() {
+      return {
+        message: { text: 'Hello World!' },
+      }
+    },
+  })
+  setTimeout(() => {
+    vm.message = { text: 'test' }
+  }, 5000)
+</script>
+```
+
+### 2、initProps
+
+`initProps`把子组件中的`_props`变成响应式对象，从而进行依赖收集
+
+```js
+function initProps$1(vm, propsOptions) {
+  // propsData => :msg="message" => {msg: {text:Hello World!}}，这个msg对象是父组件传递过来的响应式数据
+  const propsData = vm.$options.propsData || {}
+  const props = (vm._props = shallowReactive({}))
+  const keys = (vm.$options._propKeys = [])
+  const isRoot = !vm.$parent
+  for (const key in propsOptions) {
+    keys.push(key)
+    const value = validateProp(key, propsOptions, propsData, vm)
+    // 将符合的props的key定义成响应式，所以子组件就会对这些props进行依赖收集
+    // 当父组件进行updateChildComponent修改了props[key]，对应的子组件才会进行更新，否则不会更新
+    defineReactive(props, key, value, () => {
+      // 防止用户手动修改props的值，因为按照单向数据流
+      if (!isRoot && !isUpdatingChildComponent) {
+        warn$2(
+          `Avoid mutating a prop directly since the value will be ` +
+            `overwritten whenever the parent component re-renders. ` +
+            `Instead, use a data or computed property based on the prop's ` +
+            `value. Prop being mutated: "${key}"`,
+          vm
+        )
+      }
+    })
+  }
+}
+```
+
+### 3、变更流程
+
+- 在vue中一个组件在挂载时，会使用watcher进行依赖收集，所以当5s后这个`updateComponent`就会重新执行
+
+  ```js
+  // 挂载
+  function mountComponent(vm, el, hydrating) {
+    ...
+    updateComponent = () => {
+      // DIFF
+      vm._update(vm._render(), hydrating)
+    }
+    ...
+    new Watcher(
+      vm,
+      updateComponent,
+      noop,
+      watcherOptions,
+      true /* isRenderWatcher */
+    )
+  }
+
+  ```
+
+- 在进行DIFF时，当vnode是组件，就会进行`updateChildComponent`，在updateChildComponent中就会更新最新传递的props，
+  由于`initProps`函数，所以子组件的`_props`变成了响应式数据了，并且响应式数据又变更了，那么自然会重新进行子组件的`updateComponent`，
+  从而进行重新渲染了，而像那种没有依赖父组件状态的`linzhe`组件，因为`_props`没有变化，就不会重新渲染了，所以综上来说`vue就是组件级别的更新`
+
+  ```js
+  // 1
+  function patchVnode( oldVnode, vnode, ...) {
+    ...
+    // 组件的vnode
+    // { data: {hook: {..., prepatch, ...}} }
+    let i;
+    const data = vnode.data;
+    if (isDef(data) && isDef((i = data.hook)) && isDef((i = i.prepatch))) {
+      i(oldVnode, vnode) // prepatch(oldVnode, vnode)
+    }
+  }
+  // 2
+  prepatch(oldVnode, vnode) {
+    ...
+    updateChildComponent(
+      child,
+      options.propsData, // updated props
+      options.listeners, // updated  listeners
+      vnode, // new parent vnode
+      options.children // new children
+    );
+  }
+  // 3
+  function updateChildComponent(...){
+    ...
+    isUpdatingChildComponent = true //只有在更新子组件时，才能去改props，否则都会报错，保证单选数据流
+    // update props
+    // vm 这里的vm是子组件实例
+    if (propsData && vm.$options.props) {
+      const props = vm._props;
+      const propKeys = vm.$options._propKeys || [];
+      for (let i = 0; i < propKeys.length; i++) {
+        const key = propKeys[i];
+        const propOptions = vm.$options.props; // wtf flow?
+        props[key] = validateProp(key, propOptions, propsData, vm);
+        // 这里就会触发对应的子组件重新更新了
+      }
+    }
+    isUpdatingChildComponent = false
+    ...
+  }
+  ```
