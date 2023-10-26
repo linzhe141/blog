@@ -1,7 +1,9 @@
 # 为什么vue是组件级别的更新
 
 首先在react中，如果一个父组件更新了，默认情况下（没有做memo之类的性能优化）其包含的所有子组件都会更新，无论这些子组件是否依赖了父组件的状态，
-但在vue中仅仅只会更新父组件组件，如果有需要，子组件才会更新，比如依赖了父组件的状态发生了变化
+此外，也不是从 setState 的组件开始更新，而是要从 `root` 开始遍历进行diff，不一定自顶向下的更新那些组件，但会进行diff。
+但在vue中仅仅只会更新父组件，只会在有需要的情况下，子组件才会更新，
+比如依赖了父组件的状态，且父组件的状态发生了变化
 
 ### 1、比如这么一个组件
 
@@ -37,10 +39,11 @@
 
 ### 2、initProps
 
-`initProps`把子组件中的`_props`变成响应式对象，从而进行依赖收集
+在`initProps`中会把子组件中的`_props`变成响应式对象，从而进行依赖收集
 
 ```js
 function initProps$1(vm, propsOptions) {
+  ...
   // propsData => :msg="message" => {msg: {text:Hello World!}}，这个msg对象是父组件传递过来的响应式数据
   const propsData = vm.$options.propsData || {}
   const props = (vm._props = shallowReactive({}))
@@ -52,7 +55,7 @@ function initProps$1(vm, propsOptions) {
     // 将符合的props的key定义成响应式，所以子组件就会对这些props进行依赖收集
     // 当父组件进行updateChildComponent修改了props[key]，对应的子组件才会进行更新，否则不会更新
     defineReactive(props, key, value, () => {
-      // 防止用户手动修改props的值，因为按照单向数据流
+      // 防止用户在子组件中手动修改props的值，因为要保证单向数据流
       if (!isRoot && !isUpdatingChildComponent) {
         warn$2(
           `Avoid mutating a prop directly since the value will be ` +
@@ -96,10 +99,11 @@ function initProps$1(vm, propsOptions) {
   从而进行重新渲染了，而像那种没有依赖父组件状态的`linzhe`组件，因为`_props`没有变化，就不会重新渲染了，所以综上来说`vue就是组件级别的更新`
 
   ```js
-  // 1
+  // 1 DIFF
   function patchVnode( oldVnode, vnode, ...) {
     ...
     // 组件的vnode
+    // componentVNodeHooks
     // { data: {hook: {..., prepatch, ...}} }
     let i;
     const data = vnode.data;
@@ -107,7 +111,6 @@ function initProps$1(vm, propsOptions) {
       i(oldVnode, vnode) // prepatch(oldVnode, vnode)
     }
   }
-  // 2
   prepatch(oldVnode, vnode) {
     ...
     updateChildComponent(
@@ -118,7 +121,7 @@ function initProps$1(vm, propsOptions) {
       options.children // new children
     );
   }
-  // 3
+  // 2 更新子组件
   function updateChildComponent(...){
     ...
     isUpdatingChildComponent = true //只有在更新子组件时，才能去改props，否则都会报错，保证单选数据流
