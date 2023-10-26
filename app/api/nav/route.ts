@@ -10,6 +10,8 @@ import type { Menu } from '@prisma/client'
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
+//? vercel中使用fs读取不到page.tsx
+const markFileName = 'readme.mdx'
 const blogDirName = 'blog'
 async function getBlogUrlList(
   dir: string,
@@ -25,9 +27,8 @@ async function getBlogUrlList(
     }
     if (parent) {
       item.url = parent.url + '/' + name
-      console.log('xxxxxxxxxxx', name)
-      if (isDirectory || name === 'page.tsx') {
-        if (name === 'page.tsx') parent.linked = true
+      if (isDirectory || name === markFileName) {
+        if (name === markFileName) parent.linked = true
         if (!parent.children) parent.children = []
         parent.children.push(item)
       }
@@ -37,7 +38,7 @@ async function getBlogUrlList(
     if (isDirectory) {
       await getBlogUrlList(path.resolve(dir, name), result, item)
       if (item.children) {
-        const target = item.children.find((it) => it.url.includes('page.tsx'))
+        const target = item.children.find((it) => it.url.includes(markFileName))
         if (target) {
           // @ts-ignore 作为标记临时使用
           item.mark = true
@@ -143,28 +144,36 @@ export async function GET(request: Request) {
     return NextResponse.json(result)
   }
 }
-// TODO
-// export async function POST(request: Request) {
-//   const headersList = headers()
-//   const requestKey = headersList.get('authorization')!
-//   const target = await prisma.requsetKey.findFirst({
-//     where: {
-//       key: requestKey,
-//     },
-//   })
-//   if (!target) {
-//     return NextResponse.json({ code: 401, msg: '认证失败！' })
-//   }
-//   const { data } = await request.json()
-//   await prisma.$transaction(
-//     data.map((item: { id: number; label: string }) =>
-//       prisma.menu.update({
-//         where: { id: item.id },
-//         data: {
-//           label: item.label,
-//         },
-//       })
-//     )
-//   )
-//   return NextResponse.json({ data: true })
-// }
+export async function POST(request: Request) {
+  const headersList = headers()
+  const requestKey = headersList.get('authorization') ?? ''
+  const target = await prisma.requsetKey.findFirst({
+    where: {
+      key: requestKey,
+    },
+  })
+  if (!target) {
+    const result: Result<boolean> = {
+      code: 401,
+      msg: '认证失败！',
+      data: false,
+    }
+    return NextResponse.json(result)
+  }
+  const { data } = await request.json()
+  await prisma.$transaction(
+    data.map((item: { id: number; label: string }) =>
+      prisma.menu.update({
+        where: { id: item.id },
+        data: {
+          label: item.label,
+        },
+      })
+    )
+  )
+  const result: Result<boolean> = {
+    code: 200,
+    data: true,
+  }
+  return NextResponse.json(result)
+}

@@ -32,7 +32,7 @@ export default function NavSetting({ setAuth }: Props) {
   async function submit() {
     setDisabled(true)
     const data: Result<boolean> = await (
-      await fetch('/api/menu', {
+      await fetch('/api/nav', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
