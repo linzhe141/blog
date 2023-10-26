@@ -25,6 +25,7 @@ async function getBlogUrlList(
     }
     if (parent) {
       item.url = parent.url + '/' + name
+      console.log('xxxxxxxxxxx', name)
       if (isDirectory || name === 'page.tsx') {
         if (name === 'page.tsx') parent.linked = true
         if (!parent.children) parent.children = []
