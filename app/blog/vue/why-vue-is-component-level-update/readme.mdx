@@ -1,7 +1,7 @@
 # 为什么vue是组件级别的更新
 
 首先在react中，如果一个父组件更新了，默认情况下（没有做memo之类的性能优化）其包含的所有子组件都会更新，无论这些子组件是否依赖了父组件的状态，
-此外，也不是从 setState 的组件开始更新，而是要从 `root` 开始遍历进行diff，不一定自顶向下的更新那些组件，但会进行diff。
+此外，[也不是从 setState 的组件开始更新，而是要从 `root` 开始遍历进行diff](https://segmentfault.com/q/1010000041065111)，不一定自顶向下的更新那些组件，但会进行diff。
 但在vue中仅仅只会更新父组件，只会在有需要的情况下，子组件才会更新，
 比如依赖了父组件的状态，且父组件的状态发生了变化
 
@@ -51,6 +51,8 @@ function initProps$1(vm, propsOptions) {
   const isRoot = !vm.$parent
   for (const key in propsOptions) {
     keys.push(key)
+    // 这个value就是用户传递的props.msg，
+    // 举例：如果是一个响应式数据，那么也还是一个响应式数据
     const value = validateProp(key, propsOptions, propsData, vm)
     // 将符合的props的key定义成响应式，所以子组件就会对这些props进行依赖收集
     // 当父组件进行updateChildComponent修改了props[key]，对应的子组件才会进行更新，否则不会更新
@@ -94,7 +96,7 @@ function initProps$1(vm, propsOptions) {
 
   ```
 
-- 在进行DIFF时，当vnode是组件，就会进行`updateChildComponent`，在updateChildComponent中就会更新最新传递的props，
+- 在进行DIFF时，当vnode是组件，就会进行`updateChildComponent`，在updateChildComponent中就会更新最新传递的props，**而不会深入到组件内部进行更新。**
   由于`initProps`函数，所以子组件的`_props`变成了响应式数据了，并且响应式数据又变更了，那么自然会重新进行子组件的`updateComponent`，
   从而进行重新渲染了，而像那种没有依赖父组件状态的`linzhe`组件，因为`_props`没有变化，就不会重新渲染了，所以综上来说`vue就是组件级别的更新`
 
