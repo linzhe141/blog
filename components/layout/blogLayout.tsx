@@ -22,7 +22,9 @@ export default function BlogLayout({
   const [showReadmeDir, setShowReadmeDir] = useState(false)
   const navList = useStore((state) => state.navList)
   const pathname = usePathname()
-  const { dirStructure } = useReadme({ url: pathname })
+  const { dirStructure, loading: dirStructureLoading } = useReadme({
+    url: pathname,
+  })
 
   function closeNav() {
     if (showNav) {
@@ -134,10 +136,10 @@ export default function BlogLayout({
           className={`hidden bg-white xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[280px] xl:border-l-[1px] xl:px-[50px]`}
         >
           <div className='mb-4 hidden xl:block'></div>
-          {dirStructure.length > 0 ? (
-            <ReadmeDir data={dirStructure} />
-          ) : (
+          {dirStructureLoading ? (
             <Skeleton count={5} />
+          ) : (
+            <ReadmeDir data={dirStructure} />
           )}
         </div>
       </div>
