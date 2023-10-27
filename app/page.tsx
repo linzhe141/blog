@@ -5,13 +5,13 @@ import { getDefaultUrl } from '@/utils'
 import Link from 'next/link'
 
 export default function Home() {
-  const navList = useStore((state) => state.navList)
+  const menuList = useStore((state) => state.menuList)
 
   return (
     <div className='flex h-screen items-center justify-center bg-green-400 '>
       <div className='flex flex-col items-center justify-center'>
         <Link
-          href={getDefaultUrl(navList) ?? ''}
+          href={getDefaultUrl(menuList) ?? ''}
           className='flex flex-col items-center justify-center'
         >
           <h1 className='mb-4 text-9xl'>blog</h1>

@@ -1,11 +1,11 @@
 import { usePathname } from 'next/navigation'
-import { type NavItemProps } from '@/types'
+import { type MenuItemProps } from '@/types'
 import Icon from '../icon/Icon'
 import Link from 'next/link'
 
 import Underline from '../underline'
-// 虽然NavItem是递归组件，但是如果多余两层实在太丑了
-export default function NavItem(props: NavItemProps) {
+// 虽然MenuItem是递归组件，但是如果多余两层实在太丑了
+export default function MenuItem(props: MenuItemProps) {
   const {
     label,
     url,
@@ -15,28 +15,28 @@ export default function NavItem(props: NavItemProps) {
     expanded,
     expandChangeHandle,
     clickHandle,
-    navList,
+    menuList,
   } = props
   const pathname = usePathname()
-  const subNavheight = getExpandCount() * 40
-  function findNav(data: NavItemProps[]): NavItemProps | null {
+  const subMenuheight = getExpandCount() * 40
+  function findMenu(data: MenuItemProps[]): MenuItemProps | null {
     for (const item of data) {
       if (item.url === url) {
         return item
       }
       if (item.children) {
-        const target = findNav(item.children)
+        const target = findMenu(item.children)
         if (target) return target
       }
     }
     return null
   }
   function getExpandCount() {
-    const target = findNav(navList!)
+    const target = findMenu(menuList!)
     if (!target) return 0
     const getExpandedItems = (
-      data: NavItemProps[],
-      result: NavItemProps[] = []
+      data: MenuItemProps[],
+      result: MenuItemProps[] = []
     ) => {
       for (const item of data) {
         if (item.expanded) {
@@ -98,17 +98,17 @@ export default function NavItem(props: NavItemProps) {
       </div>
       <div
         style={{
-          height: (expanded ? subNavheight : 0) + 'px',
+          height: (expanded ? subMenuheight : 0) + 'px',
         }}
         className={`${
           level === 1 ? 'ml-[20px] border-l-[1px]' : ''
         } overflow-hidden transition-all duration-300`}
       >
-        {children?.map((subNav) => (
-          <NavItem
-            {...subNav}
-            key={subNav.url}
-            navList={navList}
+        {children?.map((subMenu) => (
+          <MenuItem
+            {...subMenu}
+            key={subMenu.url}
+            menuList={menuList}
             expandChangeHandle={expandChangeHandle}
             clickHandle={clickHandle}
           />

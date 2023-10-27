@@ -1,24 +1,24 @@
-export type NavItemProps = {
+export type MenuItemProps = {
   label: string
   url: string
   level: number
   expanded: boolean
   linked: boolean
-  expandChangeHandle?: (nav: NavItemProps) => void
-  clickHandle?: (nav: NavItemProps) => void
-  children?: NavItemProps[]
-  navList?: NavItemProps[]
+  expandChangeHandle?: (menu: MenuItemProps) => void
+  clickHandle?: (menu: MenuItemProps) => void
+  children?: MenuItemProps[]
+  menuList?: MenuItemProps[]
 }
-export type NavData = {
+export type MenuData = {
   id: number
   linked: boolean
   label: string
   name: string
   url: string
-  children?: NavData[]
+  children?: MenuData[]
 }
-export type NavPros = {
-  data: NavData[]
+export type MenuProps = {
+  data: MenuData[]
   beforeJump?: (...args: any) => void
 }
 

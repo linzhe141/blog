@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import message from '@/components/message'
 import { useStore } from '@/store/store'
 import { useImmer } from 'use-immer'
-import { type Result, NavData } from '@/types'
+import { type Result, MenuData } from '@/types'
 import Underline from '@/components/underline'
 import Link from 'next/link'
 import { getDefaultUrl } from '@/utils'
@@ -10,10 +10,10 @@ import Header from '@/components/layout/header'
 type Props = {
   setAuth: (value: boolean) => void
 }
-export default function NavSetting({ setAuth }: Props) {
-  const navList = useStore((state) => state.navList)
-  const setNavList = useStore((state) => state.setNavList)
-  const [treeData, setTreeData] = useImmer(navList)
+export default function MenuSetting({ setAuth }: Props) {
+  const menuList = useStore((state) => state.menuList)
+  const setMenuList = useStore((state) => state.setMenuList)
+  const [treeData, setTreeData] = useImmer(menuList)
 
   const [disabled, setDisabled] = useState(false)
 
@@ -32,7 +32,7 @@ export default function NavSetting({ setAuth }: Props) {
   async function submit() {
     setDisabled(true)
     const data: Result<boolean> = await (
-      await fetch('/api/nav', {
+      await fetch('/api/menu', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -49,8 +49,8 @@ export default function NavSetting({ setAuth }: Props) {
     }
     if (data.data) {
       message({ type: 'success', text: '菜单目录修改成功！' })
-      const data: Result<NavData[]> = await (await fetch('/api/nav')).json()
-      setNavList(data.data)
+      const data: Result<MenuData[]> = await (await fetch('/api/menu')).json()
+      setMenuList(data.data)
     }
     setDisabled(false)
   }
@@ -71,14 +71,14 @@ export default function NavSetting({ setAuth }: Props) {
   }
 
   useEffect(() => {
-    setTreeData(navList)
+    setTreeData(menuList)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navList])
+  }, [menuList])
   return (
     <div className='flex h-screen w-screen flex-col items-center justify-center'>
       <Header>
         <Underline>
-          <Link className='font-semibold' href={getDefaultUrl(navList) ?? ''}>
+          <Link className='font-semibold' href={getDefaultUrl(menuList) ?? ''}>
             blog
           </Link>
         </Underline>

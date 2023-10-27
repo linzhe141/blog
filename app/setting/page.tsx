@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Auth from './auth'
-import NavSetting from './navSetting'
+import MenuSetting from './menuSetting'
 import { type Result } from '@/types'
 import Skeleton from 'react-loading-skeleton'
 export default function Setting() {
@@ -38,9 +38,9 @@ export default function Setting() {
       ) : !auth ? (
         <Auth setAuth={setAuth} />
       ) : (
-        <NavSetting setAuth={setAuth} />
+        <MenuSetting setAuth={setAuth} />
       )}
-      {/* {!auth ? <Auth setAuth={setAuth} /> : <NavSetting setAuth={setAuth} />} */}
+      {/* {!auth ? <Auth setAuth={setAuth} /> : <MenuSetting setAuth={setAuth} />} */}
     </div>
   )
 }

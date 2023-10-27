@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/db/prisma'
 import { usePrisma } from '@/config'
 import { headers } from 'next/headers'
-import { type NavData, Result } from '@/types'
+import { type MenuData, Result } from '@/types'
 import { type Menu } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
@@ -15,13 +15,13 @@ const markFileName = 'readme.mdx'
 const blogDirName = 'blog'
 async function getBlogUrlList(
   dir: string,
-  result: NavData[] = [],
-  parent: NavData | null = null
+  result: MenuData[] = [],
+  parent: MenuData | null = null
 ) {
   for (const name of await fs.readdir(dir)) {
     const fileStat = await fs.stat(path.resolve(dir, name))
     const isDirectory = fileStat.isDirectory()
-    const item = { label: name, name, url: name } as NavData
+    const item = { label: name, name, url: name } as MenuData
     if (item.url.indexOf(blogDirName) !== 1) {
       item.url = `/${blogDirName}/${item.url}`
     }
@@ -59,8 +59,8 @@ async function getBlogUrlList(
 }
 
 function getFlatList(
-  data: NavData[],
-  result: (NavData & { parentName: string | null })[] = [],
+  data: MenuData[],
+  result: (MenuData & { parentName: string | null })[] = [],
   parentName: string | null = null
 ) {
   for (const item of data) {
@@ -78,7 +78,7 @@ function getFlatList(
   }
   return result
 }
-async function add2DB(list: (NavData & { parentName: string | null })[]) {
+async function add2DB(list: (MenuData & { parentName: string | null })[]) {
   for (const menu of list) {
     const data = await prisma.menu.findUnique({ where: { name: menu.name } })
     let parentData = null
@@ -101,7 +101,7 @@ async function add2DB(list: (NavData & { parentName: string | null })[]) {
   }
 }
 
-function formatMenu(data: Menu[], result: NavData[] = [], map = new Map()) {
+function formatMenu(data: Menu[], result: MenuData[] = [], map = new Map()) {
   for (const item of data) {
     let menu = {
       id: item.id,
@@ -134,10 +134,10 @@ export async function GET(request: Request) {
         id: 'asc',
       },
     })
-    const result: Result<NavData[]> = { code: 200, data: formatMenu(menuList) }
+    const result: Result<MenuData[]> = { code: 200, data: formatMenu(menuList) }
     return NextResponse.json(result)
   } else {
-    const result: Result<NavData[]> = {
+    const result: Result<MenuData[]> = {
       code: 200,
       data: blogUrlList,
     }

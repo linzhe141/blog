@@ -1,5 +1,5 @@
 'use client'
-import Nav from '@/components/layout/nav'
+import Menu from '@/components/layout/menu'
 import ReadmeDir from '@/components/readmeDir'
 import { useReadme } from '@/hooks/useReadme'
 import Content from '@/components/layout/content'
@@ -18,28 +18,28 @@ export default function BlogLayout({
 }: {
   children: React.ReactNode
 }) {
-  const [showNav, setShowNav] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
   const [showReadmeDir, setShowReadmeDir] = useState(false)
-  const navList = useStore((state) => state.navList)
+  const menuList = useStore((state) => state.menuList)
   const pathname = usePathname()
   const { dirStructure, loading: dirStructureLoading } = useReadme({
     url: pathname,
   })
 
-  function closeNav() {
-    if (showNav) {
-      setShowNav(false)
+  function closeMenu() {
+    if (showMenu) {
+      setShowMenu(false)
     }
   }
   function resizeHandle() {
-    closeNav()
+    closeMenu()
   }
   function beforeJumpHandle() {
-    closeNav()
+    closeMenu()
   }
   function keydownHandle(event: KeyboardEvent) {
     if (event.key === 'Escape') {
-      closeNav()
+      closeMenu()
     }
   }
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function BlogLayout({
       window.removeEventListener('keydown', keydownHandle)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showNav])
+  }, [showMenu])
   return (
     <main className='flex h-screen flex-col'>
       <Header>
@@ -70,7 +70,7 @@ export default function BlogLayout({
       <div className='mt-[57px] flex h-10 items-center justify-between overflow-hidden border-b-[1px] px-2 xl:h-0 xl:border-b-0'>
         <div
           className='flex cursor-pointer items-center'
-          onClick={() => setShowNav(true)}
+          onClick={() => setShowMenu(true)}
         >
           <Icon type='menu' />
           <span className='ml-2'>Menu</span>
@@ -111,20 +111,20 @@ export default function BlogLayout({
       <div className='flex h-0 flex-1 overflow-auto'>
         <div
           className={`fixed bottom-0 top-0 z-[1] overflow-auto border-r-[1px] bg-white xl:static xl:min-w-[380px] xl:px-[50px] ${
-            showNav ? 'left-0 right-0' : 'left-[-300px] '
+            showMenu ? 'left-0 right-0' : 'left-[-300px] '
           } transition-[left] duration-300`}
         >
           <div className='flex flex-row-reverse px-4 py-2 xl:hidden'>
             <div
-              onClick={closeNav}
+              onClick={closeMenu}
               className='cursor-pointer rounded-full p-1 transition-all duration-200 hover:rotate-180 hover:bg-green-100 hover:text-green-400'
             >
               <Icon type='close' />
             </div>
           </div>
           <div className='mb-4 hidden xl:block'></div>
-          {navList.length > 0 ? (
-            <Nav beforeJump={beforeJumpHandle} data={navList} />
+          {menuList.length > 0 ? (
+            <Menu beforeJump={beforeJumpHandle} data={menuList} />
           ) : (
             <Skeleton count={10} />
           )}

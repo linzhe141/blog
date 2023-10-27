@@ -4,15 +4,15 @@ import BlogLayout from '@/components/layout/blogLayout'
 import { useEffect } from 'react'
 import { useStore } from '@/store/store'
 import { Next13ProgressBar } from 'next13-progressbar'
-import { type Result, NavData } from '@/types'
+import { type Result, MenuData } from '@/types'
 const otherLayoutList = ['/', '/setting']
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const setNavList = useStore((state) => state.setNavList)
+  const setMenuList = useStore((state) => state.setMenuList)
 
   async function init() {
-    const data: Result<NavData[]> = await (await fetch('/api/nav')).json()
-    setNavList(data.data)
+    const data: Result<MenuData[]> = await (await fetch('/api/menu')).json()
+    setMenuList(data.data)
   }
   useEffect(() => {
     init()

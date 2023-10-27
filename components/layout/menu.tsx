@@ -1,36 +1,36 @@
-import NavItem from './navItem'
+import MenuItem from './menuItem'
 import { useEffect } from 'react'
-import { type NavItemProps, NavPros } from '@/types'
+import { type MenuItemProps, MenuProps } from '@/types'
 import { usePathname } from 'next/navigation'
 import { useImmer } from 'use-immer'
-export default function Nav({ beforeJump, data }: NavPros) {
+export default function Menu({ beforeJump, data }: MenuProps) {
   const pathname = usePathname()
-  const [navList, setNavList] = useImmer(data as unknown as NavItemProps[])
+  const [menuList, setMenuList] = useImmer(data as unknown as MenuItemProps[])
 
-  function setExpanded(data: NavItemProps[], nav: NavItemProps) {
+  function setExpanded(data: MenuItemProps[], menu: MenuItemProps) {
     for (const item of data) {
-      if (item.url === nav.url) {
+      if (item.url === menu.url) {
         item.expanded = !item.expanded
       }
       if (item.children) {
-        setExpanded(item.children, nav)
+        setExpanded(item.children, menu)
       }
     }
     return data
   }
-  function expandChangeHandle(nav: NavItemProps) {
-    setNavList((draft) => {
-      setExpanded(draft, nav)
+  function expandChangeHandle(menu: MenuItemProps) {
+    setMenuList((draft) => {
+      setExpanded(draft, menu)
     })
   }
-  function clickHandle(nav: NavItemProps) {
-    if (nav.linked) {
+  function clickHandle(menu: MenuItemProps) {
+    if (menu.linked) {
       beforeJump && beforeJump()
     }
   }
   function setDefaultData(
-    data: NavItemProps,
-    parentNode: NavItemProps | null = null,
+    data: MenuItemProps,
+    parentNode: MenuItemProps | null = null,
     level: number = 1
   ) {
     //! immutable copy
@@ -57,22 +57,22 @@ export default function Nav({ beforeJump, data }: NavPros) {
 
   useEffect(() => {
     //! immutable
-    const defaultData = (data as unknown as NavItemProps[]).map((item) =>
+    const defaultData = (data as unknown as MenuItemProps[]).map((item) =>
       setDefaultData(item)
     )
-    setNavList(defaultData)
+    setMenuList(defaultData)
     //! error not immutable
-    // setNavList(setDefaultData(data as unknown as NavItemProps[]))
+    // setMenuList(setDefaultData(data as unknown as MenuItemProps[]))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   return (
     <div>
-      {navList.map((nav) => (
-        <NavItem
-          {...nav}
-          key={nav.url}
-          navList={navList as NavItemProps[]}
+      {menuList.map((menu) => (
+        <MenuItem
+          {...menu}
+          key={menu.url}
+          menuList={menuList as MenuItemProps[]}
           expandChangeHandle={expandChangeHandle}
           clickHandle={clickHandle}
         />

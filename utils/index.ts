@@ -1,5 +1,5 @@
-import { type NavData } from '@/types'
-export function getDefaultUrl(data: NavData[]): string | null {
+import { type MenuData } from '@/types'
+export function getDefaultUrl(data: MenuData[]): string | null {
   if (data.length) {
     const target = data[0]
     if (target.linked) {
