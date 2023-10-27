@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Auth from './auth'
 import NavSetting from './navSetting'
-import type { Result } from '@/types'
+import { type Result } from '@/types'
 import Skeleton from 'react-loading-skeleton'
 export default function Setting() {
   const [auth, setAuth] = useState(false)

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/db/prisma'
-import type { Result } from '@/types'
+import { type Result } from '@/types'
 export async function POST(request: Request) {
   const data = await request.json()
   const target = await prisma.requsetKey.findFirst({

@@ -4,7 +4,7 @@ import matter from 'gray-matter'
 import { NextResponse } from 'next/server'
 import { remark } from 'remark'
 import slug from 'remark-slug'
-import type { Result } from '@/types'
+import { type Result } from '@/types'
 function getDirStructure(root: any) {
   return root.children
     .filter((item: any) => item.type === 'heading' && item.depth === 3)

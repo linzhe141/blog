@@ -1,6 +1,6 @@
 import NavItem from './navItem'
 import { useEffect } from 'react'
-import type { NavItemProps, NavPros } from '@/types'
+import { type NavItemProps, NavPros } from '@/types'
 import { usePathname } from 'next/navigation'
 import { useImmer } from 'use-immer'
 export default function Nav({ beforeJump, data }: NavPros) {

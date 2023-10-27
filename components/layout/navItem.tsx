@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation'
-import type { NavItemProps } from '@/types'
+import { type NavItemProps } from '@/types'
 import Icon from '../icon/Icon'
 import Link from 'next/link'
 

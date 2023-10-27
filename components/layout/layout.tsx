@@ -4,7 +4,7 @@ import BlogLayout from '@/components/layout/blogLayout'
 import { useEffect } from 'react'
 import { useStore } from '@/store/store'
 import { Next13ProgressBar } from 'next13-progressbar'
-import type { Result, NavData } from '@/types'
+import { type Result, NavData } from '@/types'
 const otherLayoutList = ['/', '/setting']
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()

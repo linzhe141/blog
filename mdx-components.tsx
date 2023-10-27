@@ -1,4 +1,4 @@
-import type { MDXComponents } from 'mdx/types'
+import { type MDXComponents } from 'mdx/types'
 import { renderToString } from 'react-dom/server'
 // This file is required to use MDX in `app :root` directory.
 

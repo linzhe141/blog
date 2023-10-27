@@ -1,6 +1,6 @@
 import './globals.css'
 import 'react-loading-skeleton/dist/skeleton.css'
-import type { Metadata } from 'next'
+import { type Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Layout from '@/components/layout/layout'
 const inter = Inter({ subsets: ['latin'] })

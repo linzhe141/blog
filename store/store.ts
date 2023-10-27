@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { NavData } from '@/types'
+import { type NavData } from '@/types'
 
 interface Store {
   navList: NavData[]

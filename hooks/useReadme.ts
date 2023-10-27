@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import type { Result } from '@/types'
+import { type Result } from '@/types'
 type Props = {
   url: string
 }
