@@ -1,6 +1,7 @@
 {
   "extends": ["next/core-web-vitals", "prettier"],
   "rules": {
-    "react/no-children-prop": "off"
+    "react/no-children-prop": "off",
+    "jsx-a11y/alt-text": "off"
   }
 }

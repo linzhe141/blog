@@ -1,4 +1,3 @@
-'use client'
 import Link from 'next/link'
 import Icon from '@/components/icon/Icon'
 import Image from 'next/image'

@@ -6,6 +6,7 @@ import { usePrisma } from '@/config'
 import { headers } from 'next/headers'
 import { type MenuData, Result } from '@/types'
 import { type Menu } from '@prisma/client'
+import { getFlatList } from '@/utils'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -19,14 +20,17 @@ async function getBlogUrlList(
   parent: MenuData | null = null
 ) {
   for (const name of await fs.readdir(dir)) {
+    if (name === '[name]') continue
     const fileStat = await fs.stat(path.resolve(dir, name))
     const isDirectory = fileStat.isDirectory()
-    const item = { label: name, name, url: name } as MenuData
+    const item = { label: name, name, url: name, filePath: name } as MenuData
     if (item.url.indexOf(blogDirName) !== 1) {
       item.url = `/${blogDirName}/${item.url}`
+      item.filePath = `/${blogDirName}/${item.filePath}`
     }
     if (parent) {
-      item.url = parent.url + '/' + name
+      // item.url = parent.url + '/' + name
+      item.filePath = parent.filePath + '/' + name
       if (isDirectory || name === markFileName) {
         if (name === markFileName) parent.linked = true
         if (!parent.children) parent.children = []
@@ -58,26 +62,6 @@ async function getBlogUrlList(
   return result
 }
 
-function getFlatList(
-  data: MenuData[],
-  result: (MenuData & { parentName: string | null })[] = [],
-  parentName: string | null = null
-) {
-  for (const item of data) {
-    result.push({
-      id: 0,
-      name: item.name,
-      url: item.url,
-      label: item.label,
-      linked: item.linked,
-      parentName,
-    })
-    if (item.children) {
-      getFlatList(item.children, result, item.name)
-    }
-  }
-  return result
-}
 async function add2DB(list: (MenuData & { parentName: string | null })[]) {
   for (const menu of list) {
     const data = await prisma.menu.findUnique({ where: { name: menu.name } })
@@ -93,6 +77,7 @@ async function add2DB(list: (MenuData & { parentName: string | null })[]) {
           label: menu.label,
           linked: !!menu.linked,
           url: menu.url,
+          filePath: menu.filePath,
           name: menu.name,
           parentId: parentData ? parentData.id : 0,
         },
@@ -109,6 +94,7 @@ function formatMenu(data: Menu[], result: MenuData[] = [], map = new Map()) {
       linked: item.linked,
       name: item.name,
       url: item.url,
+      filePath: item.filePath,
       children: [],
     }
     if (item.parentId === 0) {

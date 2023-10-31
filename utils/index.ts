@@ -12,3 +12,25 @@ export function getDefaultUrl(data: MenuData[]): string | null {
   }
   return null
 }
+
+export function getFlatList(
+  data: MenuData[],
+  result: (MenuData & { parentName: string | null })[] = [],
+  parentName: string | null = null
+) {
+  for (const item of data) {
+    result.push({
+      id: 0,
+      name: item.name,
+      url: item.url,
+      filePath: item.filePath,
+      label: item.label,
+      linked: item.linked,
+      parentName,
+    })
+    if (item.children) {
+      getFlatList(item.children, result, item.name)
+    }
+  }
+  return result
+}

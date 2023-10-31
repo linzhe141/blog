@@ -5,13 +5,14 @@ import { useReadme } from '@/hooks/useReadme'
 import Content from '@/components/layout/content'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Icon from '@/components/icon/Icon'
 import Underline from '../underline'
 import { useStore } from '@/store/store'
 import { usePrisma } from '@/config'
 import Header from '@/components/layout/header'
 import Skeleton from 'react-loading-skeleton'
+import { getFlatList } from '@/utils'
 
 export default function BlogLayout({
   children,
@@ -22,8 +23,14 @@ export default function BlogLayout({
   const [showReadmeDir, setShowReadmeDir] = useState(false)
   const menuList = useStore((state) => state.menuList)
   const pathname = usePathname()
+  const filePath = useMemo(() => {
+    const flatList = getFlatList(menuList)
+    const targetFilePath = flatList.find((item) => item.url === pathname)
+      ?.filePath
+    return targetFilePath ?? ''
+  }, [pathname, menuList])
   const { dirStructure, loading: dirStructureLoading } = useReadme({
-    url: pathname,
+    filePath,
   })
 
   function closeMenu() {
@@ -111,7 +118,7 @@ export default function BlogLayout({
       <div className='flex h-0 flex-1 overflow-auto'>
         <div
           className={`fixed bottom-0 top-0 z-[1] overflow-auto border-r-[1px] bg-white xl:static xl:min-w-[380px] xl:px-[50px] ${
-            showMenu ? 'left-0 right-0' : 'left-[-300px] '
+            showMenu ? 'left-0 right-0' : 'left-[-1000px] '
           } transition-[left] duration-300`}
         >
           <div className='flex flex-row-reverse px-4 py-2 xl:hidden'>

@@ -32,6 +32,7 @@
     "highlight.js": "^11.9.0",
     "immer": "^10.0.3",
     "next": "13.5.4",
+    "next-mdx-remote": "^4.4.1",
     "next13-progressbar": "^1.0.4",
     "postcss": "8.4.28",
     "prettier": "^3.0.3",

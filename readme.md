@@ -1,8 +1,9 @@
 # 基于nextjs的博客项目
 
-### mdx高亮参考
+### mdx参考
 
 - https://colinhemphill.com/blog/markdown-syntax-highlighting-with-the-nextjs-app-router
+- https://github.com/hashicorp/next-mdx-remote/blob/main/README.md#react-server-components-rsc--nextjs-app-directory-support
 
 ### ps
 
