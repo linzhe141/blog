@@ -16,6 +16,7 @@ model Menu {
   label    String  @unique
   linked   Boolean @default(false)
   url      String  @unique
+  filePath String  @unique
   name     String  @unique
   parentId Int
 }
