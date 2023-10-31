@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "prettier-lint": "prettier --write .",
-    "migrate": "dotenv -e .env.local -- prisma migrate dev",
+    "migrate:deploy": "dotenv -e .env.local -- prisma migrate deploy",
     "migrate:dev": "dotenv -e .env.dev.local -- prisma migrate dev --name=dev"
   },
   "dependencies": {
