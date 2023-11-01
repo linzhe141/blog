@@ -34,3 +34,31 @@ body {
   );
   animation: gradientAnimation 2s infinite;
 }
+
+@keyframes textShowUp {
+  from {
+    letter-spacing: -50px;
+    filter: blur(10px);
+  }
+  to {
+    letter-spacing: 10px;
+    filter: blur(0px);
+  }
+}
+
+.text-content {
+  animation: textShowUp 1.5s forwards;
+}
+
+@keyframes contrastDown {
+  from {
+    filter: contrast(5);
+  }
+  to {
+    filter: contrast(1);
+  }
+}
+
+.contrast-content {
+  animation: contrastDown 1.5s forwards;
+}
