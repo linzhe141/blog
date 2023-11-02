@@ -44,12 +44,9 @@ const components: MDXComponents = {
     </pre>
   ),
 }
-export default async function Page({ params }: { params: { name: string } }) {
-  const name = params.name
-  const blogList = await getBloglist()
-  const targetFilePath = blogList.find((item) => item.url === '/blog/' + name)
-    ?.filePath
-  const { content } = await getMdx(targetFilePath!)
+export default async function Page({ params }: { params: { name: string[] } }) {
+  const url = params.name.join('/')
+  const { content } = await getMdx(`blog/${url}`)
   if (content === null) notFound()
   return (
     <Blog>
@@ -62,9 +59,9 @@ export default async function Page({ params }: { params: { name: string } }) {
   )
 }
 
-async function getMdx(filePath: string) {
+async function getMdx(url: string) {
   const cwd = process.cwd()
-  const result = path.resolve(cwd, `app/${filePath}/readme.mdx`)
+  const result = path.resolve(cwd, `app/${url}/readme.mdx`)
   try {
     const source = await fs.readFile(result, 'utf-8')
     const { content } = matter(source)

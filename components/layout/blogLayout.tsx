@@ -23,14 +23,9 @@ export default function BlogLayout({
   const [showReadmeDir, setShowReadmeDir] = useState(false)
   const menuList = useStore((state) => state.menuList)
   const pathname = usePathname()
-  const filePath = useMemo(() => {
-    const flatList = getFlatList(menuList)
-    const targetFilePath = flatList.find((item) => item.url === pathname)
-      ?.filePath
-    return targetFilePath ?? ''
-  }, [pathname, menuList])
+
   const { dirStructure, loading: dirStructureLoading } = useReadme({
-    filePath,
+    url: pathname,
   })
 
   function closeMenu() {

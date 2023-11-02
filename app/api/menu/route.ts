@@ -20,17 +20,15 @@ async function getBlogUrlList(
   parent: MenuData | null = null
 ) {
   for (const name of await fs.readdir(dir)) {
-    if (name === '[name]') continue
+    if (name === '[...name]') continue
     const fileStat = await fs.stat(path.resolve(dir, name))
     const isDirectory = fileStat.isDirectory()
-    const item = { label: name, name, url: name, filePath: name } as MenuData
+    const item = { label: name, name, url: name } as MenuData
     if (item.url.indexOf(blogDirName) !== 1) {
       item.url = `/${blogDirName}/${item.url}`
-      item.filePath = `/${blogDirName}/${item.filePath}`
     }
     if (parent) {
-      // item.url = parent.url + '/' + name
-      item.filePath = parent.filePath + '/' + name
+      item.url = parent.url + '/' + name
       if (isDirectory || name === markFileName) {
         if (name === markFileName) parent.linked = true
         if (!parent.children) parent.children = []
@@ -77,7 +75,6 @@ async function add2DB(list: (MenuData & { parentName: string | null })[]) {
           label: menu.label,
           linked: !!menu.linked,
           url: menu.url,
-          filePath: menu.filePath,
           name: menu.name,
           parentId: parentData ? parentData.id : 0,
         },
@@ -94,7 +91,6 @@ function formatMenu(data: Menu[], result: MenuData[] = [], map = new Map()) {
       linked: item.linked,
       name: item.name,
       url: item.url,
-      filePath: item.filePath,
       children: [],
     }
     if (item.parentId === 0) {

@@ -15,7 +15,6 @@ export type MenuData = {
   label: string
   name: string
   url: string
-  filePath: string
   children?: MenuData[]
 }
 export type MenuProps = {

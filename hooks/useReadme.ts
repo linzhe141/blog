@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { type Result } from '@/types'
 type Props = {
-  filePath: string
+  url: string
 }
-export function useReadme({ filePath }: Props) {
+export function useReadme({ url }: Props) {
   const [dirStructure, setDirStructure] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   async function getDirStructure() {
-    if (!filePath) return
+    if (!url) return
     setLoading(true)
     const { data }: Result<string[]> = await (
-      await fetch(`/api/readme?filePath=${filePath}`)
+      await fetch(`/api/readme?url=${url}`)
     ).json()
     setDirStructure(data)
     setLoading(false)
@@ -18,6 +18,6 @@ export function useReadme({ filePath }: Props) {
   useEffect(() => {
     getDirStructure()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filePath])
+  }, [url])
   return { dirStructure, loading }
 }

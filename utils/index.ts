@@ -23,7 +23,6 @@ export function getFlatList(
       id: 0,
       name: item.name,
       url: item.url,
-      filePath: item.filePath,
       label: item.label,
       linked: item.linked,
       parentName,

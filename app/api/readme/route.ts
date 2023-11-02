@@ -14,8 +14,8 @@ function getDirStructure(root: any) {
 }
 export async function GET(request: Request) {
   const searchParams = new URLSearchParams(request.url.split('?')[1])
-  const filePath = searchParams.get('filePath')
-  const readmeName = `${filePath}/readme.mdx`
+  const url = searchParams.get('url')
+  const readmeName = `${url}/readme.mdx`
   const readmePath = path.resolve(process.cwd(), 'app/' + readmeName)
   const fileContent = await fs.readFile(readmePath, 'utf-8')
   const { content } = matter(fileContent)
