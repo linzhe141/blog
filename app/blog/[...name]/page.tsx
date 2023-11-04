@@ -1,4 +1,3 @@
-import { toUrl } from '@/app/api'
 import Blog from '@/components/blog'
 import Underline from '@/components/underline'
 import fs from 'fs-extra'
@@ -10,8 +9,6 @@ import { MDXRemote, type MDXRemoteProps } from 'next-mdx-remote/rsc'
 import Image, { type ImageProps } from 'next/image'
 import path from 'path'
 import rehypeHighlight from 'rehype-highlight'
-import { type Result, type MenuData } from '@/types'
-import { getFlatList } from '@/utils'
 import { notFound } from 'next/navigation'
 
 const languages = {
@@ -81,9 +78,4 @@ function generateId(children: React.ReactNode) {
 function getCodeLanguage(children: any) {
   const [_, language] = children?.props.className.split('language-')
   return language as string
-}
-
-async function getBloglist() {
-  const res: Result<MenuData[]> = await (await fetch(toUrl('/api/menu'))).json()
-  return getFlatList(res.data)
 }
