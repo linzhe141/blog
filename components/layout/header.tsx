@@ -15,7 +15,7 @@ export default function Header({ children }: Props) {
               className='mr-2'
               width={24}
               height={24}
-              src={'/logo.jpg'}
+              src={'/logo.svg'}
               alt='logo'
               unoptimized
             />

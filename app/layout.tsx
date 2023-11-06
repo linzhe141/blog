@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'linzhe-blog',
   description: '个人笔记汇总',
+  icons: {
+    icon: '/logo.svg',
+  },
 }
 
 export default function RootLayout({
