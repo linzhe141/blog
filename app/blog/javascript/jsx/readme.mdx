@@ -1,0 +1,178 @@
+# jsx本质
+
+`jsx`是JavaScript的一个类似XML的扩展，虽然最早是由react提出的，但实际上 JSX 语法并没有定义运行时语义，
+并且能被编译成各种不同的输出形式，`jsx`可以由很多工具进行转换为`js`，比如`Babel`和`TypeScript`，
+接下来就通过babel和ts创建属于自己的jsx
+
+<div className='flex'>
+  <span>
+    <Underline>
+      <a href='https://github.com/linzhe141/babel-jsx-custom-preset'>
+        <span>案例源码</span>
+      </a>
+    </Underline>
+  </span>
+</div>
+
+### 1、TypeScript转换
+
+安装typescript依赖，并进行配置相关的准备工作
+
+```bash
+pnpm i -D typescript
+```
+
+编写tsconfig.json，输入如下的简单配置，其中`jsx: preserve`，表示不对jsx进行转换，而是直接保留jsx，
+因为接下来我们可以通过`Babel`进行转换，为了让ts能够识别jsx，需要编写对应的类型
+
+- tsconfig.json
+
+  ```json
+  {
+    "compilerOptions": {
+      "strict": true,
+      "target": "ES5",
+      "module": "ESNext",
+      "jsx": "preserve", // 保留原始jsx，不进行转换
+      "outDir": "dist",
+      "types": ["./type.d.ts"]
+    },
+    "include": ["input.tsx"]
+  }
+  ```
+
+- type.d.ts：声明jsx类型，不然在编译jsx时会报错
+
+  ```ts
+  declare namespace JSX {
+    interface IntrinsicElements {
+      [elemName: string]: any
+    }
+  }
+  ```
+
+- input.tsx: 入口文件，只是通过tsc转换jsx，不进行编译jsx
+
+  ```tsx
+  const x = (
+    <div class='xxx' id='test'>
+      <div class='list-1'>1111</div>
+      <div class='list-2'>2222</div>
+    </div>
+  )
+  ```
+
+- `npx tsc`编译input.tsx，输出如下
+
+  ```jsx
+  // dist/input.jsx
+  'use strict'
+  var x = (
+    <div class='xxx' id='test'>
+      <div class='list-1'>1111</div>
+      <div class='list-2'>2222</div>
+    </div>
+  )
+  ```
+
+### 2、通过Babel插件转换成自定义的jsx
+
+参考`react`比如有这么一个函数`Dom`，用来创建属于自己的虚拟节点
+
+```ts
+function Dom(tagName: string, props: Record<string, any>, ...children: CustomVNode[]): CustomVNode{
+  ... // 实现不考虑，本文只考虑jsx的转换
+}
+```
+
+安装babel相关依赖
+
+```bash
+pnpm i -D @babel/cli @babel/core @babel/plugin-syntax-jsx
+```
+
+- 编写自定义的babel插件
+
+  ```js
+  // custom-plugin.js
+  module.exports = function ({ types: t }) {
+    return {
+      visitor: {
+        // 处理 JSXElement
+        JSXElement(path) {
+          // 得到当前 JSX的节点结构
+          const node = path.node
+          const { openingElement } = node
+          // 获取这个JSX标签的名字
+          const tagName = openingElement.name.name
+          const propsList = openingElement.attributes.reduce((result, item) => {
+            result.push(
+              t.objectProperty(
+                t.identifier(item.name.name),
+                t.stringLiteral(item.value.value)
+              )
+            )
+            return result
+          }, [])
+          const creaateIdentifier = t.identifier('Dom')
+          // 生成Dom('div', {class:'xxx'}, '123')
+          const args = [t.stringLiteral(tagName), t.objectExpression(propsList)]
+          const callRCExpression = t.callExpression(creaateIdentifier, args)
+          callRCExpression.arguments = callRCExpression.arguments.concat(
+            path.node.children
+          )
+          path.replaceWith(callRCExpression, path.node)
+        },
+        // 处理 JSXText 节点
+        JSXText(path) {
+          const nodeText = path.node.value // 直接用 string 替换 原来的节点
+          path.replaceWith(t.stringLiteral(nodeText), path.node)
+        },
+      },
+    }
+  }
+  ```
+
+- 配置babel，使用刚刚编写的自定义插件(`custom-plugin.js`)
+
+  ```json
+  // .babelrc
+  {
+    "plugins": ["@babel/plugin-syntax-jsx", "./custom-plugin.js"]
+  }
+  ```
+
+- 对ts编译的产物，再次进行转换，就可以得到自定义得jsx产物了
+
+  ```bash
+  npx babel dist/input.jsx --out-file dist/output.js
+  ```
+
+  ```js
+  // dist/output.js
+  'use strict'
+  var x = Dom(
+    'div',
+    {
+      class: 'xxx',
+      id: 'test',
+    },
+    '\n    ',
+    Dom(
+      'div',
+      {
+        class: 'list-1',
+      },
+      '1111'
+    ),
+    '\n    ',
+    Dom(
+      'div',
+      {
+        class: 'list-2',
+      },
+      '2222'
+    ),
+    '\n  '
+  )
+  ```
