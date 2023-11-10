@@ -1,11 +1,12 @@
-'use client'
-import { useStore } from '@/store/store'
 import { getDefaultUrl } from '@/utils'
 import Link from 'next/link'
+import { toUrl } from './api'
+import { type MenuData, type Result } from '@/types'
 
-export default function Home() {
-  const menuList = useStore((state) => state.menuList)
-
+export default async function Home() {
+  const { data: menuList }: Result<MenuData[]> = await (
+    await fetch(toUrl('/api/menu'))
+  ).json()
   return (
     <div className='contrast-content flex h-screen items-center justify-center bg-green-400'>
       <div className='flex flex-col items-center justify-center'>
