@@ -76,6 +76,7 @@ const iconMap = {
   ),
   check: (
     <svg
+      fill='rgba(74, 222, 128,1)'
       aria-hidden='true'
       height='16'
       viewBox='0 0 16 16'

@@ -28,7 +28,7 @@ export default function CodeBlock({ filename, children }: Props) {
         {getCodeLanguage(children)}
       </div>
       <div
-        className='absolute bottom-2 right-2 cursor-pointer rounded bg-white p-1 hover:bg-green-100'
+        className='absolute bottom-2 right-2 cursor-pointer rounded bg-white p-1'
         onClick={copyHandle}
       >
         {!copied ? (
@@ -36,7 +36,7 @@ export default function CodeBlock({ filename, children }: Props) {
         ) : (
           <div className=' relative'>
             <div className=' absolute -left-16'>
-              <div className=' rounded bg-white px-1 text-xs italic text-black'>
+              <div className=' rounded bg-white px-1 text-xs italic text-green-400'>
                 Copied!
               </div>
             </div>
