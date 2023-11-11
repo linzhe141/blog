@@ -19,7 +19,7 @@ import Underline from '@/components/underline'
 
 `dockerfile`:webapp
 
-```dockerfile
+```dockerfile filename="Dockerfile"
 FROM nginx
 # nginx配置
 COPY ./nginx/webapp.conf /etc/nginx/conf.d/webapp.conf
@@ -33,7 +33,7 @@ COPY ./www /usr/share/nginx/html
 
 `webapp.conf`
 
-```nginx
+```nginx filename="webapp.conf"
 server {
   listen       4534;
   server_name  localhost;
@@ -55,7 +55,7 @@ server {
 
 `index.js`
 
-```js
+```js filename="index.js"
 const express = require('express')
 const app = express()
 const port = 3000
@@ -81,7 +81,7 @@ app.listen(port, () => {
 
 `dockerfile`:webserver
 
-```dockerfile
+```dockerfile filename="Dockerfile"
 FROM node:16
 WORKDIR /app
 COPY . .
@@ -91,7 +91,7 @@ CMD ["npm", "start"]
 
 ### 2、使用dockder compose管理容器
 
-```yml
+```yml filename="docker-compose.yml"
 version: '3'
 services:
   webapp:

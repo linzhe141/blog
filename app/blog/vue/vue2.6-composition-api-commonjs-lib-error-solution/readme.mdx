@@ -21,7 +21,7 @@ import Underline from '@/components/underline'
 
 - 1、main.js
 
-  ```js
+  ```js filename="main.js"
   import Vue from 'vue'
   import App from './App.vue'
   import VueCompositionAPI from '@vue/composition-api'
@@ -32,9 +32,9 @@ import Underline from '@/components/underline'
   }).$mount('#app')
   ```
 
-- 2、app.vue
+- 2、App.vue
 
-  ```html
+  ```html filename="App.vue"
   <template>
     <div id="app">
       <TestDisplay></TestDisplay>
@@ -52,7 +52,7 @@ import Underline from '@/components/underline'
 
 - 1、组件TestDisplay
 
-  ```html
+  ```html filename="TestDisplay.vue"
   <template>
     <div>{{ test.text }}</div>
   </template>
@@ -70,7 +70,7 @@ import Underline from '@/components/underline'
 
 - 2、vue.config.js
 
-  ```js
+  ```js filename="vue.config.js"
   const { defineConfig } = require('@vue/cli-service')
   module.exports = defineConfig({
     configureWebpack: {
@@ -93,8 +93,7 @@ _但是composition-api就会报错`TypeError: Cannot read properties of undefine
 
 ### 3、尝试用vite构建了一个es的包，可以正常使用
 
-```js
-// vite.config.js
+```js filename="vite.config.js"
 import { defineConfig } from 'vite'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import { resolve } from 'path'
@@ -122,7 +121,8 @@ export default defineConfig({
 
 在客户端使用alias将@vue/composition-api，都统一成commonjs模块，就可以正常使用了，根本原因就是入口不一致导致
 
-```js
+```js filename="vue.config.js"
+ ...
  configureWebpack: {
     resolve: {
       alias: {
@@ -133,4 +133,5 @@ export default defineConfig({
       },
     },
   },
+  ...
 ```

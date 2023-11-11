@@ -17,8 +17,7 @@ import Image from 'next/image'
 
   - 新增sourcemap
 
-    ```js
-    // srcipts/config.js
+    ```js filename="srcipts/config.js"
     ...
     output: {
       file: opts.dest,
@@ -40,8 +39,7 @@ import Image from 'next/image'
 
   - 新增测试入口文件index.html(不考虑sfc，直接使用模板)
 
-    ```html
-    <!-- examples/index.html -->
+    ```html filename="examples/index.html"
     <!doctype html>
     <html lang="en">
       <head>
@@ -94,8 +92,7 @@ import Image from 'next/image'
 
   新增单元测试入口文件，比如`dev.spec.ts`
 
-  ```ts
-  // packages/reactivity/__test__/dev.spec.ts
+  ```ts filename="packages/reactivity/__test__/dev.spec.ts"
   // 假设测试将ref作为reactive的参数的整个流程
   import { reactive, ref } from '../src'
   test('reative use ref', () => {

@@ -2,6 +2,9 @@
 
 ### mdx参考
 
+- https://github.com/orgs/mdx-js/discussions/1948
+- https://mdxjs.com/guides/syntax-highlighting/#syntax-highlighting-with-the-meta-field
+- https://github.com/remcohaszing/rehype-mdx-code-props
 - https://colinhemphill.com/blog/markdown-syntax-highlighting-with-the-nextjs-app-router
 - https://github.com/hashicorp/next-mdx-remote/blob/main/README.md#react-server-components-rsc--nextjs-app-directory-support
 

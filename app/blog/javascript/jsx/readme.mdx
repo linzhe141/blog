@@ -27,7 +27,7 @@ pnpm i -D typescript
 
 - tsconfig.json
 
-  ```json
+  ```json filename="tsconfig.json"
   {
     "compilerOptions": {
       "strict": true,
@@ -43,7 +43,7 @@ pnpm i -D typescript
 
 - type.d.ts：声明jsx类型，不然在编译jsx时会报错
 
-  ```ts
+  ```ts filename="type.d.ts"
   declare namespace JSX {
     interface IntrinsicElements {
       [elemName: string]: any
@@ -53,7 +53,7 @@ pnpm i -D typescript
 
 - input.tsx: 入口文件，只是通过tsc转换jsx，不进行编译jsx
 
-  ```tsx
+  ```tsx filename="input.tsx"
   const x = (
     <div class='xxx' id='test'>
       <div class='list-1'>1111</div>
@@ -64,8 +64,7 @@ pnpm i -D typescript
 
 - `npx tsc`编译input.tsx，输出如下
 
-  ```jsx
-  // dist/input.jsx
+  ```jsx filename="dist/input.jsx"
   'use strict'
   var x = (
     <div class='xxx' id='test'>
@@ -93,8 +92,7 @@ pnpm i -D @babel/cli @babel/core @babel/plugin-syntax-jsx
 
 - [编写自定义的babel插件](https://juejin.cn/post/6918555538628280333)
 
-  ```js
-  // custom-plugin.js
+  ```js filename="custom-plugin.js"
   module.exports = function ({ types: t }) {
     return {
       visitor: {
@@ -135,8 +133,7 @@ pnpm i -D @babel/cli @babel/core @babel/plugin-syntax-jsx
 
 - 配置babel，使用刚刚编写的自定义插件(`custom-plugin.js`)
 
-  ```json
-  // .babelrc
+  ```json filename=".babelrc"
   {
     "plugins": ["@babel/plugin-syntax-jsx", "./custom-plugin.js"]
   }
@@ -148,8 +145,7 @@ pnpm i -D @babel/cli @babel/core @babel/plugin-syntax-jsx
   npx babel dist/input.jsx --out-file dist/output.js
   ```
 
-  ```js
-  // dist/output.js
+  ```js filename="dist/output.js"
   'use strict'
   var x = Dom(
     'div',
