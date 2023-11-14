@@ -6,7 +6,7 @@ import { MDXRemote, type MDXRemoteProps } from 'next-mdx-remote/rsc'
 import Image, { type ImageProps } from 'next/image'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeMdxCodeProps from 'rehype-mdx-code-props'
-import CodeBlock from '@/components/codeBlock'
+import CodeBlock from '@/components/codeBlock1'
 type Props = {
   content: string
 }
