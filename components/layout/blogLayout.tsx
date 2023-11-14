@@ -13,7 +13,7 @@ import { usePrisma } from '@/config'
 import Header from '@/components/layout/header'
 import Skeleton from 'react-loading-skeleton'
 
-export default function Layout({
+export default function BlogLayout({
   children,
 }: {
   children: React.ReactNode
