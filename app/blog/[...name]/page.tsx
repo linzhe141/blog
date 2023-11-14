@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import matter from 'gray-matter'
 import path from 'path'
 import { notFound } from 'next/navigation'
-import MdxContent from '@/components/mdxContent'
+import MdxContent from '@/components/mdxContent1'
 
 export default async function Page({ params }: { params: { name: string[] } }) {
   const url = params.name.join('/')

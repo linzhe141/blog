@@ -2,7 +2,7 @@ import { getDefaultUrl } from '@/utils'
 import Link from 'next/link'
 import { toUrl } from './api'
 import { type MenuData, type Result } from '@/types'
-import CursorFollow from '@/components/cursorFollow'
+import CursorFollow from '@/components/cursorFollow1'
 
 export default async function Home() {
   const { data: menuList }: Result<MenuData[]> = await (
