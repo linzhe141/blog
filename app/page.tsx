@@ -2,6 +2,7 @@ import { getDefaultUrl } from '@/utils'
 import Link from 'next/link'
 import { toUrl } from './api'
 import { type MenuData, type Result } from '@/types'
+import CursorFollow from '@/components/CursorFollow'
 
 export default async function Home() {
   const { data: menuList }: Result<MenuData[]> = await (
@@ -9,6 +10,7 @@ export default async function Home() {
   ).json()
   return (
     <div className='contrast-content flex h-screen items-center justify-center bg-green-400'>
+      <CursorFollow />
       <div className='flex flex-col items-center justify-center'>
         <Link href={getDefaultUrl(menuList) ?? ''}>
           <div className='flex flex-col items-center justify-center'>

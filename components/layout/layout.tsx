@@ -27,7 +27,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       )}
       <Next13ProgressBar
         height='4px'
-        color='rgba(74, 222, 128,1)'
+        color='rgba(187, 247, 208, 1)'
         options={{ showSpinner: true }}
         showOnShallow
       />
