@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import message from '@/components/message'
-import { useStore } from '@/store/store'
+import { useMenuStore } from '@/store/menuStore'
 import { useImmer } from 'use-immer'
 import { type Result, MenuData } from '@/types'
 import Underline from '@/components/underline'
@@ -11,8 +11,8 @@ type Props = {
   setAuth: (value: boolean) => void
 }
 export default function MenuSetting({ setAuth }: Props) {
-  const menuList = useStore((state) => state.menuList)
-  const setMenuList = useStore((state) => state.setMenuList)
+  const menuList = useMenuStore((state) => state.menuList)
+  const setMenuList = useMenuStore((state) => state.setMenuList)
   const [treeData, setTreeData] = useImmer(menuList)
 
   const [disabled, setDisabled] = useState(false)

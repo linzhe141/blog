@@ -24,13 +24,13 @@ export default function CursorFollow() {
 
   const variants = {
     default: {
-      x: mousePosition.x - 50,
-      y: mousePosition.y - 50,
+      x: mousePosition.x - 75,
+      y: mousePosition.y - 75,
     },
   }
   return (
     <motion.div
-      className={`pointer-events-none fixed left-0 top-0 z-[2] h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-40 blur-[20px]`}
+      className={`pointer-events-none fixed left-0 top-0 z-[2] h-[150px] w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-40 blur-[20px]`}
       variants={variants}
       animate='default'
       transition={{

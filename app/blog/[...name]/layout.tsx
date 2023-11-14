@@ -5,23 +5,22 @@ import { useReadme } from '@/hooks/useReadme'
 import Content from '@/components/layout/content'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import Icon from '@/components/icon/Icon'
-import Underline from '../underline'
-import { useStore } from '@/store/store'
+import Underline from '@/components/underline'
+import { useMenuStore } from '@/store/menuStore'
 import { usePrisma } from '@/config'
 import Header from '@/components/layout/header'
 import Skeleton from 'react-loading-skeleton'
-import { getFlatList } from '@/utils'
 
-export default function BlogLayout({
+export default function Layout({
   children,
 }: {
   children: React.ReactNode
 }) {
   const [showMenu, setShowMenu] = useState(false)
   const [showReadmeDir, setShowReadmeDir] = useState(false)
-  const menuList = useStore((state) => state.menuList)
+  const menuList = useMenuStore((state) => state.menuList)
   const pathname = usePathname()
 
   const { dirStructure, loading: dirStructureLoading } = useReadme({

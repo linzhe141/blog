@@ -1,4 +1,11 @@
-import BlogLoading from '@/components/blogLoading'
+import Skeleton from 'react-loading-skeleton'
 export default function Loading() {
-  return <BlogLoading></BlogLoading>
+  return (
+    <div>
+      <h1>
+        <Skeleton height={40} />
+      </h1>
+      <Skeleton count={25} />
+    </div>
+  )
 }
