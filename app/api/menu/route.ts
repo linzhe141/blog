@@ -20,7 +20,7 @@ async function getBlogUrlList(
   parent: MenuData | null = null
 ) {
   for (const name of await fs.readdir(dir)) {
-    if (name === '[...name]') continue
+    if (name === '[...name]' || name === 'layout.tsx') continue
     const fileStat = await fs.stat(path.resolve(dir, name))
     const isDirectory = fileStat.isDirectory()
     const item = { label: name, name, url: name } as MenuData
