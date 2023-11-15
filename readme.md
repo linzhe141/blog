@@ -10,7 +10,7 @@
 
 ### TODO
 
-- [ ] [next [slug] route re-mounted solution](https://github.com/vercel/next.js/issues/44793#issuecomment-1382458981)
+- [x] ~~[next [slug] route re-mounted solution](https://github.com/vercel/next.js/issues/44793#issuecomment-1382458981)~~
 
 ### ps
 
