@@ -30,13 +30,17 @@ export default function Setting() {
   }, [])
 
   return (
-    <div className='flex h-screen items-center justify-center'>
+    <div>
       {loading ? (
-        <div className='w-[400px]'>
-          <Skeleton height={40} count={10} />
+        <div className='flex h-screen items-center justify-center'>
+          <div className='w-[400px]'>
+            <Skeleton height={40} count={10} />
+          </div>
         </div>
       ) : !auth ? (
-        <Auth setAuth={setAuth} />
+        <div className='flex h-screen items-center justify-center'>
+          <Auth setAuth={setAuth} />
+        </div>
       ) : (
         <MenuSetting setAuth={setAuth} />
       )}

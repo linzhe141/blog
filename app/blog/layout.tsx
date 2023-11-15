@@ -60,6 +60,11 @@ export default function BlogLayout({
             home
           </Link>
         </Underline>
+        <Underline className=' ml-4'>
+          <Link className='font-semibold' href='/readme'>
+            readme
+          </Link>
+        </Underline>
         {usePrisma && (
           <Underline className='ml-4'>
             <Link className='font-semibold' href='/setting'>

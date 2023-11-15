@@ -75,7 +75,7 @@ export default function MenuSetting({ setAuth }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [menuList])
   return (
-    <div className='flex h-screen w-screen flex-col items-center justify-center'>
+    <div className='flex flex-col items-center justify-center'>
       <Header>
         <Underline>
           <Link className='font-semibold' href={getDefaultUrl(menuList) ?? ''}>
@@ -83,28 +83,30 @@ export default function MenuSetting({ setAuth }: Props) {
           </Link>
         </Underline>
       </Header>
-      <div className='mb-4 text-lg font-semibold'>菜单配置</div>
-      <div className='h-[600px] w-[400px] overflow-auto'>
-        {treeData.map((item) => (
-          <TreeNode
-            id={item.id}
-            key={item.id}
-            label={item.label}
-            level={0}
-            children={item.children as unknown as TreeData[]}
-            onChange={changeNameHandle}
-          />
-        ))}
-      </div>
-      <button
-        onClick={submit}
-        type='button'
-        disabled={disabled}
-        className={`mt-4 rounded-lg bg-green-400 px-4 py-2 text-white hover:bg-green-500 hover:shadow-green-400 focus:border-green-400 focus:outline-none
+      <div className='mx-auto mb-10 mt-[90px] flex flex-col items-center'>
+        <div className='mb-4 text-lg font-semibold'>菜单配置</div>
+        <div className='w-[400px] '>
+          {treeData.map((item) => (
+            <TreeNode
+              id={item.id}
+              key={item.id}
+              label={item.label}
+              level={0}
+              children={item.children as unknown as TreeData[]}
+              onChange={changeNameHandle}
+            />
+          ))}
+        </div>
+        <button
+          onClick={submit}
+          type='button'
+          disabled={disabled}
+          className={`mt-4 w-20 rounded-lg bg-green-400 px-4 py-2 text-white hover:bg-green-500 hover:shadow-green-400 focus:border-green-400 focus:outline-none
               ${disabled ? 'disabled disabled:cursor-not-allowed' : ''}`}
-      >
-        提交
-      </button>
+        >
+          提交
+        </button>
+      </div>
     </div>
   )
 }

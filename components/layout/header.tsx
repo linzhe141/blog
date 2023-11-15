@@ -7,7 +7,7 @@ type Props = {
 }
 export default function Header({ children }: Props) {
   return (
-    <div className='fixed top-0 flex w-full items-center justify-between border-b-[1px] bg-white p-4 shadow-md shadow-gray-400'>
+    <div className='fixed z-10 top-0 flex w-full items-center justify-between border-b-[1px] bg-white p-4 shadow-md shadow-gray-400'>
       <div>
         <Underline>
           <Link className=' flex items-center' href='/'>
