@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Underline from '@/components/underline'
-import { usePrisma } from '@/config'
 import Header from '@/components/layout/header'
 import { toUrl } from '@/app/api'
 import { type MenuData, type Result } from '@/types'
@@ -21,15 +20,8 @@ export default async function BlogLayout({
             blog
           </Link>
         </Underline>
-        {usePrisma && (
-          <Underline className='ml-4'>
-            <Link className='font-semibold' href='/setting'>
-              setting
-            </Link>
-          </Underline>
-        )}
       </Header>
-      <div className='mx-auto mt-[90px]'>{children}</div>
+      <div className='mx-auto mt-[90px] p-5'>{children}</div>
     </main>
   )
 }

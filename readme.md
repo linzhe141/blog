@@ -1,4 +1,6 @@
-# 基于nextjs的博客项目
+# linzhe-blog
+
+这是一个使用 Next.js、Tailwind CSS、MDX 和 Prisma 构建的博客项目，用于记录个人学习笔记。
 
 ### mdx参考
 
@@ -10,13 +12,12 @@
 
 ### TODO
 
-- [x] ~~[next [slug] route re-mounted solution](https://github.com/vercel/next.js/issues/44793#issuecomment-1382458981)~~
+- [x] ~~[[slug] route layout-re-mounted](https://github.com/vercel/next.js/issues/44793#issuecomment-1382458981)~~
 - [ ] mdx enabled checkbox
 
-### ps
+### tips
 
 - PostgreSQL区分表名、字段名的大小写
-
 - `psql -h localhost -p 5432 -U root(用户名) -d test(库名)`: postgres连接
 - `TRUNCATE "Menu" RESTART IDENTITY;` ：清空 "Menu" 表的数据，并将该表的自增长标识列的起始值重置为 1
 - `INSERT INTO "public"."RequsetKey" ("key") VALUES ('test');` : postgres新增数据

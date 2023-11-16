@@ -1,6 +1,6 @@
 'use client'
 import Menu from '@/components/layout/menu'
-import ReadmeDir from '@/components/readmeDir'
+import BlogDir from '@/components/blogDir'
 import { useReadme } from '@/hooks/useReadme'
 import Content from '@/components/layout/content'
 import { usePathname } from 'next/navigation'
@@ -19,7 +19,7 @@ export default function BlogLayout({
   children: React.ReactNode
 }) {
   const [showMenu, setShowMenu] = useState(false)
-  const [showReadmeDir, setShowReadmeDir] = useState(false)
+  const [showBlogDir, setShowBlogDir] = useState(false)
   const menuList = useMenuStore((state) => state.menuList)
   const pathname = usePathname()
 
@@ -83,7 +83,7 @@ export default function BlogLayout({
         </div>
         <div
           className='flex cursor-pointer items-center'
-          onClick={() => setShowReadmeDir(true)}
+          onClick={() => setShowBlogDir(true)}
         >
           {dirStructure.length > 0 && (
             <>
@@ -93,30 +93,30 @@ export default function BlogLayout({
           )}
           <div
             className={`absolute left-8 right-8 top-[110px] z-10 rounded bg-white p-4 shadow-md shadow-gray-400 ${
-              showReadmeDir ? 'scale-y-100' : 'scale-0 '
+              showBlogDir ? 'scale-y-100' : 'scale-0 '
             } origin-top-right transition-all duration-300`}
           >
-            <ReadmeDir
+            <BlogDir
               beforeJump={() => {
-                setShowReadmeDir(false)
+                setShowBlogDir(false)
               }}
               data={dirStructure}
             />
           </div>
           <div
             className={`fixed bottom-0 left-0 right-0 top-0 bg-gray-400 bg-opacity-30 transition-all duration-300 ${
-              showReadmeDir ? 'scale-y-100' : 'scale-0'
+              showBlogDir ? 'scale-y-100' : 'scale-0'
             }`}
             onClick={(e) => {
               e.stopPropagation()
-              setShowReadmeDir(false)
+              setShowBlogDir(false)
             }}
           ></div>
         </div>
       </div>
       <div className='flex h-0 flex-1 overflow-auto'>
         <div
-          className={`fixed bottom-0 top-0 z-[1] overflow-auto border-r-[1px] bg-white xl:static xl:min-w-[380px] xl:px-[50px] ${
+          className={`fixed bottom-0 top-0 z-[100] overflow-auto border-r-[1px] bg-white xl:static xl:min-w-[380px] xl:px-[50px] ${
             showMenu ? 'left-0 right-0' : 'left-[-1000px] '
           } transition-[left] duration-300`}
         >
@@ -145,7 +145,7 @@ export default function BlogLayout({
           {dirStructureLoading ? (
             <Skeleton count={5} />
           ) : (
-            <ReadmeDir data={dirStructure} />
+            <BlogDir data={dirStructure} />
           )}
         </div>
       </div>

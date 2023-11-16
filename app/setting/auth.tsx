@@ -41,6 +41,7 @@ export default function Auth({ setAuth }: Props) {
           type='text'
           className='w-[400px] rounded-lg border border-gray-300 px-4 py-2 focus:border-green-400 focus:outline-none'
           onChange={(e) => inputChangeHandle(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && submit()}
         ></input>
         <button
           onClick={submit}
