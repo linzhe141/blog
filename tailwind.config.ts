@@ -13,7 +13,12 @@ const config: Config = {
         DEFAULT: {
           css: {
             // 限定在 .prose 类名下的 a 元素
-            '--tw-prose-bullets': 'rgba(74, 222, 128,1)',
+            '--tw-prose-bullets': '#777',
+            input: {
+              marginRight: '8px',
+              marginTop: '0px',
+              marginBottom: '0px',
+            },
             a: {
               textDecoration: 'underline',
               color: 'rgba(74, 222, 128,1)',
@@ -37,7 +42,7 @@ const config: Config = {
               color: 'red !important',
             },
             ul: {
-              listStyleType: 'disclosure-closed',
+              // listStyleType: 'disclosure-closed',
             },
           },
         },
