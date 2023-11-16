@@ -15,7 +15,7 @@ const config: Config = {
             // 限定在 .prose 类名下的 a 元素
             '--tw-prose-bullets': 'rgba(74, 222, 128,1)',
             a: {
-              textDecoration: 'underline dotted',
+              textDecoration: 'underline',
               color: 'rgba(74, 222, 128,1)',
               '&:hover': {},
             },

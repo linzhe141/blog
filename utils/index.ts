@@ -33,3 +33,15 @@ export function getFlatList(
   }
   return result
 }
+
+export function convertMd2Html(mdSource: string) {
+  const checkedInput = '<input type="checkbox" disabled checked />'
+  const uncheckedInput = '<input type="checkbox" disabled />'
+  // 将 [x] 替换为 '<input type="checkbox" disabled checked />'
+  mdSource = mdSource.replace(/\[x\]/g, checkedInput)
+  // 将 [ ] 替换为 '<input type="checkbox" disabled />'
+  mdSource = mdSource.replace(/\[\s\]/g, uncheckedInput)
+  // 将 ~~xxx~~ 替换为 '<del>xxx</del>'
+  mdSource = mdSource.replace(/~~(.*?)~~/g, '<del>$1</del>')
+  return mdSource
+}
