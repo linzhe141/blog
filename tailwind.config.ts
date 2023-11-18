@@ -14,6 +14,10 @@ const config: Config = {
           css: {
             // 限定在 .prose 类名下的 a 元素
             '--tw-prose-bullets': '#777',
+            '#TODO + ul': {
+              paddingLeft: 0,
+              listStyle: 'none',
+            },
             input: {
               marginRight: '8px',
               marginTop: '0px',
