@@ -7,9 +7,7 @@ type Props = {
 const Message = ({ text, type }: Props) => {
   const [show, setShow] = useState(false)
   useEffect(() => {
-    setTimeout(() => {
-      setShow(true)
-    }, 100)
+    setTimeout(() => setShow(true), 100)
     setTimeout(() => {
       setShow(false)
       setTimeout(() => {
@@ -27,8 +25,7 @@ const Message = ({ text, type }: Props) => {
     <div
       style={getStyle()}
       className={`
-        fixed left-1/2 
-        z-[1000] -translate-x-1/2 
+        fixed left-1/2 z-[1000] -translate-x-1/2 
         ${type === 'success' ? 'bg-green-400' : 'bg-red-400'} 
         rounded-md bg-gray-200 p-2 text-white transition-all`}
     >

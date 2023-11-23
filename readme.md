@@ -12,7 +12,7 @@
 
 ### TODO
 
-- [x] [[slug] route layout-re-mounted](https://github.com/vercel/next.js/issues/44793#issuecomment-1382458981)
+- [x] [[slug] route layout re-mounted](https://github.com/vercel/next.js/issues/44793#issuecomment-1382458981)
 - [x] mdx enabled checkbox
 - [x] mdx enabled strike through
 

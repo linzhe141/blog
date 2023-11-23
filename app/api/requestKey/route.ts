@@ -8,10 +8,6 @@ export async function POST(request: Request) {
       key: data.key,
     },
   })
-  let success = false
-  if (target) {
-    success = true
-  }
-  const result: Result<boolean> = { code: 200, data: success }
+  const result: Result<boolean> = { code: 200, data: !!target }
   return NextResponse.json(result)
 }

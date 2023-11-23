@@ -9,7 +9,7 @@ export default function Auth({ setAuth }: Props) {
   const [disabled, setDisabled] = useState(true)
   async function submit() {
     setDisabled(true)
-    const data: Result<boolean> = await (
+    const { data }: Result<boolean> = await (
       await fetch('/api/requestKey', {
         method: 'POST',
         headers: {
@@ -18,8 +18,8 @@ export default function Auth({ setAuth }: Props) {
         body: JSON.stringify({ key }),
       })
     ).json()
-    setAuth(data.data)
-    if (!data.data) {
+    setAuth(data)
+    if (!data) {
       message({ type: 'error', text: '访问key错误！' })
     } else {
       message({ type: 'success', text: '认证成功！' })
