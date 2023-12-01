@@ -1,0 +1,92 @@
+# vite动态alias
+
+<div className='flex'>
+  <span>
+    <Underline>
+      <a href='https://github.com/linzhe141/leetcode'>
+        <span>案例源码</span>
+      </a>
+    </Underline>
+  </span>
+</div>
+记录使用 vitest 结合 vscode 进行 debug 时，无法调试 ts 源代码的问题，并找到解决方案
+
+### 1、问题复现
+
+首先这个ts项目配置了`paths`
+
+```json filename="tsconfig.json"
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "leetcode/*": ["src/leetcode/*"],
+      "types/*": ["src/types/*"],
+      "utils/*": ["src/utils/*"]
+    }
+  }
+}
+```
+
+为了同步 ts 的 paths，那么 vite 也要进行 alias 配置，又因为 vitest 是基于 vite 实现的，所以可以在 vitest 中配置 vite
+
+```ts filename="vitest.config.ts"
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      leetcode: './src/leetcode',
+      types: './src/types',
+      utils: './src/utils',
+    },
+  },
+})
+```
+
+但是如果只是这么配置`alias`，在 debug 时，发现 vite 默认编译了 ts ，最多只能调试编译后的产物，
+就十分不直观，开发体验也不友好
+
+<Image
+  width={651}
+  height={532}
+  src={'/blog/vite-dynamic-alias-debug.jpg'}
+  alt='vite-dynamic-alias-debug'
+  unoptimized
+/>
+
+### 2、解决方案
+
+- 方案1
+
+  vue3 的 [vitest alias](https://github.com/vuejs/core/blob/main/scripts/aliases.js) 方案如下，有一个统一的`index.ts`入口，
+  但是如果我也按照这种方案，改动较大就放弃了
+
+  <Image
+    width={511}
+    height={406}
+    src={'/blog/vite-dynamic-alias-vue3-vitest-alias.jpg'}
+    alt='vite-dynamic-alias-vue3-vitest-alias'
+    unoptimized
+  />
+
+- 方案2
+
+  [vite resolve alias](https://vitejs.dev/config/shared-options.html#resolve-alias)将会被传递到
+  `@rollup/plugin-alias`作为 entries 的选项，其中
+  [Regular Expression Aliases](https://github.com/rollup/plugins/tree/master/packages/alias#regular-expression-aliases)
+  可以通过正则表达式解决我的问题，按照如下配置后，就可以调试 ts 源码了
+
+  ```ts filename="vitest.config.ts"
+  import { defineConfig } from 'vitest/config'
+  export default defineConfig({
+    resolve: {
+      // https://github.com/rollup/plugins/tree/master/packages/alias#entries
+      alias: [
+        { find: /^leetcode\/(.*)/, replacement: './src/leetcode/$1.ts' },
+        { find: /^types\/(.*)/, replacement: './src/types/$1.ts' },
+        { find: /^utils\/(.*)/, replacement: './src/utils/$1.ts' },
+      ],
+    },
+  })
+  ```
