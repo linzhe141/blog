@@ -61,16 +61,23 @@ export default function MenuItem(props: MenuItemProps) {
     }
   }
   return (
-    <div>
+    <div className={`${level === 1 ? 'relative' : ''}`}>
       <div
-        className={`flex cursor-pointer items-center justify-between pr-4 leading-10 ${
+        className={`group flex cursor-pointer items-center justify-between pr-4 leading-10 ${
           pathname === url ? 'text-green-400' : ''
-        } transition-all duration-300 ${
-          level !== 1 && pathname === url ? 'border-l-2 border-green-400' : ''
-        }`}
+        } transition-all duration-300`}
         style={{ paddingLeft: 12 * level + 'px' }}
         onClick={() => clickHandler(linked)}
       >
+        {level === 2 && (
+          <div
+            className={`absolute left-5 h-5 ${
+              pathname === url
+                ? 'border-l border-green-400'
+                : 'group-hover:border-l group-hover:border-[#94a3b8]'
+            }`}
+          ></div>
+        )}
         {linked ? (
           <Underline offset={-8}>
             <Link className='block w-full' href={url}>
