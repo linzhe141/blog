@@ -99,7 +99,7 @@ export default function BlogLayout({
             />
           </div>
           <div
-            className={`fixed bottom-0 left-0 right-0 top-0 bg-gray-400 bg-opacity-30 transition-all duration-300 ${
+            className={`fixed bottom-0 left-0 right-0 top-0 z-[1] bg-gray-400 bg-opacity-30 transition-all duration-300 ${
               showBlogDir ? 'scale-y-100' : 'scale-0'
             }`}
             onClick={(e) => {
@@ -127,14 +127,16 @@ export default function BlogLayout({
           {menuList.length > 0 ? (
             <Menu beforeJump={beforeJumpHandle} data={menuList} />
           ) : (
-            <Skeleton count={10} />
+            <div className='p-4'>
+              <Skeleton style={{ height: '30px' }} count={10} />
+            </div>
           )}
         </div>
         <div className='flex-1 overflow-auto p-5 xl:pr-[300px]'>
           <Content>{children}</Content>
         </div>
         <div
-          className={`hidden dark:border-gray-800 xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[280px] xl:border-l-[1px] xl:px-[50px]`}
+          className={`hidden dark:border-gray-800 xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[270px] xl:border-l-[1px] xl:px-[50px]`}
         >
           <div className='mb-4 hidden xl:block'></div>
           {dirStructureLoading ? (
