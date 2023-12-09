@@ -14,7 +14,7 @@ export default function Underline({
       {children}
       <div
         style={{ height: height + 'px', marginTop: offset + 'px' }}
-        className={`absolute w-0 bg-gradient-to-r from-green-400 to-white transition-all duration-300 group-hover:w-full`}
+        className={`absolute w-0 bg-gradient-to-r from-green-400 to-transparent transition-all duration-300 group-hover:w-full`}
       ></div>
     </div>
   )

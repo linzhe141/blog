@@ -55,11 +55,6 @@ export default function BlogLayout({
   return (
     <main className='flex h-screen flex-col'>
       <Header>
-        <Underline>
-          <Link className='font-semibold' href='/'>
-            home
-          </Link>
-        </Underline>
         <Underline className=' ml-4'>
           <Link className='font-semibold' href='/readme'>
             readme
@@ -73,7 +68,7 @@ export default function BlogLayout({
           </Underline>
         )}
       </Header>
-      <div className='mt-[57px] flex h-10 items-center justify-between overflow-hidden border-b-[1px] px-2 xl:h-0 xl:border-b-0'>
+      <div className='mt-[57px] flex h-10 items-center justify-between overflow-hidden border-b-[1px] px-2 dark:border-gray-800 xl:h-0 xl:border-b-0'>
         <div
           className='flex cursor-pointer items-center'
           onClick={() => setShowMenu(true)}
@@ -92,7 +87,7 @@ export default function BlogLayout({
             </>
           )}
           <div
-            className={`absolute left-8 right-8 top-[110px] z-10 rounded bg-white p-4 shadow-md shadow-gray-400 ${
+            className={`absolute left-8 right-8 top-[110px] z-10 rounded bg-white p-4 shadow-md shadow-gray-400 dark:bg-black dark:shadow-gray-800 ${
               showBlogDir ? 'scale-y-100' : 'scale-0 '
             } origin-top-right transition-all duration-300`}
           >
@@ -116,7 +111,7 @@ export default function BlogLayout({
       </div>
       <div className='flex h-0 flex-1 overflow-auto'>
         <div
-          className={`fixed bottom-0 top-0 z-[100] overflow-auto border-r-[1px] bg-white xl:static xl:min-w-[380px] xl:px-[50px] ${
+          className={`fixed bottom-0 top-0 z-[100] overflow-auto border-r-[1px] bg-white dark:border-gray-800 dark:bg-black xl:static xl:z-[1] xl:min-w-[380px] xl:px-[50px] ${
             showMenu ? 'left-0 right-0' : 'left-[-1000px] '
           } transition-[left] duration-300`}
         >
@@ -139,7 +134,7 @@ export default function BlogLayout({
           <Content>{children}</Content>
         </div>
         <div
-          className={`hidden bg-white xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[280px] xl:border-l-[1px] xl:px-[50px]`}
+          className={`hidden dark:border-gray-800 xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[280px] xl:border-l-[1px] xl:px-[50px]`}
         >
           <div className='mb-4 hidden xl:block'></div>
           {dirStructureLoading ? (

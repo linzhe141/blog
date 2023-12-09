@@ -108,7 +108,7 @@ export default function MenuItem(props: MenuItemProps) {
           height: (expanded ? subMenuheight : 0) + 'px',
         }}
         className={`${
-          level === 1 ? 'ml-[20px] border-l-[1px]' : ''
+          level === 1 ? 'ml-[20px] border-l-[1px] dark:border-gray-800' : ''
         } overflow-hidden transition-all duration-300`}
       >
         {children?.map((subMenu) => (

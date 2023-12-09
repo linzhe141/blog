@@ -4,6 +4,19 @@
 :root {
   --text: #213547;
 }
+.dark {
+  --text: #e2e8f0;
+}
+.dark .prose {
+  --tw-prose-headings: var(--text);
+  --tw-prose-body: var(--text);
+}
+.dark .prose p > code,
+.dark .prose h3 > code,
+.dark .prose li > code {
+  background-color: rgb(30 41 59);
+}
+
 body {
   color: var(--text);
 }
@@ -61,4 +74,35 @@ body {
 
 .contrast-content {
   animation: contrastDown 1.5s forwards;
+}
+
+::-webkit-scrollbar {
+  background-color: transparent;
+  height: 0.6em;
+  width: 0.6em;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  --tw-bg-opacity: 1;
+  background-color: rgb(51 65 85 / 1);
+}
+
+::-webkit-scrollbar-thumb {
+  --tw-bg-opacity: 1;
+  background-color: rgb(203 213 225 / 1);
+  border-radius: 0.6em;
+}
+
+.dark ::-webkit-scrollbar-track {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 41 59 / 1);
+}
+
+::-webkit-scrollbar-track {
+  --tw-bg-opacity: 1;
+  background-color: rgb(241 245 249 / 1);
+}
+
+::selection {
+  background-color: rgb(0 193 106 / 0.4);
 }

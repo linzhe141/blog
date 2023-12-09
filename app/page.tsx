@@ -9,7 +9,7 @@ export default async function Home() {
     await fetch(toUrl('/api/menu'))
   ).json()
   return (
-    <div className='contrast-content flex h-screen items-center justify-center overflow-hidden bg-green-400'>
+    <div className='contrast-content flex h-screen items-center justify-center overflow-hidden bg-green-400 text-[#213547]'>
       <CursorFollow />
       <div className='flex flex-col items-center justify-center'>
         <Link href={getDefaultUrl(menuList) ?? ''}>

@@ -129,7 +129,7 @@ function TreeNode({ id, label, children, level, onChange }: TreeData) {
         <input
           value={label}
           type='text'
-          className='ml-2 flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-green-400 focus:outline-none'
+          className='ml-2 flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:border-green-400 focus:outline-none dark:bg-black'
           onChange={(e) => onChange(id, e.target.value)}
         ></input>
       </div>

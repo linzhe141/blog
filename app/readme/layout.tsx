@@ -13,7 +13,7 @@ export default async function BlogLayout({
     await fetch(toUrl('/api/menu'))
   ).json()
   return (
-    <main className='flex h-screen flex-col'>
+    <main className='flex flex-col'>
       <Header>
         <Underline>
           <Link className='font-semibold' href={getDefaultUrl(menuList) ?? ''}>
