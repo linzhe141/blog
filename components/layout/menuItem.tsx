@@ -61,7 +61,7 @@ export default function MenuItem(props: MenuItemProps) {
     }
   }
   return (
-    <div className={`${level === 1 ? 'relative' : ''}`}>
+    <div className={`${level === 1 ? 'relative overflow-hidden' : ''}`}>
       <div
         className={`group flex cursor-pointer items-center justify-between pr-4 leading-10 ${
           pathname === url ? 'text-green-400' : ''

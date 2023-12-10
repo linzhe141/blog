@@ -139,6 +139,7 @@ export default function BlogLayout({
           className={`hidden dark:border-gray-800 xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[270px] xl:border-l-[1px] xl:px-[50px]`}
         >
           <div className='mb-4 hidden xl:block'></div>
+          {dirStructure.length > 0 && <div className='mb-4'>on this page</div>}
           {dirStructureLoading ? (
             <Skeleton count={5} />
           ) : (
