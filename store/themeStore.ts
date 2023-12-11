@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-type themeType = 'light' | 'dark'
+type ThemeType = 'light' | 'dark'
 interface Store {
-  mode: themeType
-  setMode: (data: themeType) => void
+  mode: ThemeType
+  setMode: (data: ThemeType) => void
 }
 
 export const useThemeStore = create<Store>()(
