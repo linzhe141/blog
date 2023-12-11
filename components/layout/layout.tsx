@@ -9,7 +9,9 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 export default function Layout({ children }: { children: React.ReactNode }) {
   const setMenuList = useMenuStore((state) => state.setMenuList)
   const mode = useThemeStore((state) => state.mode)
-
+  useEffect(() => {
+    useThemeStore.persist.rehydrate()
+  }, [])
   async function init() {
     const data: Result<MenuData[]> = await (await fetch('/api/menu')).json()
     setMenuList(data.data)

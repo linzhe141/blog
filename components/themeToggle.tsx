@@ -18,6 +18,9 @@ export default function ThemeToggle() {
       document.documentElement.classList.remove('dark')
     }
   }, [mode])
+  useEffect(() => {
+    useThemeStore.persist.rehydrate()
+  }, [])
   return (
     <div className='cursor-pointer' onClick={clickHandle}>
       {mode === 'light' ? (
