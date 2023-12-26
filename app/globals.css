@@ -10,6 +10,7 @@
 .dark .prose {
   --tw-prose-headings: var(--text);
   --tw-prose-body: var(--text);
+  --tw-prose-bold: var(--text);
 }
 .dark .prose p > code,
 .dark .prose h3 > code,
