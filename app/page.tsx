@@ -6,7 +6,7 @@ import CursorFollow from '@/components/cursorFollow'
 
 export default async function Home() {
   const { data: menuList }: Result<MenuData[]> = await (
-    await fetch(toUrl('/api/menu'))
+    await fetch(toUrl('/api/menu'), { next: { revalidate: 0 } })
   ).json()
   return (
     <div className='contrast-content flex h-screen items-center justify-center overflow-hidden bg-green-400 text-[#213547]'>
