@@ -1,0 +1,119 @@
+# github PR 流程
+
+最近为一个开源项目提交了一个PR，但对这个流程很是模糊，于是学习了如何在github上如何较为规范的提交PR，以及如何合并用户提交的PR
+
+### 1、创建仓库（管理者拥有）
+
+如果我们要提交一个PR，那么首先需要找到一个厂库，就比如这么一个仓库
+
+<Image
+  width={795}
+  height={520}
+  src={'/blog/github-pr-process-create-manager-repo.jpg'}
+  alt='github-pr-process-create-manager-repo'
+  unoptimized
+/>
+
+### 2、fork仓库（自己拥有），并进行一些配置工作
+
+- 1、 首先fork仓库，就是把别人的仓库，copy到自己的仓库中
+
+  <Image
+    width={795}
+    height={520}
+    src={'/blog/github-pr-process-fork-repo.jpg'}
+    alt='github-pr-process-fork-repo'
+    unoptimized
+  />
+
+- 2、 clone到本地，并进行一些配置工作
+
+  ```bash
+  #! 注意 1、clone自己的仓库
+  https://github.com/linzhe141/learn-github.git
+
+  #! 注意 2、将被fork的仓库添加为本地仓库的上游（upstream）版本库。用于与远程仓库(被fork的仓库)保持同步
+  git remote add upstream https://github.com/linzhe-tools/learn-github.git
+  ```
+
+### 3、写PR代码
+
+在开始写代码前，我们要保证我们的代码都是最新的，要不容易发生冲突（有可能在你fork后，源仓库的管理者又进行了代码提交），
+并且提交PR时，如果有冲突，必须解决冲突，这个需要提PR的开发者自行解决
+
+```bash
+  git fetch upstream
+  git rebase upstream/main # 采用了rebase的方案
+```
+
+因为有可能这个仓库会不止提交一个PR，那么需要为每一个PR新建一个分支，（tips:github的一个PR是关联一个分支的）
+
+```bash
+  git checkout -b feat_test
+```
+
+写完PR代码后
+
+```bash
+  # 提交
+  git add .
+  git commit -m "feat: 新增bar功能"
+  git push origin feat_test
+```
+
+当前代码有可能有一些没有啥意义的日志，比如一些删除了console.log()等调试代码，可以使用git rebase合并到一些无用的日志记录，
+这样可以让`git log`的记录更纯粹一点
+
+比如这么一个场景，我们在这个`feat_test`，新增了如下一个文件,并进行了一次提交`feat: 新增bar功能`
+
+```ts filename='bar.ts'
+export function bar() {
+  return 'bar'
+}
+```
+
+然后我们又进行了一次提交，这次提交单纯只是一个日志打印`feat: test1`
+
+```ts filename='bar.ts'
+export function bar() {
+  return 'bar'
+}
+// 这次提交新增
+console.log(bar)
+```
+
+然后我们又又进行了一次提交，这次提交单纯只是一个日志打印`feat: test2`
+
+```ts filename='bar.ts'
+export function bar() {
+  return 'bar'
+}
+// 这次提交新增，修改bar为bar()
+console.log(bar())
+```
+
+然后我们又又又进行了一次提交，我们删除了调试日志的代码`feat: test3`
+
+```ts
+export function bar() {
+  return 'bar'
+}
+// 这次提交新增，删除了打印日志的代码
+```
+
+然后我们又又又又进行了一次提交，我们在readme文件中，新增了bar函数的介绍`docs: 补充bar功能文档`
+
+````ts
+import { bar } from './bar'
+bar() // bar```
+````
+
+其中的`test1，test2，test3`日志并没有实际意义，我们可以通过`git rebase -i HEAD~5`将最近的五次提交进行调整进行调整，整个过程都在vim模式下进行
+
+<Image
+  width={544}
+  height={338}
+  src={'/blog/github-pr-process-rebase-i-1.jpg'}
+  alt='github-pr-process-rebase-i-1'
+  unoptimized
+/>
