@@ -1,6 +1,7 @@
 # github PR 流程
 
-最近为一个开源项目提交了一个PR，但对这个流程很是模糊，于是学习了如何在github上如何较为规范的提交PR，以及如何合并用户提交的PR
+最近为一个开源项目提交了一个[PR](https://github.com/Yuyz0112/vx.dev/pull/80)，
+但对这个流程很是模糊，于是学习了如何在github上如何较为规范的提交PR，以及如何合并用户提交的PR
 
 ### 1、创建仓库（管理者拥有）
 
@@ -39,20 +40,20 @@
 ### 3、写PR代码
 
 在开始写代码前，我们要保证我们的代码都是最新的，要不容易发生冲突（有可能在你fork后，源仓库的管理者又进行了代码提交），
-并且提交PR时，如果有冲突，必须解决冲突，这个需要提PR的开发者自行解决
+并且提交PR时，如果有冲突，必须解决冲突，这个需要提PR的开发者自行解决，建议使用`rebase`合并
 
 ```bash
   git fetch upstream
   git rebase upstream/main # 采用了rebase的方案
 ```
 
-因为有可能这个仓库会不止提交一个PR，那么需要为每一个PR新建一个分支，（tips:github的一个PR是关联一个分支的）
+因为有可能这个仓库会不止提交一个PR，那么需要为每一个PR新建一个分支`tips:github的一个PR是关联一个分支的`
 
 ```bash
   git checkout -b feat_test
 ```
 
-写完PR代码后
+写完PR代码后，进行提交
 
 ```bash
   # 提交
@@ -61,59 +62,107 @@
   git push origin feat_test
 ```
 
-当前代码有可能有一些没有啥意义的日志，比如一些删除了console.log()等调试代码，可以使用git rebase合并到一些无用的日志记录，
+当前代码有可能有一些没有啥意义的日志，比如一些删除了console.log()等调试代码，可以使用`git rebase -i`压缩一些无用的日志记录，
 这样可以让`git log`的记录更纯粹一点
 
-比如这么一个场景，我们在这个`feat_test`，新增了如下一个文件,并进行了一次提交`feat: 新增bar功能`
+- 1、比如这么一个场景，我们在这个`feat_test`分支，新增了如下一个文件，并进行了一次提交`feat: 新增bar功能`
 
-```ts filename='bar.ts'
-export function bar() {
-  return 'bar'
-}
+  ```ts filename='bar.ts'
+  export function bar() {
+    return 'bar'
+  }
+  ```
+
+- 2、然后我们又进行了一次提交，这次提交单纯只是一个日志打印`feat: test1`
+
+  ```ts filename='bar.ts'
+  export function bar() {
+    return 'bar'
+  }
+  // 这次提交新增
+  console.log(bar)
+  ```
+
+- 3、然后我们又又进行了一次提交，这次提交单纯只是一个日志打印`feat: test2`
+
+  ```ts filename='bar.ts'
+  export function bar() {
+    return 'bar'
+  }
+  // 这次提交新增，修改bar为bar()
+  console.log(bar())
+  ```
+
+- 4、然后我们又又又进行了一次提交，我们删除了调试日志的代码`feat: test3`
+
+  ```ts
+  export function bar() {
+    return 'bar'
+  }
+  // 这次提交新增，删除了打印日志的代码
+  ```
+
+- 5、然后我们又又又又进行了一次提交，我们在readme文件中，新增了bar函数的介绍`docs: 补充bar功能文档`
+
+  ```ts
+  import { bar } from './bar'
+  bar() // bar
+  ```
+
+其中的`test1，test2，test3`日志其实并没有实际意义，只是单纯的日志调试代码，没有任何用途
+
+- a、我们可以通过`git rebase -i HEAD~5`将最近的五次提交进行调整进行调整，整个过程都在`vim模式下`进行
+
+  <Image
+    width={544}
+    height={338}
+    src={'/blog/github-pr-process-rebase-i-1.jpg'}
+    alt='github-pr-process-rebase-i-1'
+    unoptimized
+  />
+
+- b、我们可以将`test1，test2，test3`这3个commit进行压缩，融入到`feat: 新增bar功能`commit中
+
+  <Image
+    width={539}
+    height={384}
+    src={'/blog/github-pr-process-rebase-i-2.jpg'}
+    alt='github-pr-process-rebase-i-2'
+    unoptimized
+  />
+
+- c、然后重新调整压缩后的日志commit message，删除`test1，test2，test3`日志commit message，
+  这样日志记录就会变得优雅一些
+
+  <Image
+    width={503}
+    height={341}
+    src={'/blog/github-pr-process-rebase-i-3.jpg'}
+    alt='github-pr-process-rebase-i-3'
+    unoptimized
+  />
+  <Image
+    width={474}
+    height={197}
+    src={'/blog/github-pr-process-rebase-i-git-log.jpg'}
+    alt='github-pr-process-rebase-i-git-log'
+    unoptimized
+  />
+
+### 4、push代码到自己fork的远程仓库
+
+建议直接`-f`，因为这是自己的开发分支(只有自己使用)，并且有可能会进行`rebase -i`等操作，需要冲掉远程旧的 commits 记录。
+
+```bash
+git push -f origin feat_test
 ```
 
-然后我们又进行了一次提交，这次提交单纯只是一个日志打印`feat: test1`
+### 5、创建PR
 
-```ts filename='bar.ts'
-export function bar() {
-  return 'bar'
-}
-// 这次提交新增
-console.log(bar)
-```
+TODO
 
-然后我们又又进行了一次提交，这次提交单纯只是一个日志打印`feat: test2`
+如果Reviewer没有直接合并给了一下建议，我们可以直接在这个原创分支进行修改并提交，PR会自动更新
 
-```ts filename='bar.ts'
-export function bar() {
-  return 'bar'
-}
-// 这次提交新增，修改bar为bar()
-console.log(bar())
-```
+### 6、合并PR(管理者)
 
-然后我们又又又进行了一次提交，我们删除了调试日志的代码`feat: test3`
-
-```ts
-export function bar() {
-  return 'bar'
-}
-// 这次提交新增，删除了打印日志的代码
-```
-
-然后我们又又又又进行了一次提交，我们在readme文件中，新增了bar函数的介绍`docs: 补充bar功能文档`
-
-````ts
-import { bar } from './bar'
-bar() // bar```
-````
-
-其中的`test1，test2，test3`日志并没有实际意义，我们可以通过`git rebase -i HEAD~5`将最近的五次提交进行调整进行调整，整个过程都在vim模式下进行
-
-<Image
-  width={544}
-  height={338}
-  src={'/blog/github-pr-process-rebase-i-1.jpg'}
-  alt='github-pr-process-rebase-i-1'
-  unoptimized
-/>
+TODO
