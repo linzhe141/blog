@@ -1,7 +1,7 @@
 # github PR 流程
 
 最近为一个开源项目提交了一个[PR](https://github.com/Yuyz0112/vx.dev/pull/80)，
-但对这个流程很是模糊，于是学习了如何在github上如何较为规范的提交PR，以及如何合并用户提交的PR
+但对这个流程很是模糊，于是学习了如何在github上较为规范的提交PR，以及如何合并用户提交的PR
 
 ### 1、创建仓库（管理者拥有）
 
@@ -56,7 +56,6 @@
 写完PR代码后，进行提交
 
 ```bash
-  # 提交
   git add .
   git commit -m "feat: 新增bar功能"
   git push origin feat_test
@@ -121,7 +120,7 @@
     unoptimized
   />
 
-- b、我们可以将`test1，test2，test3`这3个commit进行压缩，融入到`feat: 新增bar功能`commit中
+- b、我们可以将`test1，test2，test3`这3个commit进行压缩并融入到`feat: 新增bar功能`commit中
 
   <Image
     width={539}
@@ -159,10 +158,46 @@ git push -f origin feat_test
 
 ### 5、创建PR
 
-TODO
+当把这个`feat_test`分支push到fork的远程仓库后，我们主页的仓库主页就会出现一个PR的的快捷入口`Compare & pull request`，
+当然也可以去被fork原始仓库的`Pull requests`板块进行创建PR，这里采用第一种方案
 
-如果Reviewer没有直接合并给了一下建议，我们可以直接在这个原创分支进行修改并提交，PR会自动更新
+<Image
+  width={917}
+  height={293}
+  src={'/blog/github-pr-process-create-pr-1.jpg'}
+  alt='github-pr-process-create-pr-1'
+  unoptimized
+/>
+点击后就会出现如下页面，包括一些基本信息，如新分支的commits和一些描述这个pr的文字信息，
+以及将当前的哪个分支合并到原始仓库的哪个分支，比如现在我们想把`自己的feat_test分支合并到原始仓库的main分支上`，
+然后点击`Create pull request`即可，至此我们已经成功创建了一个PR，现在只需等待Reviewer来审核
+<Image
+  width={926}
+  height={786}
+  src={'/blog/github-pr-process-create-pr-2.jpg'}
+  alt='github-pr-process-create-pr-2'
+  unoptimized
+/>
+
+如果Reviewer没有直接合并给了一下建议，或者存在冲突，我们可以直接再次在这个分支进行修改并提交，
+PR会自动更新（上文已经提到github的一个PR是关联一个分支的），等待Reviewer再次审核
 
 ### 6、合并PR(管理者)
 
-TODO
+作为管理者，可以在`Pull requests`板块中，找到刚刚创建的PR就可以审核这个PR，
+这里有三种合并模式，可根据自己需求选择，这里我选择第3种`Rebase and merge`，
+
+<span className='text-xs'>
+  tips:
+  为什么这里的commit只有一个？是因为上面的PR存在了冲突，我解决冲突后又再次提交
+</span>
+
+<Image
+  width={900}
+  height={924}
+  src={'/blog/github-pr-process-merge-pr.jpg'}
+  alt='github-pr-process-merge-pr'
+  unoptimized
+/>
+
+当被成功合并后，至此我们成功水了一个PR🎉
