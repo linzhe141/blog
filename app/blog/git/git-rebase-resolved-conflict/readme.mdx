@@ -1,0 +1,84 @@
+# git rebase 解决冲突
+
+假设这么一个场景，首先在`master`分支上提交了两次，然后从master分支切出`feat_bar`分支，
+并且分别在master和feat_bar这两个分支上，又进行了提交，如下图所示
+
+<Image
+  width={295}
+  height={147}
+  src={'/blog/git-rebase-demo-1.jpg'}
+  alt='git-rebase-demo-1'
+  unoptimized
+/>
+
+### 1、合并代码
+
+现在使用rebase（变基），将`feat_bar`的提交`逐个“复制”`到`master`
+
+```bash
+# 将分支切换到feat_bar分支
+git checkout feat_bar
+# 将当前分支（feat_bar）的提交历史 逐个 应用到目标分支（master）上。
+git rebase master
+```
+
+当输入上述命令后，由于存在冲突，需要依次解决冲突
+
+<Image
+  width={630}
+  height={146}
+  src={'/blog/git-rebase-demo-2.jpg'}
+  alt='git-rebase-demo-2'
+  unoptimized
+/>
+
+### 2、解决冲突
+
+手动解决冲突后，依次输入如下命令
+
+```bash
+# 添加改动
+git add .
+# 继续rebase 注意
+git rebase --continue
+```
+
+注意第二个命令`git rebase --continue`会自动进入`vim模式`，用于输入这次冲突的commit message，
+
+<Image
+  width={488}
+  height={246}
+  src={'/blog/git-rebase-demo-3.jpg'}
+  alt='git-rebase-demo-3'
+  unoptimized
+/>
+如果下一次的rebase(--continue)还是有冲突，那么再解决冲突，重复上述命令，直至完成，
+当处理完所有冲突后，会跳出提示：`Successfully rebased and updated refs/heads/feat_bar.`
+最后的分支图如下，发现`feat_bar`的commit已经依次提交到`main`后面了
+
+<Image
+  width={305}
+  height={150}
+  src={'/blog/git-rebase-demo-4.jpg'}
+  alt='git-rebase-demo-4'
+  unoptimized
+/>
+
+上述解决冲突的过程还可以通过vscode的`source control`模块解决
+
+<Image
+  width={882}
+  height={222}
+  src={'/blog/git-rebase-demo-5.jpg'}
+  alt='git-rebase-demo-5'
+  unoptimized
+/>
+
+### 3、更新master分支
+
+现在需要将`master`分支进行更新，和`feat_bar`保持一致，输入如下命令
+
+```bash
+git checkout master
+git merge feat_bar #将feat_bar分支的更改合并到当前分支（master）
+```
