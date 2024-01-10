@@ -1,0 +1,115 @@
+# github三种合并PR的方式
+
+### 1、Create a merge commit
+
+在fork的仓库里创建一个`test-create-a-merge-commit`的分支，并进行了几次commit，紧接着也创建一个对应的PR
+
+<Image
+  width={1436}
+  height={121}
+  src={'/blog/github-pr-create-a-merge-commit-1.jpg'}
+  alt='github-pr-create-a-merge-commit-1'
+  unoptimized
+/>
+
+Reviewer在合并PR时，选择`Create a merge commit`，github会出现一个表单，可输入这个PR的相关信息，
+这种方式会把所有的提交通过一个`merge commit`添加到main分支了，就类似`git merge`命令
+
+<Image
+  width={899}
+  height={277}
+  src={'/blog/github-pr-create-a-merge-commit-2.jpg'}
+  alt='github-pr-create-a-merge-commit-2'
+  unoptimized
+/>
+
+成功合并后
+
+<Image
+  width={1449}
+  height={155}
+  src={'/blog/github-pr-create-a-merge-commit-3.jpg'}
+  alt='github-pr-create-a-merge-commit-3'
+  unoptimized
+/>
+
+### 2、Squash and merge
+
+在fork的仓库里创建一个`test-squash-and-merge`的分支，并进行了几次commit，紧接着也创建一个对应的PR
+
+<Image
+  width={1428}
+  height={122}
+  src={'/blog/github-pr-squash-and-merge-1.jpg'}
+  alt='github-pr-squash-and-merge-1-1'
+  unoptimized
+/>
+
+Reviewer在合并PR时，选择`Squash and merge`，github会出现一个表单，可输入这个PR的相关信息，
+这种方式会在main分支上，把所有的提交压缩成一个commit，git log的记录比较优雅一些
+
+<Image
+  width={910}
+  height={454}
+  src={'/blog/github-pr-squash-and-merge-2.jpg'}
+  alt='github-pr-squash-and-merge-2'
+  unoptimized
+/>
+
+成功合并后，注意下面几个commit，是第一种合并方式的结果，这种方式的结果就是箭头指向那个，只会存在一个commimt
+
+<Image
+  width={1428}
+  height={173}
+  src={'/blog/github-pr-squash-and-merge-3.jpg'}
+  alt='github-pr-squash-and-merge-3'
+  unoptimized
+/>
+
+### 3、Rebase and merge
+
+在fork的仓库里创建一个`test-rebase-and-merge`的分支，并进行了几次commit，紧接着也创建一个对应的PR
+
+<Image
+  width={1424}
+  height={122}
+  src={'/blog/github-pr-rebase-and-merge-1.jpg'}
+  alt='github-pr-rebase-and-merge-1-1'
+  unoptimized
+/>
+
+Reviewer在合并PR时，选择`Rebase and merge`，这次github就`不会出现`一个表单了，
+因为这种方式会把所有的提交通过rebase的方式添加到main分支上，也就是直接使用对应的日志了
+
+<Image
+  width={910}
+  height={124}
+  src={'/blog/github-pr-rebase-and-merge-2.jpg'}
+  alt='github-pr-rebase-and-merge-2'
+  unoptimized
+/>
+
+成功合并后，注意最下面那个commit，是第二种合并方式的结果
+
+<Image
+  width={1424}
+  height={121}
+  src={'/blog/github-pr-rebase-and-merge-3.jpg'}
+  alt='github-pr-rebase-and-merge-3'
+  unoptimized
+/>
+
+<div className='tips-wrapper rounded bg-[#e9eaff] p-2'>
+  <div className='font-semibold text-black'>tips</div>
+  <sapn className='text-[13px] text-black'>
+    根据这三种合并策略，感觉第二种最为简单
+    `推荐流程：PR的分支通过rebase合并main，然后main在通过squashand merge合并PR`
+  </sapn>
+  <Image
+    width={306}
+    height={219}
+    src={'/blog/github-pr-merge-tips.jpg'}
+    alt='github-pr-merge-tips'
+    unoptimized
+  />
+</div>
