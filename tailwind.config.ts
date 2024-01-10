@@ -53,9 +53,9 @@ const config: Config = {
             ul: {
               // listStyleType: 'disclosure-closed',
             },
-            '.tips-wrapper p': {
-              marginTop: '0 !important',
-              marginBottom: '0 !important',
+            '.tips-wrapper p, .tips-wrapper img': {
+              marginTop: '0.5rem !important',
+              marginBottom: '0.5rem !important',
             },
           },
         },
