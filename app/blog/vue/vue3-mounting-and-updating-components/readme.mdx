@@ -1,0 +1,201 @@
+# vue3 组件的挂载更新流程
+
+在单元测试中通过断点调试，可以知道vue组件的整个流程，如下面这个单侧，其中包含了两个组件，
+其中一个作为父组件`App`，一个作为子组件`Comp`
+
+```ts filename="packages/runtime-core/__tests__/rendererComponent.spec.ts"
+test('basic component', async () => {
+  const number = ref(1)
+  const App = {
+    setup() {
+      const innerNumber = number
+      return () => {
+        console.log('app render')
+        return h('div', { id: 'test-id', class: 'test-class' }, [
+          h(Comp, { value: innerNumber.value }),
+        ])
+      }
+    },
+  }
+  const Comp = {
+    props: ['value'],
+    setup(props: any) {
+      const x = computed(() => props.value)
+      return () => {
+        console.log('son render')
+        return h('span', null, 'number ' + x.value)
+      }
+    },
+  }
+
+  const root = nodeOps.createElement('div')
+  render(h(App, null), root)
+  let innerStr = serializeInner(root)
+  expect(innerStr).toBe(
+    `<div id="test-id" class="test-class"><span>number 1</span></div>`
+  )
+  number.value = 3
+  await nextTick()
+  innerStr = serializeInner(root)
+  expect(innerStr).toBe(
+    `<div id="test-id" class="test-class"><span>number 3</span></div>`
+  )
+})
+```
+
+### 挂载流程
+
+在断点调试的过程中，发现首先会进行挂载组件`mountComponent`，因为这是第一次渲染，在进入`setupComponent`函数，
+用于处理props和slots和一些初始化工作，比如当setup函数的返回值是一个对象的时候，代理setup的返回值(`proxyRefs(setupResult)`)，但是当前的
+测试用例并不会走这一步，因为当前返回的是一个渲染函数，
+
+```ts
+export function setupComponent(
+  instance: ComponentInternalInstance,
+  isSSR = false
+) {
+  // ...
+  const { props, children } = instance.vnode
+  const isStateful = isStatefulComponent(instance)
+  initProps(instance, props, isStateful, isSSR)
+  initSlots(instance, children)
+
+  const setupResult = isStateful
+    ? setupStatefulComponent(instance, isSSR)
+    : undefined
+
+  isSSR && setInSSRSetupState(false)
+  return setupResult
+}
+```
+
+当初始化子组件时，因为在父组件传入了props,`{ value: innerNumber.value }`，注意这是一个数字，而不是一个ref，所以在initProps中，会把父组件传递的props转换成一个`shallowReactive`响应式的数据，
+注意用户在子组件里面不应该修改props，并且修改props拦截操作就在上文提到的`setupStatefulComponent`中实现(`instance.proxy = markRaw(new Proxy(instance.ctx, PublicInstanceProxyHandlers))`)
+
+```ts
+export function initProps(
+  instance: ComponentInternalInstance,
+  rawProps: Data | null,
+  isStateful: number, // result of bitwise flag comparison
+  isSSR = false
+) {
+  const props: Data = {}
+  if (isStateful) {
+    // stateful
+    // 为什么要是用shallowReactive包裹props？，下文会进行解释
+    instance.props = isSSR ? props : shallowReactive(props)
+  }
+}
+```
+
+接下来对渲染函数使用`setupRenderEffect`进行依赖收集，并且进行渲染
+
+```ts
+expect(innerStr).toBe(
+  `<div id="test-id" class="test-class"><span>number 1</span></div>`
+)
+```
+
+### 更新流程
+
+当修改了`number.value = 3`，由于依赖收集首先会重新执行App组件的render，然后在进行patch，当patch到子组件时，
+由于props发生了变化，则子组件实例会重新更新副作用函数
+
+```ts
+const updateComponent = (n1: VNode, n2: VNode, optimized: boolean) => {
+  const instance = (n2.component = n1.component)!
+  if (shouldUpdateComponent(n1, n2, optimized)) {
+    ...
+    // 由于props发生了变化，则子组件实例会重新更新副作用函数
+    instance.effect.dirty = true
+    instance.update()
+  }
+  ...
+}
+```
+
+当重新执行子组件更新时，就会更新Props和Slots，并重新执行子组件render获取最新的vnode，并执行patch更新操作，然后子组件就更新完成了
+
+```ts
+// 子组件的更新 instance.update()
+const componentUpdateFn = ()=>{
+  ...
+  updateComponentPreRender(instance, next, optimized)
+  ...
+  // 更新完成重新得到子组件的vnode，即会重新执行子组件的render
+  const nextTree = renderComponentRoot(instance)
+  // 执行patch更新操作
+  patch(
+    prevTree,
+    nextTree,
+    // parent may have changed if it's in a teleport
+    hostParentNode(prevTree.el!)!,
+    // anchor may have changed if it's in a fragment
+    getNextHostNode(prevTree),
+    instance,
+    parentSuspense,
+    namespace,
+  )
+}
+
+const updateComponentPreRender = (
+  instance: ComponentInternalInstance,
+  nextVNode: VNode,
+  optimized: boolean
+) => {
+  ...
+  // 更新props
+  updateProps(instance, nextVNode.props, prevProps, optimized)
+  updateSlots(instance, nextVNode.children, optimized)
+  ...
+}
+
+```
+
+### 至于为什么要用shallowReactive包裹props
+
+因为除了渲染函数，其他副作用也会使用props，如computed等，
+如果props不使用响应式对象，那么只有渲染函数会重新执行，其他的副作用函数，就不会重新执行了，这是一个很严重的bug，
+所以props必须是响应式对象，并且也只能是浅的，因为`子组件只关心props.x变化了，不关心props.x.a变化了`，
+但是有些情况下，会有如下这种代码，直接传递一个对象，这种其实props.value并没有更新，相当于innerNumber
+又依赖收集了子组件的渲染函数，[并且官方文档不推荐这种写法](https://cn.vuejs.org/guide/components/props.html#mutating-object-array-props)
+
+```ts filename="packages/runtime-core/__tests__/rendererComponent.spec.ts"
+test('basic component', async () => {
+  const App = {
+    setup() {
+      const innerNumber = reactive({ data: 1 })
+      return () => {
+        console.log('app render')
+        return h('div', { id: 'test-id', class: 'test-class' }, [
+          h(Comp, { value: innerNumber }),
+        ])
+      }
+    },
+  }
+  const Comp = {
+    props: ['value'],
+    setup(props: any) {
+      onMounted(async () => {
+        props.value.data = 3
+        await nextTick()
+        innerStr = serializeInner(root)
+        expect(innerStr).toBe(
+          `<div id="test-id" class="test-class"><span>number 3</span></div>`
+        )
+      })
+      return () => {
+        console.log('son render')
+        return h('span', null, 'number ' + props.value.data)
+      }
+    },
+  }
+
+  const root = nodeOps.createElement('div')
+  render(h(App, null), root)
+  let innerStr = serializeInner(root)
+  expect(innerStr).toBe(
+    `<div id="test-id" class="test-class"><span>number 1</span></div>`
+  )
+})
+```
