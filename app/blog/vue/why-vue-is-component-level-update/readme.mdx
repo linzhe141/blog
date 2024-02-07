@@ -1,28 +1,45 @@
 # 为什么vue是组件级别的更新
 
+<div className='tips-wrapper rounded bg-[#e9eaff] p-2'>
+  <div className='font-semibold text-black'>tips</div>
+  <div className='flex items-center'>
+    ⚠
+    <span className='ml-1 text-xs text-red-500'>
+      这篇笔记是关于 Vue 2.7 的组件流程的，[如果你想了解 Vue 3
+      的组件流程，请参考另一篇笔记。](/blog/vue/vue3-mounting-and-updating-components)
+    </span>
+  </div>
+</div>
+
 首先在react中，如果一个父组件更新了，默认情况下（没有做memo之类的性能优化）其包含的所有子组件都会更新，无论这些子组件是否依赖了父组件的状态，
 此外，[也不是从 setState 的组件开始更新，而是要从 `root` 开始遍历进行diff](https://segmentfault.com/q/1010000041065111)，不一定自顶向下的更新那些组件，但会进行diff。
-但在vue中仅仅只会更新父组件，只会在有需要的情况下，子组件才会更新，
-比如依赖了父组件的状态，且父组件的状态发生了变化
+但在vue中仅仅只会更新父组件，只会在有需要的情况下，子组件才会更新，比如依赖了父组件的状态，且父组件的状态发生了变化
 
 ### 1、比如这么一个组件
 
 ```html filename="index.html"
 <div id="app">
-  {{message.text}}
-  <test :msg="message"></test>
+  <test :msg="message.text"></test>
   <linzhe></linzhe>
 </div>
 <script type="module">
-  import Vue from './vue.esm.js'
+  import Vue, { reactive, h, ref } from './vue.esm.js'
   const vm = new Vue({
     components: {
       test: {
         props: ['msg'],
-        template: `<div>{{msg.text}}</div>`,
+        updated() {
+          // 会触发
+          console.log('test update')
+        },
+        template: `<div>{{msg}}</div>`,
       },
       linzhe: {
-        template: `<div>linzhe</div>`,
+        template: `<div>linzhe141</div>`,
+        updated() {
+          // 不会触发
+          console.log('linzhe update')
+        },
       },
     },
     data() {
@@ -30,10 +47,17 @@
         message: { text: 'Hello World!' },
       }
     },
+    updated() {
+      // 会触发
+      console.log('app update')
+    },
   })
+  vm.$mount('#app')
+  window.vm = vm
   setTimeout(() => {
-    vm.message = { text: 'test' }
-  }, 5000)
+    vm.message.text = 'ssssssssssss'
+    console.log('update')
+  }, 2000)
 </script>
 ```
 
@@ -56,6 +80,8 @@ function initProps$1(vm, propsOptions) {
     const value = validateProp(key, propsOptions, propsData, vm)
     // 将符合的props的key定义成响应式，所以子组件就会对这些props进行依赖收集
     // 当父组件进行updateChildComponent修改了props[key]，对应的子组件才会进行更新，否则不会更新
+
+    //! 这行代码是重点，并且这个流程和vue3不一样
     defineReactive(props, key, value, () => {
       // 防止用户在子组件中手动修改props的值，因为要保证单向数据流
       if (!isRoot && !isUpdatingChildComponent) {
@@ -136,7 +162,7 @@ function initProps$1(vm, propsOptions) {
         const key = propKeys[i];
         const propOptions = vm.$options.props; // wtf flow?
         props[key] = validateProp(key, propOptions, propsData, vm);
-        // 这里就会触发对应的子组件重新更新了
+        // 这里就会触发对应的子组件重新更新了，及其依赖props副作用函数也会更新，比如computed
       }
     }
     isUpdatingChildComponent = false
