@@ -1,60 +1,142 @@
 # vue-router@4的导航守卫原理
 
-它通过调用navigate函数来执行用户注册的导航守卫（beforeEachHooks作为示例），
-并按照守卫的顺序逐个执行。如果所有守卫都执行成功，则输出"成功导航"；
-如果任何一个守卫执行失败，则抛出"Invalid navigation guard"错误。
+在`vue-router@4(vue3配套使用)`中，通过调用`navigate`函数来执行用户注册的导航守卫`（beforeEachHooks作为示例）`，
+并按照守卫的顺序逐个执行。如果所有守卫都执行成功，则输出`成功导航`；如果任何一个守卫执行失败，则抛出`Invalid navigation guard`错误，
+并且后续的钩子函数就不会执行了
 
-### 1、注册的守卫钩子函数
+### 1、注册导航守卫
+
+通过发布订阅的方式，注册对应的导航守卫，并在正在导航时，`依次执行`对应的导航守卫函数
 
 ```js
+// 注册beforeEachHook1
+beforeEach((to, from) => console.log('hook1', to, from))
+// 注册beforeEachHook2 测试异步
+beforeEach(async (to, from) => {
+  console.log('hook2', to, from)
+  await 1
+  return false
+})
+// 注册beforeEachHook3
+beforeEach((to, from) => console.log('hook3', to, from))
+
+// 注册完成后，收集到的beforeEachHooks如下
 const beforeEachHooks = [
-  (to, from) => console.log('hooks1', to, from),
+  (to, from) => console.log('hook1', to, from),
   async (to, from) => {
-    console.log('hooks2', to, from)
+    console.log('hook2', to, from)
     await 1
     return false
   },
-  (to, from) => console.log('hooks3', to, from),
+  (to, from) => console.log('hook3', to, from),
 ]
 ```
 
 ### 2、导航入口
 
+导航函数会依次执行对应的钩子函数，并根据对应的钩子函数的结果，做不同的处理。如果没有问题，就进行导航跳转，反之抛出错误，第一个参数表示这次导航的目的，第二个参数表示这次导航的来源，这里简单用`"to" 和 "from" 两个字符串表示`
+
 ```js
 navigate('to', 'from')
-  .then(() => {
-    console.log('成功导航')
-  })
-  .catch((error) => console.log(error))
+
+function navigate(to, from) {
+  let guards = []
+  for (const guard of beforeEachHooks) {
+    // 包装成promise
+    guards.push(guardToPromise(guard, to, from))
+  }
+  // 链式调用
+  return runGuardQueue(guards)
+}
 ```
 
 ### 3、核心原理
 
+navigate的核心原理，就是把用户传入的钩子函数，包装成promise，并进行链式调用。利用`promise链式调用`，
+可以做到依次执行钩子函数，无论这些钩子函数是同步函数还是异步函数
+
 ```js
+// 把用户传入的钩子函数，包装成promise
+function guardToPromise(guard, to, from) {
+  return () =>
+    new Promise((resolve, reject) => {
+      const next = (valid) => {
+        if (valid === false) {
+          // 中断runGuardQueue
+          reject('Invalid navigation guard')
+        }
+        resolve()
+      }
+      // 执行用户的钩子函数
+      //! 如果用户的返回值是false，就会在next中reject，那么runGuardQueue就会被中断了
+      //! 因为这个 runGuardQueue 只对上一次promise的 resolve() 进行迭代
+      const fnReturn = guard(to, from)
+
+      //! 源码还包装了一层 Promise
+      //! 因为这个hook可以支持异步(fnReturn可能是一个promise，对应上文提到的beforeEachHook2)
+      //! 使用场景：用户在hook中，可以做异步逻辑，比如异步判断用户状态，根据状态做相应的调整
+      Promise.resolve(fnReturn).then(next)
+
+      //! 最新的vue-router，next不是必须调用的了
+      //! 最新文档 https://router.vuejs.org/zh/guide/advanced/navigation-guards.html#%E5%8F%AF%E9%80%89%E7%9A%84%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%8F%82%E6%95%B0-next
+    })
+}
+
+// 链式调用
 function runGuardQueue(guards) {
-  /**
-   * p0 = Promise.resolve()
-   * p1 = p0.then(()=>guard())
-   * p2 = p1.then(()=>guard())
-   */
-  //! mdn 有详细描述 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_promises
+  //! mdn 有详细描述 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_promises#%E7%BB%84%E5%90%88
   //! 本质等价于一直给Promise.resolve()加then方法
   //! Promise.resolve() // 初始值
   //!   .then(() => new Promise((resolve, reject) => {resolve()/reject()})) //第一次迭代
   //!   .then(() => new Promise((resolve, reject) => {resolve()/reject()})) //第二次迭代
   //!   .then(() => new Promise((resolve, reject) => {resolve()/reject()})) //第三次迭代
-
-  //! 最后处理
-  //! (一直加then的promise)
-  //!   .then(res => console.log('res'))   // 导航成功
-  //!   .catch(error=>console.log(error))  // 导航失败
   return guards.reduce(
-    //! 最新的vue-router，next不是必须调用的了
-    //! 最新文档 https://router.vuejs.org/zh/guide/advanced/navigation-guards.html
+    //! 如果用户的返回值是false，就reject，那么runGuardQueue就会被中断了
     (promise, guard) => promise.then(() => guard()),
     Promise.resolve()
   )
 }
+
+// 依次打印
+// hook1 to from
+// hook2 to from
+// Invalid navigation guard
+navigate('to', 'from')
+  // 导航成功
+  .then(() => {
+    console.log('成功导航')
+  })
+  //导航失败 捕获runGuardQueue中的 reject
+  .catch((error) => console.log(error))
+```
+
+全部代码如下
+
+```js
+const beforeEachHooks = [
+  (to, from) => console.log('hook1', to, from),
+  async (to, from) => {
+    console.log('hook2', to, from)
+    await 1
+    return false
+  },
+  (to, from) => console.log('hook3', to, from),
+]
+
+navigate('to', 'from')
+  .then(() => {
+    console.log('成功导航')
+  })
+  .catch((error) => console.log(error))
+
+function navigate(to, from) {
+  let guards = []
+  for (const guard of beforeEachHooks) {
+    guards.push(guardToPromise(guard, to, from))
+  }
+  return runGuardQueue(guards)
+}
+
 function guardToPromise(guard, to, from) {
   return () =>
     new Promise((resolve, reject) => {
@@ -65,20 +147,14 @@ function guardToPromise(guard, to, from) {
         resolve()
       }
       const fnReturn = guard(to, from)
-      //! 如果用户的返回值是false，就reject，那么runGuardQueue就会被中断了
-      //! 因为这个 runGuardQueue 只对 resolve(promise.then) 进行迭代
-
-      //! 源码还包装了一层 Promise,因为这个hook可以支持异步(fnReturn可能是一个promise)
-      //! 用户在hook中，可以做异步逻辑，比如异步判断用户状态，根据状态做相应的调整
       Promise.resolve(fnReturn).then(next)
     })
 }
 
-function navigate(to, from) {
-  let guards = []
-  for (const guard of beforeEachHooks) {
-    guards.push(guardToPromise(guard, to, from))
-  }
-  return runGuardQueue(guards)
+function runGuardQueue(guards) {
+  return guards.reduce(
+    (promise, guard) => promise.then(() => guard()),
+    Promise.resolve()
+  )
 }
 ```
