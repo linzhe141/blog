@@ -3,15 +3,12 @@ import { useEffect } from 'react'
 import { useMenuStore } from '@/store/menuStore'
 import { Next13ProgressBar } from 'next13-progressbar'
 import { type Result, MenuData } from '@/types'
-import { useThemeStore } from '@/store/themeStore'
+import { useToggleTheme } from '@/hooks/useToggleTheme'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const setMenuList = useMenuStore((state) => state.setMenuList)
-  const mode = useThemeStore((state) => state.mode)
-  useEffect(() => {
-    useThemeStore.persist.rehydrate()
-  }, [])
+  const { theme: mode } = useToggleTheme()
   async function init() {
     const data: Result<MenuData[]> = await (await fetch('/api/menu')).json()
     setMenuList(data.data)

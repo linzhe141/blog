@@ -3,6 +3,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { type Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Layout from '@/components/layout/layout'
+import { Providers } from './providers'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -24,7 +25,7 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: `
-            if (JSON.parse(localStorage.getItem('theme'))?.state?.mode === 'dark') {
+            if (localStorage.getItem('theme') === 'dark') {
               document.documentElement.classList.add('dark')
             } else {
               document.documentElement.classList.remove('dark')
@@ -33,7 +34,9 @@ export default function RootLayout({
         ></script>
       </head>
       <body className={inter.className}>
-        <Layout>{children}</Layout>
+        <Providers>
+          <Layout>{children}</Layout>
+        </Providers>
       </body>
     </html>
   )
