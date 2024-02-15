@@ -10,7 +10,7 @@ export default async function BlogLayout({
   children: React.ReactNode
 }) {
   const { data: menuList }: Result<MenuData[]> = await (
-    await fetch(toUrl('/api/menu'))
+    await fetch(toUrl('/api/menu'), { next: { revalidate: 0 } })
   ).json()
   return (
     <main className='flex flex-col'>
