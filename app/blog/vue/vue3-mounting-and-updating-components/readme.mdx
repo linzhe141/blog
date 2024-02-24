@@ -82,7 +82,7 @@ export function initProps(
   const props: Data = {}
   if (isStateful) {
     // stateful
-    // 为什么要是用shallowReactive包裹props？，下文会进行解释
+    // 为什么要是用shallowReactive包裹props？下文会进行解释
     instance.props = isSSR ? props : shallowReactive(props)
   }
 }
@@ -104,11 +104,16 @@ expect(innerStr).toBe(
 ```ts
 const updateComponent = (n1: VNode, n2: VNode, optimized: boolean) => {
   const instance = (n2.component = n1.component)!
+  // 为什么vue是组件级别的更新？下文会进行解释
   if (shouldUpdateComponent(n1, n2, optimized)) {
     ...
     // 由于props发生了变化，则子组件实例会重新更新副作用函数
     instance.effect.dirty = true
     instance.update()
+  } else {
+    // no update needed. just copy over properties
+    n2.el = n1.el
+    instance.vnode = n2
   }
   ...
 }
@@ -198,4 +203,61 @@ test('basic component', async () => {
     `<div id="test-id" class="test-class"><span>number 1</span></div>`
   )
 })
+```
+
+### 至于为什么vue是组件级别的更新
+
+比如下面这个案例`pure component`，其中的这个`Comp是一个没有props的组件`，在父组件变更的时候`shouldUpdateComponent`会返回`false`，
+就不会走更新这个子组件的分支了，那么就只有父子间的render函数会重新执行，子组件的render函数就不会重新执行，所以`vue是组件级别的更新`
+
+```ts filename="packages/runtime-core/__tests__/rendererComponent.spec.ts"
+test('pure component', async () => {
+  const number = ref(1)
+  const App = {
+    setup() {
+      const innerNumber = number
+      return () => {
+        // number.value = 3 后，会打印 app render
+        console.log('app render')
+        return h(
+          'div',
+          { id: 'test-id-' + innerNumber.value, class: 'test-class' },
+          [h(Comp)],
+        )
+      }
+    },
+  }
+  const Comp = {
+    setup(props: any) {
+      return () => {
+        // number.value = 3 后，不会打印 son render
+        console.log('son render')
+        return h('span', null, 'number')
+      }
+    },
+  }
+  const root = nodeOps.createElement('div')
+  render(h(App, null), root)
+  number.value = 3
+  await nextTick()
+})
+
+export function shouldUpdateComponent(
+  prevVNode: VNode,
+  nextVNode: VNode,
+  optimized?: boolean,
+): boolean {
+  const { props: prevProps } = prevVNode
+  const { props: nextProps } = nextVNode
+  ...
+  // 这里就是解释了为什么vue是组件级别的更新了
+  // 就比如上文提到的test('pure component')这个单测
+  // 那么prevProps和nextProps都是null，所以return false，
+  // 就不会走更新这个子组件的分支了 不会执行 instance.update()
+  if (prevProps === nextProps) {
+    return false
+  }
+  ...
+  return false
+}
 ```

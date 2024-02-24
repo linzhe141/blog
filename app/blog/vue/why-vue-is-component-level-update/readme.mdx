@@ -155,6 +155,11 @@ function initProps$1(vm, propsOptions) {
     isUpdatingChildComponent = true //只有在更新子组件时，才能去改props，否则都会报错，保证单选数据流
     // update props
     // vm 这里的vm是子组件实例
+
+    // 这里就是解释了为什么vue是组件级别的更新了
+    // 就比如linzhe这个组件，由于它没有对应的props，
+    // 那么propsData是undefined，所以props这个响应式数据就不会更新，
+    // 对应的渲染watcher也不会重新执行，所以子组件就不会更新
     if (propsData && vm.$options.props) {
       const props = vm._props;
       const propKeys = vm.$options._propKeys || [];
