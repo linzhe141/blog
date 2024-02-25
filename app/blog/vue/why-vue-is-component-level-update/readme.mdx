@@ -15,7 +15,7 @@
 此外，[也不是从 setState 的组件开始更新，而是要从 `root` 开始遍历进行diff](https://segmentfault.com/q/1010000041065111)，不一定自顶向下的更新那些组件，但会进行diff。
 但在vue中仅仅只会更新父组件，只会在有需要的情况下，子组件才会更新，比如依赖了父组件的状态，且父组件的状态发生了变化
 
-### 1、比如这么一个组件
+## 1、比如这么一个组件
 
 ```html filename="index.html"
 <div id="app">
@@ -61,7 +61,7 @@
 </script>
 ```
 
-### 2、initProps
+## 2、initProps
 
 在`initProps`中会把子组件中的`_props`变成响应式对象，从而进行依赖收集
 
@@ -98,7 +98,7 @@ function initProps$1(vm, propsOptions) {
 }
 ```
 
-### 3、变更流程
+## 3、变更流程
 
 - 在vue中一个组件在挂载时，会使用watcher进行依赖收集，所以当5s后这个`updateComponent`就会重新执行
 

@@ -14,7 +14,7 @@ const components: MDXComponents = {
   Underline,
   Image: (props: ImageProps) => <Image {...props} />,
   h1: ({ children }) => <h1 id={generateId(children)}>{children}</h1>,
-  h3: ({ children }) => <h3 id={generateId(children)}>{children}</h3>,
+  h2: ({ children }) => <h2 id={generateId(children)}>{children}</h2>,
   pre: (props) => {
     const { children, filename } = props as any
     return <CodeBlock filename={filename}>{children}</CodeBlock>

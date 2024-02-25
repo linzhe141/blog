@@ -43,7 +43,7 @@ test('basic component', async () => {
 })
 ```
 
-### 挂载流程
+## 挂载流程
 
 在断点调试的过程中，发现首先会进行挂载组件`mountComponent`，因为这是第一次渲染，在进入`setupComponent`函数，
 用于处理props和slots和一些初始化工作，比如当setup函数的返回值是一个对象的时候，代理setup的返回值(`proxyRefs(setupResult)`)，但是当前的
@@ -96,7 +96,7 @@ expect(innerStr).toBe(
 )
 ```
 
-### 更新流程
+## 更新流程
 
 当修改了`number.value = 3`，由于依赖收集首先会重新执行App组件的render，然后在进行patch，当patch到子组件时，
 由于props发生了变化，则子组件实例会重新更新副作用函数
@@ -157,7 +157,7 @@ const updateComponentPreRender = (
 
 ```
 
-### 至于为什么要用shallowReactive包裹props
+## 至于为什么要用shallowReactive包裹props
 
 因为除了渲染函数，其他副作用也会使用props，如computed等，
 如果props不使用响应式对象，那么只有渲染函数会重新执行，其他的副作用函数，就不会重新执行了，这是一个很严重的bug，
@@ -205,7 +205,7 @@ test('basic component', async () => {
 })
 ```
 
-### 至于为什么vue是组件级别的更新
+## 至于为什么vue是组件级别的更新
 
 比如下面这个案例`pure component`，其中的这个`Comp是一个没有props的组件`，在父组件变更的时候`shouldUpdateComponent`会返回`false`，
 就不会走更新这个子组件的分支了，那么就只有父子间的render函数会重新执行，子组件的render函数就不会重新执行，所以`vue是组件级别的更新`

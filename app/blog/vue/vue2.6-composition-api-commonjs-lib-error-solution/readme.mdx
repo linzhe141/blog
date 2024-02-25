@@ -17,7 +17,7 @@ import Underline from '@/components/underline'
 
 报错`Error: [vue-composition-api] must call Vue.use(VueCompositionAPI) before using any function`
 
-### 1、客户端
+## 1、客户端
 
 - 1、main.js
 
@@ -48,7 +48,7 @@ import Underline from '@/components/underline'
   <style></style>
   ```
 
-### 2、lib
+## 2、lib
 
 - 1、组件TestDisplay
 
@@ -91,7 +91,7 @@ import Underline from '@/components/underline'
 但是我把main.js 修改成`const VueCompositionAPI = require("@vue/composition-api");`，这样确实不会报`Error: [vue-composition-api] must call Vue.use(`错误了
 _但是composition-api就会报错`TypeError: Cannot read properties of undefined (reading 'text')"`_
 
-### 3、尝试用vite构建了一个es的包，可以正常使用
+## 3、尝试用vite构建了一个es的包，可以正常使用
 
 ```js filename="vite.config.js"
 import { defineConfig } from 'vite'
@@ -117,7 +117,7 @@ export default defineConfig({
 })
 ```
 
-### 4、解决方案
+## 4、解决方案
 
 在客户端使用alias将@vue/composition-api，都统一成commonjs模块，就可以正常使用了，根本原因就是入口不一致导致
 

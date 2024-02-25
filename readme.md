@@ -2,7 +2,7 @@
 
 这是一个使用 Next.js、Tailwind CSS、MDX 和 Prisma 构建的博客项目，用于记录个人学习笔记。
 
-### mdx参考
+## mdx参考
 
 - [mdx-js/discussions/1948](https://github.com/orgs/mdx-js/discussions/1948)
 - [syntax-highlighting-with-the-meta-field](https://mdxjs.com/guides/syntax-highlighting/#syntax-highlighting-with-the-meta-field)
@@ -10,14 +10,14 @@
 - [markdown-syntax-highlighting-with-the-nextjs-app-router](https://colinhemphill.com/blog/markdown-syntax-highlighting-with-the-nextjs-app-router)
 - [react-server-components-rsc--nextjs-app-directory-support](https://github.com/hashicorp/next-mdx-remote/blob/main/README.md#react-server-components-rsc--nextjs-app-directory-support)
 
-### TODO
+## TODO
 
 - [x] [[slug] route layout re-mounted](https://github.com/vercel/next.js/issues/44793#issuecomment-1382458981)
 - [x] mdx enabled checkbox
 - [x] mdx enabled strike through
 - [ ] more convenient menu configuration
 
-### tips
+## tips
 
 - PostgreSQL区分表名、字段名的大小写
 - `psql -h localhost -p 5432 -U root(用户名) -d test(库名)`: postgres连接

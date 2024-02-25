@@ -3,7 +3,7 @@
 最近为一个开源项目提交了一个[PR](https://github.com/Yuyz0112/vx.dev/pull/80)，
 但对这个流程很是模糊，于是学习了如何在github上较为规范的提交PR，以及如何合并用户提交的PR
 
-### 1、创建仓库（管理者拥有）
+## 1、创建仓库（管理者拥有）
 
 如果我们要提交一个PR，那么首先需要找到一个厂库，就比如这么一个仓库
 
@@ -15,7 +15,7 @@
   unoptimized
 />
 
-### 2、fork仓库（自己拥有），并进行一些配置工作
+## 2、fork仓库（自己拥有），并进行一些配置工作
 
 - 1、 首先fork仓库，就是把别人的仓库，copy到自己的仓库中
 
@@ -37,7 +37,7 @@
   git remote add upstream https://github.com/linzhe-tools/learn-github.git
   ```
 
-### 3、写PR代码
+## 3、写PR代码
 
 在开始写代码前，我们要保证我们的代码都是最新的，要不容易发生冲突（有可能在你fork后，源仓库的管理者又进行了代码提交），
 并且提交PR时，如果有冲突，必须解决冲突，这个需要提PR的开发者自行解决，建议使用`rebase`合并
@@ -148,7 +148,7 @@
     unoptimized
   />
 
-### 4、push代码到自己fork的远程仓库
+## 4、push代码到自己fork的远程仓库
 
 建议直接`-f`，因为这是自己的开发分支(只有自己使用)，并且有可能会进行`rebase -i`等操作，需要冲掉远程旧的 commits 记录。
 
@@ -156,7 +156,7 @@
 git push -f origin feat_test
 ```
 
-### 5、创建PR
+## 5、创建PR
 
 当把这个`feat_test`分支push到fork的远程仓库后，我们主页的仓库主页就会出现一个PR的的快捷入口`Compare & pull request`，
 当然也可以去被fork原始仓库的`Pull requests`板块进行创建PR，这里采用第一种方案
@@ -182,7 +182,7 @@ git push -f origin feat_test
 如果Reviewer没有直接合并给了一下建议，或者存在冲突，我们可以直接再次在这个分支进行修改并提交，
 PR会自动更新（上文已经提到github的一个PR是关联一个分支的），等待Reviewer再次审核
 
-### 6、合并PR(管理者)
+## 6、合并PR(管理者)
 
 作为管理者，可以在`Pull requests`板块中，找到刚刚创建的PR就可以审核这个PR，
 这里有三种合并模式，可根据自己需求选择，这里我选择第3种`Rebase and merge`，

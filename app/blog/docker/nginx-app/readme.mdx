@@ -13,9 +13,9 @@ import Underline from '@/components/underline'
   </span>
 </div>
 
-### 1、使用dockerfile制作镜像
+## 1、使用dockerfile制作镜像
 
-#### webapp
+### webapp
 
 `dockerfile`:webapp
 
@@ -51,7 +51,7 @@ server {
 }
 ```
 
-#### webserver
+### webserver
 
 `index.js`
 
@@ -89,7 +89,7 @@ RUN npm install
 CMD ["npm", "start"]
 ```
 
-### 2、使用dockder compose管理容器
+## 2、使用dockder compose管理容器
 
 ```yml filename="docker-compose.yml"
 version: '3'

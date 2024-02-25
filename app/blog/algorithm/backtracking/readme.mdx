@@ -5,7 +5,7 @@
 
 回溯和普通递归的联系：回溯知道路径(递归与递归直接的状态)，普通递归不关心路径(递归递归之间的关联状态)
 
-### 1、排列问题
+## 1、排列问题
 
 [leetcode-46:](https://leetcode.cn/problems/permutations/)
 给定一个不含重复数字的数组 nums ，返回其 所有可能的全排列 。你可以 按任意顺序 返回答案。
@@ -41,7 +41,7 @@ function permute(nums: number[]): number[][] {
 }
 ```
 
-### 2、子集(组合)问题
+## 2、子集(组合)问题
 
 [leetcode-78:](https://leetcode.cn/problems/subsets/)
 给你一个整数数组 nums ，数组中的元素 互不相同 。返回该数组所有可能的子集（幂集）。
@@ -74,7 +74,7 @@ function function subsets(nums: number[]): number[][] {
 }
 ```
 
-### 3、切割问题
+## 3、切割问题
 
 [leetcode-131:](https://leetcode.cn/problems/palindrome-partitioning/)
 给你一个字符串 s，请你将 s 分割成一些子串，使每个子串都是 回文串 。返回 s 所有可能的分割方案。
@@ -114,7 +114,7 @@ function partition(s: string): string[][] {
 }
 ```
 
-### 4、大概的模板代码
+## 4、大概的模板代码
 
 ```ts
 function foo(nums: number[], result: number[][], path: number[] = []) {
