@@ -20,7 +20,7 @@ export default function CodeBlock({ filename, children }: Props) {
     <div className='relative'>
       {filename && (
         <div className='absolute left-6 top-2 cursor-pointer rounded p-1 text-xs italic text-[#abb2bf]'>
-          <span className=' mr-2'>filename:</span>
+          <span className='mr-2'>filename:</span>
           {filename}
         </div>
       )}
@@ -34,9 +34,9 @@ export default function CodeBlock({ filename, children }: Props) {
         {!copied ? (
           <Icon type='copy' />
         ) : (
-          <div className=' relative'>
-            <div className=' absolute -left-16'>
-              <div className=' rounded bg-white px-1 text-xs italic text-green-400'>
+          <div className='relative'>
+            <div className='absolute -left-16'>
+              <div className='rounded bg-white px-1 text-xs italic text-green-400'>
                 Copied!
               </div>
             </div>

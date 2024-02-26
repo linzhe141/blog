@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import message from '@/components/message'
 import { type Result } from '@/types'
+import { cn } from '@/utils'
 type Props = {
   setAuth: (value: boolean) => void
 }
@@ -33,13 +34,29 @@ export default function Auth({ setAuth }: Props) {
   }
 
   return (
-    <div className='fixed bottom-0 left-0 right-0 top-0 z-10 flex items-center justify-center bg-gray-300'>
-      <div className='flex h-[200px] w-[500px] flex-col items-center justify-center rounded bg-slate-100'>
+    <div
+      className={cn(
+        'fixed bottom-0 left-0 right-0 top-0 z-10',
+        'flex items-center justify-center',
+        'bg-gray-300'
+      )}
+    >
+      <div
+        className={cn(
+          'h-[200px] w-[500px]',
+          'flex flex-col items-center justify-center',
+          'rounded bg-slate-100'
+        )}
+      >
         <span className='mb-4 text-stone-900'>请输入访问key</span>
         <input
           value={key}
           type='text'
-          className='w-[400px] rounded-lg border border-gray-300 px-4 py-2 focus:border-green-400 focus:outline-none'
+          className={cn(
+            'w-[400px] px-4 py-2',
+            'rounded-lg border border-gray-300',
+            'focus:border-green-400 focus:outline-none'
+          )}
           onChange={(e) => inputChangeHandle(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && submit()}
         ></input>
@@ -47,8 +64,15 @@ export default function Auth({ setAuth }: Props) {
           onClick={submit}
           type='button'
           disabled={disabled}
-          className={`mt-4 rounded-lg bg-green-400 px-4 py-2 text-white hover:bg-green-500 hover:shadow-green-400 focus:border-green-400 focus:outline-none
-              ${disabled ? 'disabled disabled:cursor-not-allowed' : ''}`}
+          className={cn(
+            'mt-4 px-4 py-2',
+            'rounded-lg bg-green-400  text-white',
+            'hover:bg-green-500 hover:shadow-green-400',
+            'focus:border-green-400 focus:outline-none',
+            {
+              'disabled disabled:cursor-not-allowed': disabled,
+            }
+          )}
         >
           提交
         </button>

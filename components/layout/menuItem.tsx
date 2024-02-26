@@ -4,6 +4,7 @@ import Icon from '../icon/Icon'
 import Link from 'next/link'
 
 import Underline from '../underline'
+import { cn } from '@/utils'
 // 虽然MenuItem是递归组件，但是如果多余两层实在太丑了
 export default function MenuItem(props: MenuItemProps) {
   const {
@@ -61,21 +62,25 @@ export default function MenuItem(props: MenuItemProps) {
     }
   }
   return (
-    <div className={`${level === 1 ? 'relative overflow-hidden' : ''}`}>
+    <div className={cn({ 'relative overflow-hidden': level === 1 })}>
       <div
-        className={`group flex cursor-pointer items-center justify-between pr-4 leading-10 ${
-          pathname === url ? 'text-green-400' : ''
-        } transition-all duration-300`}
+        className={cn(
+          'group pr-4 leading-10',
+          'flex cursor-pointer items-center justify-between',
+          'transition-all duration-300',
+          { 'text-green-400': pathname === url }
+        )}
         style={{ paddingLeft: 12 * level + 'px' }}
         onClick={() => clickHandler(linked)}
       >
         {level === 2 && (
           <div
-            className={`absolute left-5 h-5 ${
+            className={cn(
+              'absolute left-5 h-5',
               pathname === url
                 ? 'border-l border-green-400'
                 : 'group-hover:border-l group-hover:border-[#94a3b8]'
-            }`}
+            )}
           ></div>
         )}
         {linked ? (
@@ -94,9 +99,12 @@ export default function MenuItem(props: MenuItemProps) {
                 e.stopPropagation()
                 expandChangeHandle && expandChangeHandle(props)
               }}
-              className={`flex h-4 w-4 items-center justify-center p-4 text-green-400 transition-all duration-300 ${
-                expanded ? 'rotate-90' : ''
-              }`}
+              className={cn(
+                'h-4 w-4 p-4',
+                'flex items-center justify-center',
+                'text-green-400 transition-all duration-300',
+                { 'rotate-90': expanded }
+              )}
             >
               <Icon type='triangle' />
             </div>
@@ -107,9 +115,12 @@ export default function MenuItem(props: MenuItemProps) {
         style={{
           height: (expanded ? subMenuheight : 0) + 'px',
         }}
-        className={`${
-          level === 1 ? 'ml-[20px] border-l-[1px] dark:border-gray-800' : ''
-        } overflow-hidden transition-all duration-300`}
+        className={cn(
+          {
+            'ml-[20px] border-l-[1px] dark:border-gray-800': level === 1,
+          },
+          'overflow-hidden transition-all duration-300'
+        )}
       >
         {children?.map((subMenu) => (
           <MenuItem

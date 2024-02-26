@@ -1,3 +1,4 @@
+import { cn } from '@/utils'
 import React, { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 type Props = {
@@ -24,10 +25,11 @@ const Message = ({ text, type }: Props) => {
   return (
     <div
       style={getStyle()}
-      className={`
-        fixed left-1/2 z-[1000] -translate-x-1/2 
-        ${type === 'success' ? 'bg-green-400' : 'bg-red-400'} 
-        rounded-md bg-gray-200 p-2 text-white transition-all`}
+      className={cn(
+        'fixed left-1/2 z-[1000] -translate-x-1/2',
+        type === 'success' ? 'bg-green-400' : 'bg-red-400',
+        'rounded-md bg-gray-200 p-2 text-white transition-all'
+      )}
     >
       {text}
     </div>

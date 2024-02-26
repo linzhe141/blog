@@ -5,7 +5,7 @@ import { useImmer } from 'use-immer'
 import { type Result, MenuData } from '@/types'
 import Underline from '@/components/underline'
 import Link from 'next/link'
-import { getDefaultUrl } from '@/utils'
+import { cn, getDefaultUrl } from '@/utils'
 import Header from '@/components/layout/header'
 type Props = {
   setAuth: (value: boolean) => void
@@ -101,8 +101,15 @@ export default function MenuSetting({ setAuth }: Props) {
           onClick={submit}
           type='button'
           disabled={disabled}
-          className={`mt-4 w-20 rounded-lg bg-green-400 px-4 py-2 text-white hover:bg-green-500 hover:shadow-green-400 focus:border-green-400 focus:outline-none
-              ${disabled ? 'disabled disabled:cursor-not-allowed' : ''}`}
+          className={cn(
+            'mt-4 w-20 px-4 py-2',
+            'rounded-lg bg-green-400  text-white',
+            'hover:bg-green-500 hover:shadow-green-400',
+            'focus:border-green-400 focus:outline-none',
+            {
+              'disabled disabled:cursor-not-allowed': disabled,
+            }
+          )}
         >
           提交
         </button>

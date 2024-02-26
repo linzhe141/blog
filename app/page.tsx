@@ -1,4 +1,4 @@
-import { getDefaultUrl } from '@/utils'
+import { cn, getDefaultUrl } from '@/utils'
 import Link from 'next/link'
 import { toUrl } from './api'
 import { type MenuData, type Result } from '@/types'
@@ -9,7 +9,14 @@ export default async function Home() {
     await fetch(toUrl('/api/menu'), { next: { revalidate: 0 } })
   ).json()
   return (
-    <div className='contrast-content flex h-screen items-center justify-center overflow-hidden bg-green-400 text-[#213547]'>
+    <div
+      className={cn(
+        'contrast-content',
+        'h-screen',
+        'flex items-center justify-center',
+        'overflow-hidden bg-green-400 text-[#213547]'
+      )}
+    >
       <CursorFollow />
       <div className='flex flex-col items-center justify-center'>
         <Link href={getDefaultUrl(menuList) ?? ''}>

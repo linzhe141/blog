@@ -6,6 +6,7 @@ import Underline from '../underline'
 import ThemeToggle from '../themeToggle'
 
 import { useToggleTheme } from '@/hooks/useToggleTheme'
+import { cn } from '@/utils'
 
 type Props = {
   children: React.ReactNode
@@ -13,10 +14,17 @@ type Props = {
 export default function Header({ children }: Props) {
   const { theme: mode } = useToggleTheme()
   return (
-    <div className='fixed top-0 z-10 flex w-full items-center justify-between border-b-[1px] bg-white p-4 shadow-md shadow-gray-400 dark:border-gray-800 dark:bg-black dark:shadow-none'>
+    <div
+      className={cn(
+        'fixed top-0 z-10',
+        'flex w-full items-center justify-between',
+        'border-b-[1px] bg-white p-4 shadow-md shadow-gray-400',
+        'dark:border-gray-800 dark:bg-black dark:shadow-none'
+      )}
+    >
       <div>
         <Underline>
-          <Link className=' flex items-center' href='/'>
+          <Link className='flex items-center' href='/'>
             <Image
               className='mr-2'
               width={24}

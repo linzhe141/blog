@@ -1,4 +1,5 @@
 'use client'
+import { cn } from '@/utils'
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 type Props = {
@@ -34,7 +35,12 @@ export default function CursorFollow({ color = 'white' }: Props) {
   return (
     <motion.div
       style={{ background: color }}
-      className={`pointer-events-none fixed left-0 top-0 z-[1] h-[150px] w-[150px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-40 blur-[20px]`}
+      className={cn(
+        'pointer-events-none',
+        'fixed left-0 top-0 z-[1]',
+        'h-[150px] w-[150px] -translate-x-1/2 -translate-y-1/2',
+        'rounded-full opacity-40 blur-[20px]'
+      )}
       variants={variants}
       animate='default'
       transition={{
