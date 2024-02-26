@@ -26,9 +26,9 @@ const Message = ({ text, type }: Props) => {
     <div
       style={getStyle()}
       className={cn(
-        'fixed left-1/2 z-[1000] -translate-x-1/2',
+        'fixed left-1/2 z-[1000] -translate-x-1/2 p-2',
         type === 'success' ? 'bg-green-400' : 'bg-red-400',
-        'rounded-md bg-gray-200 p-2 text-white transition-all'
+        'rounded-md text-white transition-all'
       )}
     >
       {text}
