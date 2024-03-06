@@ -1,7 +1,8 @@
 # vue3 组件的挂载更新流程
 
-在单元测试中通过断点调试，可以知道vue组件的整个流程，如下面这个单侧，其中包含了两个组件，
-其中一个作为父组件`App`，一个作为子组件`Comp`
+可以在vue3源码中编写单元测试，并通过`vscode的vitest插件`断点调试功能，
+就可以知道vue组件的整个流程，比如下面这个单测，其中包含了两个组件，其中一个作为父组件`App`，
+一个作为子组件`Comp`，用于测试组件的挂载和更新
 
 ```ts filename="packages/runtime-core/__tests__/rendererComponent.spec.ts"
 test('basic component', async () => {
@@ -45,11 +46,19 @@ test('basic component', async () => {
 
 ## 挂载流程
 
-在断点调试的过程中，发现首先会进行挂载组件`mountComponent`，因为这是第一次渲染，在进入`setupComponent`函数，
+在断点调试`render(h(App, null), root)`的过程中，发现首先会进行挂载组件`mountComponent`，因为这是第一次渲染，在进入`setupComponent`函数，
 用于处理props和slots和一些初始化工作，比如当setup函数的返回值是一个对象的时候，代理setup的返回值(`proxyRefs(setupResult)`)，但是当前的
-测试用例并不会走这一步，因为当前返回的是一个渲染函数，
+测试用例并不会走这一步，因为当前返回的是一个渲染函数
 
 ```ts
+const mountComponent = () => {
+  ...
+  setupComponent(...);
+  ...
+  setupRenderEffect(...);
+  ...
+};
+
 export function setupComponent(
   instance: ComponentInternalInstance,
   isSSR = false
@@ -88,7 +97,7 @@ export function initProps(
 }
 ```
 
-接下来对渲染函数使用`setupRenderEffect`进行依赖收集，并且进行渲染
+接下来对渲染函数使用`setupRenderEffect`的`componentUpdateFn(下文会用到)`进行依赖收集，并且进行渲染
 
 ```ts
 expect(innerStr).toBe(
