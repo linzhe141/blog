@@ -3,7 +3,7 @@ import fs from 'fs-extra'
 import matter from 'gray-matter'
 import path from 'path'
 import { notFound } from 'next/navigation'
-import MdxContent from '@/components/mdxContent'
+import MdxDisplayRsc from '@/components/mdx/mdxDisplayRsc'
 
 export default async function Page({ params }: { params: { name: string[] } }) {
   const url = params.name.join('/')
@@ -11,7 +11,7 @@ export default async function Page({ params }: { params: { name: string[] } }) {
   if (content === null) notFound()
   return (
     <Blog>
-      <MdxContent content={content} />
+      <MdxDisplayRsc content={content} />
     </Blog>
   )
 }

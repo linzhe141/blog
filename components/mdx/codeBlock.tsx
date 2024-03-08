@@ -1,6 +1,6 @@
 'use client'
 import { useRef, useState } from 'react'
-import Icon from './icon/Icon'
+import Icon from '../icon/Icon'
 
 type Props = {
   filename: string
