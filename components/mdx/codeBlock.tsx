@@ -51,6 +51,7 @@ export default function CodeBlock({ filename, children }: Props) {
   )
 }
 function getCodeLanguage(children: any) {
-  const [_, language] = children?.props.className.split('language-')
+  if (!children.props.className) return ''
+  const [_, language] = children.props.className?.split('language-')
   return language as string
 }

@@ -9,7 +9,8 @@
 - [rehype-mdx-code-props](https://github.com/remcohaszing/rehype-mdx-code-props)
 - [markdown-syntax-highlighting-with-the-nextjs-app-router](https://colinhemphill.com/blog/markdown-syntax-highlighting-with-the-nextjs-app-router)
 - [react-server-components-rsc--nextjs-app-directory-support](https://github.com/hashicorp/next-mdx-remote/blob/main/README.md#react-server-components-rsc--nextjs-app-directory-support)
-- [Not working in prettier formatting using monaco editor](https://stackoverflow.com/questions/73970692/not-working-in-prettier-formatting-using-monaco-editor)
+- [monaco prettier plugin](https://prettier.io/lib/package-manifest.js)
+- [monaco prettier website](https://github.com/prettier/prettier/blob/41baabd62734a4b8f4065294cad873af3b46dbb3/website/static/worker.js#L169)
 
 ## TODO
 
