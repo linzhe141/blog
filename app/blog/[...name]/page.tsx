@@ -4,13 +4,28 @@ import matter from 'gray-matter'
 import path from 'path'
 import { notFound } from 'next/navigation'
 import MdxDisplayRsc from '@/components/mdx/mdxDisplayRsc'
-
+import Link from 'next/link'
 export default async function Page({ params }: { params: { name: string[] } }) {
   const url = params.name.join('/')
   const { content } = await getMdx(`blog/${url}`)
   if (content === null) notFound()
+  function getBlogBase64Url() {
+    const base64 = btoa(unescape(encodeURIComponent(content!)))
+    const url = '/editor#' + base64
+    return url
+  }
+
   return (
-    <Blog>
+    <Blog className='relative'>
+      <Link
+        className='absolute right-0 cursor-pointer text-xs no-underline'
+        href={getBlogBase64Url()}
+      >
+        <span className='rounded bg-[#ffbd2a] px-2 py-1 text-white'>
+          TODO:编辑
+        </span>
+      </Link>
+
       <MdxDisplayRsc content={content} />
     </Blog>
   )

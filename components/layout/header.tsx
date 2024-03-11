@@ -9,7 +9,7 @@ import { useToggleTheme } from '@/hooks/useToggleTheme'
 import { cn } from '@/utils'
 
 type Props = {
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 export default function Header({ children }: Props) {
   const { theme: mode } = useToggleTheme()

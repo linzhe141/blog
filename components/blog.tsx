@@ -1,6 +1,14 @@
-export default function Blog({ children }: { children: React.ReactNode }) {
+import { cn } from '@/utils'
+
+export default function Blog({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
   return (
-    <div className='prose max-w-full'>
+    <div className={cn('prose max-w-full', className)}>
       <div>{children}</div>
     </div>
   )

@@ -5,6 +5,7 @@ import { type editor } from 'monaco-editor'
 import * as monacoInstance from 'monaco-editor/esm/vs/editor/editor.api'
 import prettier from 'prettier/standalone'
 import prettierrc from '../.prettierrc.json'
+import { useToggleTheme } from '@/hooks/useToggleTheme'
 type Monaco = typeof monacoInstance
 
 interface Props {
@@ -13,15 +14,19 @@ interface Props {
 }
 export function BlogEditor({ width, renderMdx }: Props) {
   const [defaultValue, setDefaultValue] = useState('')
+  const [blogContent, setBlogContent] = useState('')
   const monacoRef = useRef<Monaco | null>(null)
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
+  const { theme: mode } = useToggleTheme()
 
   useEffect(() => {
     const hash = location.hash
     if (hash.indexOf('#') === 0) {
-      const code = atob(hash.slice(1))
+      const code = decodeURIComponent(escape(atob(hash.slice(1))))
       setDefaultValue(code)
       renderMdx(code)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function handleEditorWillMount(monaco: Monaco) {
@@ -62,21 +67,45 @@ export function BlogEditor({ width, renderMdx }: Props) {
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco
   ) {
-    // here is another way to get monaco instance
-    // you can also store it in `useRef` for further usage
     monacoRef.current = monaco
+    editorRef.current = editor
   }
-
+  function formatConent(e: KeyboardEvent) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      if (editorRef.current) {
+        editorRef.current.trigger(
+          blogContent,
+          'editor.action.formatDocument',
+          {}
+        )
+      }
+      e.preventDefault()
+    }
+  }
+  useEffect(() => {
+    window.addEventListener('keydown', formatConent)
+    return () => {
+      window.removeEventListener('keydown', formatConent)
+    }
+  }, [])
   return (
     <Editor
-      width='50%'
+      width={width}
       defaultLanguage='markdown'
       defaultValue={defaultValue}
       beforeMount={handleEditorWillMount}
       onMount={handleEditorDidMount}
+      options={{
+        minimap: {
+          enabled: false,
+        },
+      }}
+      theme={mode === 'light' ? 'light' : 'vs-dark'}
       onChange={(value) => {
-        const url = 'editor#' + btoa(value!)
+        const base64 = btoa(unescape(encodeURIComponent(value!)))
+        const url = 'editor#' + base64
         history.replaceState({}, '', url)
+        setBlogContent(value!)
         renderMdx(value!)
       }}
     />

@@ -24,7 +24,7 @@ function generateId(children: React.ReactNode) {
 type MdxOptions = NonNullable<MDXRemoteProps['options']>['mdxOptions']
 
 export const mdxOptions: MdxOptions = {
-  remarkPlugins: [],
+  // remarkPlugins: [],
   rehypePlugins: [
     [
       rehypeHighlight,
