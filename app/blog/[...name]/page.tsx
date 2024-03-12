@@ -1,6 +1,6 @@
 import Blog from '@/components/blog'
 import fs from 'fs-extra'
-import matter from 'gray-matter'
+// import matter from 'gray-matter'
 import path from 'path'
 import { notFound } from 'next/navigation'
 import MdxDisplayRsc from '@/components/mdx/mdxDisplayRsc'
@@ -36,9 +36,9 @@ async function getMdx(url: string) {
   const result = path.resolve(cwd, `app/${url}/readme.mdx`)
   try {
     const source = await fs.readFile(result, 'utf-8')
-    const { content } = matter(source)
+    // const { content } = matter(source)
     return {
-      content,
+      content: source,
     }
   } catch (error) {
     return {

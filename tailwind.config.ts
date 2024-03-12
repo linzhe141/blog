@@ -66,6 +66,9 @@ const config: Config = {
     },
   },
   plugins: [typography, require('tailwind-highlightjs')],
+  // 默认情况下，Tailwind 的 JIT 编译器只会为内容中使用的类生成 css。
+  // 为确保生成Higlight.js主题样式，您需要确保将它们添加到 safelist
+  // 这将保留以 开头的所有 hljs 类
   safelist: [
     {
       pattern: /hljs+/,
