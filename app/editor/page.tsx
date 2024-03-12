@@ -4,14 +4,10 @@ import { BlogEditor } from '@/components/blogEditor'
 import Header from '@/components/layout/header'
 import { mdxOptions } from '@/components/mdx/mdxConfig'
 import { MdxDisplay } from '@/components/mdx/mdxDisplay'
-import { type MDXRemoteSerializeResult } from 'next-mdx-remote'
+import { type MDXRemoteSerializeResult as BlogSource } from 'next-mdx-remote'
 import { serialize } from 'next-mdx-remote/serialize'
 import { useState } from 'react'
 
-type BlogSource = MDXRemoteSerializeResult<
-  Record<string, unknown>,
-  Record<string, unknown>
->
 export default function Page() {
   const [blogSource, setBlogSource] = useState<BlogSource | null>(null)
   const [error, setError] = useState(false)
