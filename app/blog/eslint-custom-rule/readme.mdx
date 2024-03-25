@@ -1,0 +1,139 @@
+# eslint自定义rule
+
+因为公司前端架构原因，各个模块是单独的仓库，开发时只会关注当前的仓库，并且又需要为vue注册许多的全局组件。
+但是当各个模块混合使用时，可能会导致全局组件重名，生产环境就会使用错误的组件出现严重的bug。
+其中各个模块通过`requre.context和Vue.install`实现自动注册（当然有更好的办法解决这些问题）
+
+```js filename="index.js"
+import Foo from './Foo.vue'
+export default function install(Vue) {
+  Vue.component('Foo', Foo)
+}
+```
+
+由于不同的模块存在不同的git仓库，这些仓库是毫无关联的，只有`package.json的name作为不同模块的唯一标识`，
+则根据package.json的name字段，我们可以对这个`Vue.component("Foo")`的"Foo"字符串进行校验，让他必须是`${package.name}-Foo`这种格式，
+从而保证`各个模块的全局组件名不同`，那么就可以通过自定义eslint规则来做这个校验。
+
+## 1、自定义eslint rule
+
+[官网教程](https://eslint.org/docs/latest/extend/custom-rule-tutorial#the-custom-rule)
+
+按照官网教程，发现需要使用插件注册自定义规则，并且还要将这个插件发布为一个npm的包，而且这个npm包的name字段还要满足
+[一定的格式](https://eslint.org/docs/latest/use/configure/plugins#naming-convention)
+
+### 插件代码
+
+```js filename="index.js"
+const path = require('node:path')
+// 获取当前的模块名
+const { name } = require(path.resolve(process.cwd(), './package.json'))
+const plugin = {
+  rules: {
+    'vue-install-component': {
+      create: function (context) {
+        return {
+          CallExpression(node) {
+            const { callee, arguments: args } = node
+            // Vue.component(`Foo`, Foo)
+            if (
+              callee.type === 'MemberExpression' &&
+              callee.object.name === 'Vue' &&
+              callee.property.name === 'component' &&
+              args.length >= 2 &&
+              args[0].type === 'Literal'
+            ) {
+              const componentName = args[0].value
+              if (!componentName.startsWith(name + '-')) {
+                context.report({
+                  node,
+                  message: `The first argument of Vue.component should start with "${name}-".`,
+                })
+              }
+            }
+          },
+        }
+      },
+    },
+  },
+}
+module.exports = plugin
+```
+
+### 将插件发布到npm上
+
+```json filename="package.json"
+{
+  "name": "eslint-plugin-linzhe-tools",
+  "exports": {
+    ".": {
+      "require": "./index.js"
+    }
+  }
+}
+```
+
+## 2、使用自定义规则
+
+首先安装刚刚的插件`npm i -D eslint-plugin-linzhe-tools`，然后在eslint配置文件中，使用这个plugin，并且使用里面的规则。
+
+```js filename=".eslintrc.js"
+module.exports = {
+  // ...其他配置
+  // 如果没有使用其他插件的配置，既没有使用extends，则需要手动定义以下parserOptions配置
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  },
+  plugins: ['linzhe-tools'],
+  rules: {
+    // 使用规则
+    'linzhe-tools/vue-install-component': 'error',
+  },
+}
+```
+
+现在就可以检测到错误了
+![img](https://imgur.com/m3q4f6R.png)
+![img](https://imgur.com/SKev1JA.png)
+
+此外，还可以使用`plugin的config参数和eslint的extends参数`简化配置
+[参考了eslint-plugin-vue](https://github.com/vuejs/eslint-plugin-vue/blob/master/lib/configs/base.js)，
+eslint plugin的 configs 部分允许你定义命名的配置集合，这些配置集合可以在不同项目中通过`extends配置`共享，比如新增了一个base的配置。
+
+```js filename="index.js"
+// ...省略上文部分代码
+const plugin = {
+  // 自定义插件新增如下配置
+  configs: {
+    base: {
+      plugins: ['linzhe-tools'],
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      rules: {
+        'linzhe-tools/vue-install-component': 'error',
+      },
+    },
+  },
+  rules: {
+    // ...省略上文部分代码
+  },
+}
+```
+
+然后在eslintrc.js配置文件中通过 extends 使用对应的配置
+
+```js filename=".eslintrc.js"
+module.exports = {
+  // ...其他配置
+  // eslint使用自定义插件对应的配置
+  extends: ['plugin:linzhe-tools/base'],
+  // plugins: ['linzhe-tools'], 注释掉
+  // rules: {
+  //   // 使用规则
+  //   'linzhe-tools/vue-install-component': 'error', 注释掉
+  // },
+}
+```

@@ -7,7 +7,7 @@ import slug from 'remark-slug'
 import { type Result } from '@/types'
 function getDirStructure(root: any) {
   return root.children
-    .filter((item: any) => item.type === 'heading' && item.depth === 3)
+    .filter((item: any) => item.type === 'heading' && item.depth === 2)
     .map((item: any) =>
       item.children.reduce((title: string, it: any) => (title += it.value), '')
     ) as string[]
