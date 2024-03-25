@@ -34,6 +34,8 @@ const plugin = {
       create: function (context) {
         return {
           CallExpression(node) {
+            // 表示是在 function install(){}函数里面的节点才进行验证
+            if (node.parent?.parent?.parent?.id?.name !== 'install') return
             const { callee, arguments: args } = node
             // Vue.component(`Foo`, Foo)
             if (
