@@ -23,7 +23,6 @@ import {
   restrictToVerticalAxis,
   restrictToWindowEdges,
 } from '@dnd-kit/modifiers'
-import Container from './Container'
 import Icon from '@/components/icon/Icon'
 function formatData(data: any[]) {
   const stack: any[] = []
@@ -31,7 +30,6 @@ function formatData(data: any[]) {
     data.forEach((i, index) => {
       i.isDragging = false
       i.level = level
-      i.paddingLeft = 0
       i.isLastChild = index === data.length - 1
       i.forward = 0
       if (stack.length) {
@@ -75,7 +73,10 @@ export default function App() {
           {
             id: '3-1',
             label: 'test3-1',
-            children: [{ id: '3-1-1', label: 'test3-1-1' }],
+            children: [
+              { id: '3-1-1', label: 'test3-1-1' },
+              { id: '3-1-2', label: 'test3-1-2' },
+            ],
           },
           { id: '3-2', label: 'test3-2' },
           {
@@ -284,6 +285,9 @@ const animateLayoutChanges: AnimateLayoutChanges = ({
 }) => (isSorting || wasDragging ? false : true)
 function SortableTreeItem({ node, data }: any) {
   const { level, id } = node
+  // 用于在拖拽时，直接更新树，并得到更新后的树的相关信息
+  const cloneData = useRef(JSON.parse(JSON.stringify(data)))
+
   const {
     attributes,
     isDragging,
@@ -314,27 +318,75 @@ function SortableTreeItem({ node, data }: any) {
     active.rect.current.initial &&
     active.id === id
   ) {
-    console.log(over.id)
+    const overTop = over.rect.top
+    const activeTop = active.rect.current.initial!.top
+    const direction: Direction = activeTop >= overTop ? 'up' : 'down'
+    if (active.id != over.id) {
+      console.log(over.id, direction)
+      changeData(cloneData.current, active, over)
+      // cloneActiveNode 表示 拖动后变化真正位置的active节点也就是目前的蓝色节点
+      const cloneActiveNode = getNodeByID(
+        cloneData.current,
+        active.id as string
+      )
+      currentPadding.current = 20 * (cloneActiveNode.level - 1)
+    }
 
     const distanceX =
       active.rect.current.translated.left - active.rect.current.initial.left
-    const overNode = getNodeByID(data, over.id as string)
-    const activeNode = getNodeByID(data, active.id as string)
-    currentPadding.current =
-      20 * (Math.min(overNode.level, activeNode.level) - 1)
-    for (let i = 0; i <= overNode.backward; i++) {
+    const activeNode = getNodeByID(cloneData.current, active.id as string)
+    for (let i = 0; i <= activeNode.backward; i++) {
       if (distanceX > 20 * i) {
         paddingLeft.current = 20 * i
-        console.log(paddingLeft.current)
       }
     }
-    for (let i = 0; i <= overNode.forward; i++) {
+    for (let i = 0; i <= activeNode.forward; i++) {
       if (distanceX < -20 * i) {
         paddingLeft.current = -20 * i
-        console.log(paddingLeft.current)
       }
     }
   }
+  // active != over
+  function changeData(data: any, active: Active, over: Over) {
+    const overTop = over.rect.top
+    const activeTop = active.rect.current.initial!.top
+    const direction: Direction = activeTop >= overTop ? 'up' : 'down'
+    const overNode = getNodeByID(data, over.id as string)
+    const activeNode = getNodeByID(data, active.id as string)
+    remove(data, active.id as string)
+    // 如果active 在over的上面
+    if (direction === 'up') {
+      const overParent = getParentNodeByID(data, over.id as string) ?? {
+        children: data,
+      }
+      const overIndex = overParent.children.findIndex(
+        (i: any) => i.id === over.id
+      )
+      // 就比activeNode 插入到over 前面
+      overParent.children.splice(overIndex, 0, activeNode)
+    }
+    // 如果active 在over的下面
+    else {
+      // 如果over存在子节点
+      if (overNode.children.length) {
+        // 就比activeNode 插入到over子节点的第一个
+        overNode.children.unshift(activeNode)
+      } else {
+        // 如果over不存在子节点
+        const overParent = getParentNodeByID(data, over.id as string) ?? {
+          children: data,
+        }
+        const overIndex = overParent.children.findIndex(
+          (i: any) => i.id === over.id
+        )
+        // 就比activeNode 插入到over 后面
+        overParent.children.splice(overIndex + 1, 0, activeNode)
+      }
+    }
+    formatData(data)
+    cloneData.current = data
+  }
+
   return (
     <>
       <div
