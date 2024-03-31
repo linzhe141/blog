@@ -126,19 +126,23 @@ export default function App() {
     const overTop = over.rect.top
     const activeTop = active.rect.current.initial!.top
     const direction: Direction = activeTop >= overTop ? 'up' : 'down'
-    if (active.id !== over.id && distanceX <= 20 && distanceX >= -20) {
-      setMenuData((draft) => {
-        const activeNode = getNodeByID(draft, active.id as string)
-        const overNode = getNodeByID(draft, over.id as string)
-        remove(draft, active.id as string)
-        if (overNode.children.length && direction === 'down') {
-          overNode.children.unshift(activeNode)
-        } else {
-          insert(direction, draft, over.id as string, activeNode)
+    setMenuData((draft) => {
+      if (active.id != over.id) {
+        console.log(over.id, direction)
+        changeData(draft, active, over)
+        // cloneActiveNode 表示 拖动后变化真正位置的active节点也就是目前的蓝色节点
+      }
+      for (let i = 0; i <= activeNode.backward; i++) {
+        if (distanceX > 20 * i) {
+          // paddingLeft.current = 20 * i
         }
-        formatData(draft)
-      })
-    }
+      }
+      for (let i = 0; i <= activeNode.forward; i++) {
+        if (distanceX < -20 * i) {
+          // paddingLeft.current = -20 * i
+        }
+      }
+    })
     // const overNode = getNodeByID(menuData, over.id as string)
     // for (let i = 1; i <= overNode.backward; i++) {
     //   if (distanceX > 20 * i) {
@@ -199,7 +203,7 @@ export default function App() {
         {activeNode ? (
           <div
             // style={{ marginLeft: 20 * (activeNode.level - 1) + 'px' }}
-            className='mb-1 flex h-10 w-60 items-center border-2 border-dashed border-green-400 bg-green-200 px-2 opacity-70'
+            className='mb-1 flex h-10 w-60 items-center rounded-lg border-2 border-dashed border-green-400 bg-green-200 px-2 opacity-70'
           >
             <span className='mr-2 h-4 w-4 cursor-all-scroll'>
               <Icon type='rank' />
@@ -287,6 +291,9 @@ function SortableTreeItem({ node, data }: any) {
   const { level, id } = node
   // 用于在拖拽时，直接更新树，并得到更新后的树的相关信息
   const cloneData = useRef(JSON.parse(JSON.stringify(data)))
+  useEffect(() => {
+    cloneData.current = JSON.parse(JSON.stringify(data))
+  }, [data])
 
   const {
     attributes,
@@ -322,14 +329,16 @@ function SortableTreeItem({ node, data }: any) {
     const activeTop = active.rect.current.initial!.top
     const direction: Direction = activeTop >= overTop ? 'up' : 'down'
     if (active.id != over.id) {
-      console.log(over.id, direction)
-      changeData(cloneData.current, active, over)
+      console.log(over.id, direction, cloneData.current)
+      cloneData.current = changeData(cloneData.current, active, over)
       // cloneActiveNode 表示 拖动后变化真正位置的active节点也就是目前的蓝色节点
       const cloneActiveNode = getNodeByID(
         cloneData.current,
         active.id as string
       )
       currentPadding.current = 20 * (cloneActiveNode.level - 1)
+    } else {
+      currentPadding.current = 20 * (level - 1)
     }
 
     const distanceX =
@@ -346,46 +355,6 @@ function SortableTreeItem({ node, data }: any) {
       }
     }
   }
-  // active != over
-  function changeData(data: any, active: Active, over: Over) {
-    const overTop = over.rect.top
-    const activeTop = active.rect.current.initial!.top
-    const direction: Direction = activeTop >= overTop ? 'up' : 'down'
-    const overNode = getNodeByID(data, over.id as string)
-    const activeNode = getNodeByID(data, active.id as string)
-    remove(data, active.id as string)
-    // 如果active 在over的上面
-    if (direction === 'up') {
-      const overParent = getParentNodeByID(data, over.id as string) ?? {
-        children: data,
-      }
-      const overIndex = overParent.children.findIndex(
-        (i: any) => i.id === over.id
-      )
-      // 就比activeNode 插入到over 前面
-      overParent.children.splice(overIndex, 0, activeNode)
-    }
-    // 如果active 在over的下面
-    else {
-      // 如果over存在子节点
-      if (overNode.children.length) {
-        // 就比activeNode 插入到over子节点的第一个
-        overNode.children.unshift(activeNode)
-      } else {
-        // 如果over不存在子节点
-        const overParent = getParentNodeByID(data, over.id as string) ?? {
-          children: data,
-        }
-        const overIndex = overParent.children.findIndex(
-          (i: any) => i.id === over.id
-        )
-        // 就比activeNode 插入到over 后面
-        overParent.children.splice(overIndex + 1, 0, activeNode)
-      }
-    }
-    formatData(data)
-    cloneData.current = data
-  }
 
   return (
     <>
@@ -397,13 +366,13 @@ function SortableTreeItem({ node, data }: any) {
       >
         <div
           style={{ ...style }}
-          className={cn('mb-3 flex h-10 items-center px-2', {
+          className={cn('mb-3 flex h-10 items-center rounded-lg px-2', {
             'bg-blue-200': isDragging,
-            'bg-red-200': !isDragging,
+            'bg-green-400': !isDragging,
           })}
           ref={setDraggableNodeRef}
         >
-          <div className='h-4 w-4' {...attributes} {...listeners}>
+          <div className='mr-2 h-4 w-4' {...attributes} {...listeners}>
             <Icon type='rank'></Icon>
           </div>
           <span>
@@ -418,4 +387,45 @@ function SortableTreeItem({ node, data }: any) {
         ))}
     </>
   )
+}
+
+// active != over
+function changeData(data: any, active: Active, over: Over) {
+  const overTop = over.rect.top
+  const activeTop = active.rect.current.initial!.top
+  const direction: Direction = activeTop >= overTop ? 'up' : 'down'
+  const overNode = getNodeByID(data, over.id as string)
+  const activeNode = getNodeByID(data, active.id as string)
+  remove(data, active.id as string)
+  // 如果active 在over的上面
+  if (direction === 'up') {
+    const overParent = getParentNodeByID(data, over.id as string) ?? {
+      children: data,
+    }
+    const overIndex = overParent.children.findIndex(
+      (i: any) => i.id === over.id
+    )
+    // 就比activeNode 插入到over 前面
+    overParent.children.splice(overIndex, 0, activeNode)
+  }
+  // 如果active 在over的下面
+  else {
+    // 如果over存在子节点
+    if (overNode.children.length) {
+      // 就比activeNode 插入到over子节点的第一个
+      overNode.children.unshift(activeNode)
+    } else {
+      // 如果over不存在子节点
+      const overParent = getParentNodeByID(data, over.id as string) ?? {
+        children: data,
+      }
+      const overIndex = overParent.children.findIndex(
+        (i: any) => i.id === over.id
+      )
+      // 就比activeNode 插入到over 后面
+      overParent.children.splice(overIndex + 1, 0, activeNode)
+    }
+  }
+  formatData(data)
+  return data
 }
