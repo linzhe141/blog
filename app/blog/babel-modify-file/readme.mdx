@@ -1,0 +1,261 @@
+# 利用 Babel 自动化修改 JavaScript 文件
+
+因为公司前端架构，在一些情况下需要对 vue 的路由的 meta 字段新增或删除很多属性，随着项目规模的扩大，如果手动加配置就会变得很麻烦。
+为了简化这一过程，我们需要对路由进行一些自动化的处理，以提高开发效率。本文将介绍一个基于 Babel 的 nodejs 脚本，用于自动化修改 JavaScript 文件。
+
+## 准备工作
+
+检查当前仓库是否已经提交了，因为该脚本会直接操作 Git 仓库中的文件，如果有未提交的更改，可能会导致覆盖本地更改。然后获取 router 目录下所有的路由文件。
+
+```js
+async function getAllIndexJsFiles() {
+  const result = []
+  const routerPath = resolve(__dirname, '../src/router')
+  const appDirList = fs.readdirSync(routerPath)
+  for (const appName of appDirList) {
+    const appDirPath = join(routerPath, appName)
+    result.push(...(await foo(appDirPath)))
+  }
+  return result
+}
+async function foo(appDirPath, result = []) {
+  const appDir = fs.readdirSync(appDirPath)
+  for (const file of appDir) {
+    const filePath = resolve(appDirPath, file)
+    if (file === 'index.js') {
+      result.push(resolve(filePath))
+    }
+    const fileStat = await fs.stat(filePath)
+    const isDirectory = fileStat.isDirectory()
+    if (isDirectory) {
+      await foo(filePath, result)
+    }
+  }
+  return result
+}
+
+async function checkGitStatus() {
+  const { execa } = await import('execa')
+  const { stdout } = await execa('git', ['status', '--short'])
+  if (stdout.length === 0) {
+    return true
+  } else {
+    throw (
+      '建议在执行此脚本之前，先将本地的更改提交git仓库中。\n' +
+      '因为该脚本会直接操作 Git 仓库中的文件，如果有未提交的更改，可能会导致覆盖本地更改。\n\n'
+    )
+  }
+}
+```
+
+## Babel处理
+
+[tip:如果不了解babel等编译工具的原理，建议看看the-super-tiny-compiler](https://github.com/jamiebuilds/the-super-tiny-compiler)
+
+通过`parse`的 ast 结果，可以知道 meta 是一个`ObjectProperty`，并且其中的 value 字段是一个`ObjectExpression`里面的`properties`就是 meta 的各个属性。
+
+```js
+const file = path.resolve('./', '对应的路由文件.js')
+const fileContext = await fs.readFile(file, 'utf8')
+const ast = parse(fileContext, {
+  filePath: file,
+  sourceType: 'module',
+})
+```
+
+![img](https://imgur.com/hFuPw3T.png)
+
+得到这个 ast 后，我们就可以利用`traverse`遍历这个 ast，并进行对应的转换（新增或删除对应的属性）。
+
+```js
+// 新增的属性(route 的 mete 对象)
+const addMetaPropertiesMap = {
+  isLayoutHide: true,
+}
+// 删除的属性(route 的 mete 对象)
+const deleteMetaPropertiesMap = {
+  isSideHide: true,
+  isNavHide: true,
+  isNavMenuHide: true,
+  isMenuHide: true,
+}
+traverse(ast, {
+  ObjectProperty(path) {
+    if (path.node.key.name === 'meta') {
+      const properties = path.node.value.properties
+      Object.keys(addMetaPropertiesMap).forEach((metaKey) => {
+        if (!properties.find((i) => i.key.name === metaKey)) {
+          isUpdata = true
+          // 添加属性
+          properties.push({
+            type: 'ObjectProperty',
+            key: { type: 'Identifier', name: metaKey },
+            value: {
+              type: 'StringLiteral',
+              value: addMetaPropertiesMap[metaKey],
+            },
+          })
+        }
+      })
+      Object.keys(deleteMetaPropertiesMap).forEach((metaKey) => {
+        const index = properties.findIndex((i) => i.key.name === metaKey)
+        if (index > -1) {
+          const targetItem = properties[index]
+          // 删除属性
+          if (targetItem.value.value === deleteMetaPropertiesMap[metaKey]) {
+            isUpdata = true
+            properties.splice(index, 1)
+          }
+        }
+      })
+    }
+  },
+})
+```
+
+转换完成后，通过`generate`生成新的代码，并使用`prettier`进行格式化。
+
+```js
+const { code } = generate(ast, {}, '')
+fs.writeFileSync(file, code)
+prettierFile(file)
+
+async function prettierFile(file) {
+  const { execa } = await import('execa')
+  await execa('npx', ['prettier', '--write', file])
+}
+```
+
+## 完整代码
+
+```js
+const fs = require('fs-extra')
+const { resolve, join } = require('path')
+const { parse } = require('@babel/parser')
+const traverse = require('@babel/traverse').default
+const generate = require('@babel/generator').default
+const { createSpinner } = require('nanospinner')
+// 新增的属性(route 的 mete 对象)
+const addMetaPropertiesMap = {
+  isLayoutHide: true,
+}
+// 删除的属性(route 的 mete 对象)
+const deleteMetaPropertiesMap = {
+  isSideHide: true,
+  isNavHide: true,
+  isNavMenuHide: true,
+  isMenuHide: true,
+}
+const log = console.log
+let chalk = null
+let spinner = null
+async function main() {
+  chalk = (await import('chalk')).default
+  spinner = createSpinner('formating route meta').start()
+  try {
+    await checkGitStatus()
+    const allIndexJsFiles = await getAllIndexJsFiles()
+    await Promise.all(allIndexJsFiles.map((i) => formatFile(i)))
+    spinner.success()
+  } catch (e) {
+    spinner.error()
+    log(chalk.red('\n' + e))
+    process.exit(1)
+  }
+}
+
+async function getAllIndexJsFiles() {
+  const result = []
+  const routerPath = resolve(__dirname, '../src/router')
+  const appDirList = fs.readdirSync(routerPath)
+  for (const appName of appDirList) {
+    const appDirPath = join(routerPath, appName)
+    result.push(...(await foo(appDirPath)))
+  }
+  return result
+}
+async function foo(appDirPath, result = []) {
+  const appDir = fs.readdirSync(appDirPath)
+  for (const file of appDir) {
+    const filePath = resolve(appDirPath, file)
+    if (file === 'index.js') {
+      result.push(resolve(filePath))
+    }
+    const fileStat = await fs.stat(filePath)
+    const isDirectory = fileStat.isDirectory()
+    if (isDirectory) {
+      await foo(filePath, result)
+    }
+  }
+  return result
+}
+
+async function formatFile(file) {
+  const fileContext = await fs.readFile(file, 'utf8')
+  // 确认是 route的注册函数?
+  if (fileContext.includes('meta: {')) {
+    // const result = require(fileContext);
+    const ast = parse(fileContext, {
+      filePath: file,
+      sourceType: 'module',
+    })
+    let isUpdata = false
+    traverse(ast, {
+      ObjectProperty(path) {
+        if (path.node.key.name === 'meta') {
+          const properties = path.node.value.properties
+          Object.keys(addMetaPropertiesMap).forEach((metaKey) => {
+            if (!properties.find((i) => i.key.name === metaKey)) {
+              isUpdata = true
+              // 添加新的属性
+              properties.push({
+                type: 'ObjectProperty',
+                key: { type: 'Identifier', name: metaKey },
+                value: {
+                  type: 'StringLiteral',
+                  value: addMetaPropertiesMap[metaKey],
+                },
+              })
+            }
+          })
+          Object.keys(deleteMetaPropertiesMap).forEach((metaKey) => {
+            const index = properties.findIndex((i) => i.key.name === metaKey)
+            if (index > -1) {
+              const targetItem = properties[index]
+              if (targetItem.value.value === deleteMetaPropertiesMap[metaKey]) {
+                isUpdata = true
+                properties.splice(index, 1)
+              }
+            }
+          })
+        }
+      },
+    })
+    const { code } = generate(ast, {}, '')
+    if (isUpdata) {
+      fs.writeFileSync(file, code)
+      await prettierFile(file)
+      spinner.clear()
+      log(chalk.green('prettier format ', file, '\n'))
+    }
+  }
+}
+
+async function prettierFile(file) {
+  const { execa } = await import('execa')
+  await execa('npx', ['prettier', '--write', file])
+}
+async function checkGitStatus() {
+  const { execa } = await import('execa')
+  const { stdout } = await execa('git', ['status', '--short'])
+  if (stdout.length === 0) {
+    return true
+  } else {
+    throw (
+      '建议在执行此脚本之前，先将本地的更改提交git仓库中。\n' +
+      '因为该脚本会直接操作 Git 仓库中的文件，如果有未提交的更改，可能会导致覆盖本地更改。\n'
+    )
+  }
+}
+main()
+```
