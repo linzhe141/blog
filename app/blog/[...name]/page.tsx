@@ -5,6 +5,7 @@ import path from 'path'
 import { notFound } from 'next/navigation'
 import MdxDisplayRsc from '@/components/mdx/mdxDisplayRsc'
 import Link from 'next/link'
+export const dynamic = 'force-dynamic'
 export default async function Page({ params }: { params: { name: string[] } }) {
   const url = params.name.join('/')
   const { content } = await getMdx(`blog/${url}`)
