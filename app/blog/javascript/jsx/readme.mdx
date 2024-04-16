@@ -51,7 +51,7 @@ pnpm i -D typescript
   }
   ```
 
-- input.tsx: 入口文件，只是通过tsc转换jsx，不进行编译jsx
+- input.tsx: 入口文件，只是通过tsc编译js，不进行转换jsx，直接保留jsx，jsx的编译交给babel做。
 
   ```tsx filename="input.tsx"
   const x = (
@@ -103,6 +103,7 @@ pnpm i -D @babel/cli @babel/core @babel/plugin-syntax-jsx
           const { openingElement } = node
           // 获取这个JSX标签的名字
           const tagName = openingElement.name.name
+          // {class:'xxx',id: 'test'}
           const propsList = openingElement.attributes.reduce((result, item) => {
             result.push(
               t.objectProperty(
@@ -116,6 +117,7 @@ pnpm i -D @babel/cli @babel/core @babel/plugin-syntax-jsx
           const args = [t.stringLiteral(tagName), t.objectExpression(propsList)]
           // Dom('div', {class:'xxx',id: 'test'})
           const callRCExpression = t.callExpression(createIdentifier, args)
+          // ...children
           callRCExpression.arguments = callRCExpression.arguments.concat(
             path.node.children
           )

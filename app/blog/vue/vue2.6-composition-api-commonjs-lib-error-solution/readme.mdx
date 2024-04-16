@@ -1,7 +1,4 @@
-import React from 'react'
-import Underline from '@/components/underline'
-
-# vue2.6.14(composition api)使用vuecli 打包出来的commonjs模式的库报错的解决方案
+# 针对 Vue 2.6中使用 Composition API 的情况，在使用 Vue CLI 打包为 CommonJS 模式的库时的解决方案
 
 <div className='flex'>
   <span>
@@ -13,85 +10,93 @@ import Underline from '@/components/underline'
   </span>
 </div>
 
-记录在vue2.6.14(composition api)使用vuecli 打包出来的commonjs模式的库报错的排查过程，并找到解决方案
+针对 Vue 2.6中使用 Composition API 的情况，在使用 Vue CLI 打包为 CommonJS 模式的库时，这个lib库也是vue2.6，并且也使用了Composition API，在客户端引入改lib库时，出现的错误如下
 
-报错`Error: [vue-composition-api] must call Vue.use(VueCompositionAPI) before using any function`
+`Error: [vue-composition-api] must call Vue.use(VueCompositionAPI) before using any function ...`
 
 ## 1、客户端
 
-- 1、main.js
+*   1、main.js
 
-  ```js filename="main.js"
-  import Vue from 'vue'
-  import App from './App.vue'
-  import VueCompositionAPI from '@vue/composition-api'
+    ```js filename="main.js"
+    import Vue from 'vue'
+    import App from './App.vue'
+    import VueCompositionAPI from '@vue/composition-api'
 
-  Vue.use(VueCompositionAPI)
-  new Vue({
-    render: (h) => h(App),
-  }).$mount('#app')
-  ```
+    Vue.use(VueCompositionAPI)
+    new Vue({
+      render: (h) => h(App),
+    }).$mount('#app')
+    ```
 
-- 2、App.vue
+*   2、App.vue
 
-  ```html filename="App.vue"
-  <template>
-    <div id="app">
-      <TestDisplay></TestDisplay>
-    </div>
-  </template>
+    ```html filename="App.vue"
+    <template>
+      <div id="app">
+        <TestDisplay></TestDisplay>
+      </div>
+    </template>
 
-  <script setup>
+    <script setup>
+    // lib 测试库
     import { TestDisplay } from 'zzz'
-  </script>
+    </script>
 
-  <style></style>
-  ```
+    <style></style>
+    ```
 
 ## 2、lib
 
-- 1、组件TestDisplay
+*   1、组件TestDisplay
 
-  ```html filename="TestDisplay.vue"
-  <template>
-    <div>{{ test.text }}</div>
-  </template>
-  <script>
-    import { reactive } from '@vue/composition-api'
-    export default {
-      setup() {
-        const test = reactive({ text: 'xxxxxxxx' })
-        console.log('only for setup', test)
-        return { test }
+    ```html filename="TestDisplay.vue"
+    <template>
+      <div>{{ test.text }}</div>
+    </template>
+    <script>
+      import { reactive } from '@vue/composition-api'
+      export default {
+        setup() {
+          const test = reactive({ text: 'xxxxxxxx' })
+          console.log('only for setup', test)
+          return { test }
+        },
+      }
+    </script>
+    ```
+
+*   2、vue.config.js
+
+    ```js filename="vue.config.js"
+    const { defineConfig } = require('@vue/cli-service')
+    module.exports = defineConfig({
+      configureWebpack: {
+        externals: {
+          '@vue/composition-api': '@vue/composition-api',
+        },
       },
-    }
-  </script>
-  ```
+    })
+    ```
 
-- 2、vue.config.js
+*   3、 `"build": "vue-cli-service build --mode production --target lib src/index.js"`
 
-  ```js filename="vue.config.js"
-  const { defineConfig } = require('@vue/cli-service')
-  module.exports = defineConfig({
-    configureWebpack: {
-      externals: {
-        '@vue/composition-api': '@vue/composition-api',
-      },
-    },
-  })
-  ```
+在启动客户端时，发现就会报上述那个错误，"Error: [vue-composition-api] must call Vue.use(VueCompositionAPI) before using any function."
 
-- 3、 `"build": "vue-cli-service build --mode production --target lib src/index.js"`
+我排查了下猜测是因为库文件和客户端使用的`@vue/composition-api入口不一样`导致这个问题的，`客户端使用esm的@vue/composition-api，而lib库是通过vue.config.js(webpack)打包，但只支持使用commonjs`
 
-报错vue.runtime.esm.js:619 [Vue warn]: Error in data(): "Error: [vue-composition-api] must call Vue.use(VueCompositionAPI) before using any function."
 
-我排查了下好像是因为库文件和客户端使用的入口不一样导致这个问题的，客户端使用mjs，库使用commonjs
-![image](https://github.com/vuejs/composition-api/assets/40790268/f3e9a67e-7d59-4bc6-98c5-3b4c44d47c74)
+![image.png](https://imgur.com/hKfa8tn.png)
 
-但是我把main.js 修改成`const VueCompositionAPI = require("@vue/composition-api");`，这样确实不会报`Error: [vue-composition-api] must call Vue.use(`错误了
-_但是composition-api就会报错`TypeError: Cannot read properties of undefined (reading 'text')"`_
+但是我把main.js 修改成`const VueCompositionAPI = require("@vue/composition-api");`，这样确实不会报`Error: [vue-composition-api] must call Vue.use`错误了
 
-## 3、尝试用vite构建了一个es的包，可以正常使用
+
+但是composition-api就会报另一个错误`TypeError: Cannot read properties of undefined (reading 'text')"`
+
+
+## 3、尝试用vite构建了一个es的包
+
+发现可以正常使用，则说明就是库文件和客户端使用的`@vue/composition-api入口不一样`导致这个问题的
 
 ```js filename="vite.config.js"
 import { defineConfig } from 'vite'
@@ -119,7 +124,7 @@ export default defineConfig({
 
 ## 4、解决方案
 
-在客户端使用alias将@vue/composition-api，都统一成commonjs模块，就可以正常使用了，根本原因就是入口不一致导致
+在客户端使用`alias`将@vue/composition-api，都统一成commonjs模块，就可以正常使用了
 
 ```js filename="vue.config.js"
  ...
