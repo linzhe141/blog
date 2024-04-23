@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { toUrl } from './api'
 import { type MenuData, type Result } from '@/types'
 import CursorFollow from '@/components/cursorFollow'
+import Icon from '@/components/icon/Icon'
 
 export default async function Home() {
   const { data: menuList }: Result<MenuData[]> = await (
@@ -20,7 +21,10 @@ export default async function Home() {
       <CursorFollow />
       <div className='flex flex-col items-center justify-center'>
         <Link href={getDefaultUrl(menuList) ?? ''}>
-          <div className='flex flex-col items-center justify-center'>
+          <div className='relative flex flex-col items-center justify-center'>
+            <div className='click-icon absolute right-0 top-0'>
+              <Icon type='click' />
+            </div>
             <h1 className='text-content mb-4 text-9xl'>blog</h1>
             <span className='text-content text-xl'>好记性不如烂笔头</span>
           </div>
