@@ -17,34 +17,26 @@ export default function CodeBlock({ filename, children }: Props) {
     }, 2000)
   }
   return (
-    <div className='relative'>
-      {filename && (
-        <div className='absolute left-6 top-2 cursor-pointer rounded p-1 text-xs italic text-[#abb2bf]'>
-          <span className='mr-2'>filename:</span>
-          {filename}
-        </div>
-      )}
-      <div className=' absolute right-2 top-2 text-xs italic text-[#abb2bf]'>
-        {getCodeLanguage(children)}
-      </div>
-      <div
-        className='absolute bottom-2 right-2 cursor-pointer rounded bg-white p-1'
-        onClick={copyHandle}
-      >
-        {!copied ? (
-          <Icon type='copy' />
-        ) : (
-          <div className='relative'>
-            <div className='absolute -left-16'>
-              <div className='rounded bg-white px-1 text-xs italic text-green-400'>
-                Copied!
+    <div className='rounded bg-[#2f2f2f]'>
+      <div className='flex justify-between p-2 text-[#cdcdcd]'>
+        <div>{getCodeLanguage(children)}</div>
+        <div>{filename}</div>
+        <div className='cursor-pointer rounded p-1' onClick={copyHandle}>
+          {!copied ? (
+            <Icon type='copy' color='#cdcdcd' />
+          ) : (
+            <div className='relative'>
+              <div className='absolute -left-16 -top-1'>
+                <div className='rounded bg-white px-2 py-1 text-xs italic text-green-400'>
+                  Copied!
+                </div>
               </div>
+              <Icon type='check' color='#cdcdcd' />
             </div>
-            <Icon type='check' />
-          </div>
-        )}
+          )}
+        </div>
       </div>
-      <pre className={`${filename ?? 'pt-4'}`}>
+      <pre className={'mt-0 rounded-none p-0'}>
         <div ref={ref}>{children}</div>
       </pre>
     </div>

@@ -64,6 +64,7 @@ const iconMap = {
   ),
   copy: (color: string, width?: number, height?: number) => (
     <svg
+      fill={color}
       aria-hidden='true'
       width={width ?? 16}
       height={height ?? 16}
@@ -144,11 +145,6 @@ type Props = {
   width?: number
   height?: number
 }
-export default function Icon({
-  type,
-  color = '',
-  width = 24,
-  height = 24,
-}: Props) {
+export default function Icon({ type, color = '', width, height }: Props) {
   return <div>{iconMap[type](color, width, height)}</div>
 }
