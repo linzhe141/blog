@@ -21,7 +21,7 @@ export default async function Home() {
       <CursorFollow />
       <div className='flex flex-col items-center justify-center'>
         <Link href={getDefaultUrl(menuList) ?? ''}>
-          <div className='relative flex flex-col items-center justify-center'>
+          <div className='text-content relative flex flex-col items-center justify-center'>
             <div className='click-icon absolute right-0 top-0'>
               <Icon type='click' color='#213547' />
             </div>
