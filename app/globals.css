@@ -49,6 +49,25 @@ body {
   animation: gradientAnimation 2s infinite;
 }
 
+@keyframes clickUpAndDown {
+  0% {
+    top: 0px;
+  }
+  33% {
+    top: -10px;
+  }
+  66% {
+    top: 10px;
+  }
+  100% {
+    top: 0px;
+  }
+}
+
+.click-icon {
+  animation: clickUpAndDown 3s infinite ease;
+}
+
 @keyframes textShowUp {
   from {
     letter-spacing: -50px;
