@@ -23,7 +23,7 @@ export default async function Home() {
         <Link href={getDefaultUrl(menuList) ?? ''}>
           <div className='relative flex flex-col items-center justify-center'>
             <div className='click-icon absolute right-0 top-0'>
-              <Icon type='click' />
+              <Icon type='click' color='#213547' />
             </div>
             <h1 className='text-content mb-4 text-9xl'>blog</h1>
             <span className='text-content text-xl'>好记性不如烂笔头</span>
