@@ -12,6 +12,7 @@ import { useMenuStore } from '@/store/menuStore'
 import { usePrisma } from '@/config'
 import Header from '@/components/layout/header'
 import Skeleton from 'react-loading-skeleton'
+import { cn } from '@/utils'
 
 export default function BlogLayout({
   children,
@@ -111,9 +112,15 @@ export default function BlogLayout({
       </div>
       <div className='flex h-0 flex-1 overflow-auto'>
         <div
-          className={`fixed bottom-0 top-0 z-[100] overflow-auto border-r-[1px] bg-white dark:border-gray-800 dark:bg-black xl:static xl:z-[1] xl:min-w-[380px] xl:px-[50px] ${
-            showMenu ? 'left-0 right-0' : 'left-[-1000px] '
-          } transition-[left] duration-300`}
+          className={cn(
+            'overflow-auto border-r-[1px] bg-white transition-[left] duration-300 dark:border-gray-800 dark:bg-black',
+            'fixed bottom-0 top-0 z-[100]',
+            'xl:static xl:z-[0] xl:min-w-[380px] xl:px-[50px]',
+            {
+              'left-0 right-0': showMenu,
+              'left-[-1000px]': !showMenu,
+            }
+          )}
         >
           <div className='flex flex-row-reverse px-4 py-2 xl:hidden'>
             <div
