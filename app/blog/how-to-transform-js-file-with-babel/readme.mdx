@@ -63,7 +63,13 @@ const ast = parse(fileContext, {
 })
 ```
 
-![img](https://imgur.com/hFuPw3T.png)
+<Image
+  width={900}
+  height={600}
+  src={'https://imgur.com/hFuPw3T.png'}
+  alt='img'
+  unoptimized
+/>
 
 得到这个 ast 后，我们就可以利用`traverse`遍历这个 ast，并进行对应的转换（新增或删除对应的属性）。
 
