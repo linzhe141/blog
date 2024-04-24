@@ -7,9 +7,10 @@ import rehypeHighlight from 'rehype-highlight'
 import rehypeMdxCodeProps from 'rehype-mdx-code-props'
 import langDockerfile from 'highlight.js/lib/languages/dockerfile'
 import langNginx from 'highlight.js/lib/languages/nginx'
+import { ZoomImage } from '@/components/zoomImage'
 export const components: MDXComponents = {
   Underline,
-  Image: (props: ImageProps) => <Image {...props} />,
+  Image: (props: ImageProps) => <ZoomImage {...props} />,
   h1: ({ children }: any) => <h1 id={generateId(children)}>{children}</h1>,
   h2: ({ children }: any) => <h2 id={generateId(children)}>{children}</h2>,
   pre: (props: any) => {
