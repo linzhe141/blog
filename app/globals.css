@@ -21,6 +21,11 @@
 body {
   color: var(--text);
 }
+
+.medium-zoom-image--opened {
+  z-index: 100;
+}
+
 @property --gradient-end {
   syntax: '<percentage>';
   initial-value: 10%;
