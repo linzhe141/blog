@@ -6,7 +6,7 @@ import { usePrisma } from '@/config'
 import { headers } from 'next/headers'
 import { type MenuData, Result } from '@/types'
 import { type Menu } from '@prisma/client'
-import { getFlatList } from '@/utils'
+import { getFlatList } from '@/lib/utils'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0

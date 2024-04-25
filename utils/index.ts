@@ -1,6 +1,4 @@
 import { type MenuData } from '@/types'
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
 export function getDefaultUrl(data: MenuData[]): string | null {
   if (data.length) {
     const target = data[0]

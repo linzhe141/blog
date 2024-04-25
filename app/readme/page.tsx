@@ -3,7 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import MdxDisplayRsc from '@/components/mdx/mdxDisplayRsc'
 import CursorFollow from '@/components/cursorFollow'
-import { convertMd2Html } from '@/utils'
+import { convertMd2Html } from '@/lib/utils'
 export default async function Page() {
   const { content } = await getReadmeContent()
   return (
