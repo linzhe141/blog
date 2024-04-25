@@ -1,4 +1,4 @@
-import { cn, getDefaultUrl } from '@/utils'
+import { cn, getDefaultUrl } from '@/lib/utils'
 import Link from 'next/link'
 import { toUrl } from './api'
 import { type MenuData, type Result } from '@/types'

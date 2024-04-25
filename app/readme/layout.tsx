@@ -3,7 +3,7 @@ import Underline from '@/components/underline'
 import Header from '@/components/layout/header'
 import { toUrl } from '@/app/api'
 import { type MenuData, type Result } from '@/types'
-import { getDefaultUrl } from '@/utils'
+import { getDefaultUrl } from '@/lib/utils'
 export default async function BlogLayout({
   children,
 }: {

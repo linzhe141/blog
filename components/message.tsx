@@ -1,4 +1,4 @@
-import { cn } from '@/utils'
+import { cn } from '@/lib/utils'
 import React, { useState, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 type Props = {

@@ -1,6 +1,4 @@
 import { type MenuData } from '@/types'
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
 export function getDefaultUrl(data: MenuData[]): string | null {
   if (data.length) {
     const target = data[0]
@@ -46,8 +44,4 @@ export function convertMd2Html(mdSource: string) {
   // 将 ~~xxx~~ 替换为 '<del>xxx</del>'
   mdSource = mdSource.replace(/~~(.*?)~~/g, '<del>$1</del>')
   return mdSource
-}
-
-export function cn(...args: ClassValue[]) {
-  return twMerge(clsx(args))
 }

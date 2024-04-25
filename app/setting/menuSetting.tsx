@@ -5,7 +5,7 @@ import { useImmer } from 'use-immer'
 import { type Result, MenuData } from '@/types'
 import Underline from '@/components/underline'
 import Link from 'next/link'
-import { cn, getDefaultUrl } from '@/utils'
+import { cn, getDefaultUrl } from '@/lib/utils'
 import Header from '@/components/layout/header'
 type Props = {
   setAuth: (value: boolean) => void
