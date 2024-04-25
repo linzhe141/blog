@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import message from '@/components/message'
 import { type Result } from '@/types'
-import { cn } from '@/utils'
+import { cn } from '@/lib/utils'
 type Props = {
   setAuth: (value: boolean) => void
 }

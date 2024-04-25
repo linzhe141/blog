@@ -6,7 +6,7 @@ import Underline from '../underline'
 import ThemeToggle from '../themeToggle'
 
 import { useToggleTheme } from '@/hooks/useToggleTheme'
-import { cn } from '@/utils'
+import { cn } from '@/lib/utils'
 
 type Props = {
   children?: React.ReactNode

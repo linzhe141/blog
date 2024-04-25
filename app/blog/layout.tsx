@@ -12,7 +12,7 @@ import { useMenuStore } from '@/store/menuStore'
 import { usePrisma } from '@/config'
 import Header from '@/components/layout/header'
 import Skeleton from 'react-loading-skeleton'
-import { cn } from '@/utils'
+import { cn } from '@/lib/utils'
 
 export default function BlogLayout({
   children,

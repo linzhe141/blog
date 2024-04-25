@@ -47,7 +47,3 @@ export function convertMd2Html(mdSource: string) {
   mdSource = mdSource.replace(/~~(.*?)~~/g, '<del>$1</del>')
   return mdSource
 }
-
-export function cn(...args: ClassValue[]) {
-  return twMerge(clsx(args))
-}

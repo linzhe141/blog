@@ -4,7 +4,7 @@ import Icon from '../icon/Icon'
 import Link from 'next/link'
 
 import Underline from '../underline'
-import { cn } from '@/utils'
+import { cn } from '@/lib/utils'
 // 虽然MenuItem是递归组件，但是如果多余两层实在太丑了
 export default function MenuItem(props: MenuItemProps) {
   const {

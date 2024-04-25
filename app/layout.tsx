@@ -1,10 +1,10 @@
 import './globals.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { type Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter as FontSans } from 'next/font/google'
 import Layout from '@/components/layout/layout'
 import { Providers } from './providers'
-const inter = Inter({ subsets: ['latin'] })
+const fontSans = FontSans({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
   title: 'linzhe-blog',
@@ -33,7 +33,7 @@ export default function RootLayout({
           }}
         ></script>
       </head>
-      <body className={inter.className}>
+      <body className={fontSans.variable}>
         <Providers>
           <Layout>{children}</Layout>
         </Providers>
