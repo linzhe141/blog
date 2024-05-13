@@ -15,7 +15,7 @@ export default function NotFound() {
         width={550}
         height={470}
       />
-      <Button onClick={() => router.back()} variant='outline'>
+      <Button onClick={() => router.back()} variant='outline' className='mb-4'>
         返回
       </Button>
     </div>
