@@ -1,0 +1,47 @@
+# webpack自定义plugin
+
+使用了`jsencrypt`对数据进行加密，导致再渗透测试中会检测出一个关于`yui`的漏洞。排查后发现，由于`jsencrypt`中的一个`yahoo.js`文件里面有一个
+`http://developer.yahoo.com/yui/license.html`的注释。所以可以通过`webpack的插件机制解决`，即在打包的时候把这个注释去掉就行了
+
+## 1、自定义webpack plugin
+
+```js filename="removeYuiPlugin.js"
+const path = require('path')
+class RemoveYuiPlugin {
+  apply(compiler) {
+    compiler.hooks.compilation.tap('RemoveYuiPlugin', (compilation) => {
+      compilation.hooks.buildModule.tap('RemoveYuiPlugin', (module) => {
+        if (
+          module.resource?.includes('node_modules') &&
+          module.resource?.includes('jsencrypt') &&
+          module.resource?.includes('yahoo.js')
+        ) {
+          module.loaders.push({
+            loader: path.resolve(__dirname, './remove-yui-comments-loader.js'),
+          })
+        }
+      })
+    })
+  }
+}
+
+module.exports = RemoveYuiPlugin
+```
+
+```js filename="remove-yui-comments-loader.js"
+module.exports = function (source) {
+  // 去掉注释的正则表达式
+  const content = source.replace(/\/\*[\s\S]*?\*\/|\/\/.*/g, '')
+  return content
+}
+```
+
+## 2、使用自定义插件
+
+```js filename="webpack.config.js"
+const RemoveCommentsPlugin = require('./removeCommentsPlugin')
+module.exports = {
+  // ...其他配置
+  plugins: [new RemoveCommentsPlugin()],
+}
+```
