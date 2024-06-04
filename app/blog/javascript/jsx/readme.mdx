@@ -151,26 +151,11 @@ pnpm i -D @babel/cli @babel/core @babel/plugin-syntax-jsx
   'use strict'
   var x = Dom(
     'div',
-    {
-      class: 'xxx',
-      id: 'test',
-    },
+    { class: 'xxx', id: 'test' },
     '\n    ',
-    Dom(
-      'div',
-      {
-        class: 'list-1',
-      },
-      '1111'
-    ),
+    Dom('div', { class: 'list-1' }, '1111'),
     '\n    ',
-    Dom(
-      'div',
-      {
-        class: 'list-2',
-      },
-      '2222'
-    ),
+    Dom('div', { class: 'list-2' }, '2222'),
     '\n  '
   )
   ```
