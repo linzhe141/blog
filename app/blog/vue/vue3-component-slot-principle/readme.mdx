@@ -1,0 +1,132 @@
+# vue3组件插槽原理
+
+我们知道，在vue中可通过`slot`可以传递外部传入的元素，比如这样
+
+```html filename="Child.vue"
+<template>
+  <div>
+    <slot />
+  </div>
+</template>
+```
+
+但传递元素时，就可以这样使用
+
+```html filename="App.vue"
+<template>
+  <Child>123</Child>
+</template>
+```
+
+如果不考虑sfc的编译优化，可以将这上述组件转换为对应的[h函数版本](https://vuejs.org/guide/extras/render-function.html#passing-slots)版本,
+这里我们使用了单测来表示，并且通过断点调试这个单测，就可以知道slot的原理了
+
+```js
+  test('slot', async () => {
+    // 这个对应Child.vue
+    const Child = {
+      setup(props: any, { slots }: any) {
+        return () => h('div', null, slots.default())
+      },
+    }
+    // 对于main.js的createApp(App).mount('#app')
+    render(
+      // 这个对应App.vue
+      h(Child, null, { default: () => h('div', null, 123) }),
+      nodeOps.createElement('div'),
+    )
+  })
+```
+
+通过调试可以知道在创建`Child`这个组件的过程中，会先执行`createBaseVNode`，在这个函数中会对第三个参数`{ default: () => h('div', null, 123) }`
+进行处理
+
+```ts
+export function normalizeChildren(vnode: VNode, children: unknown) {
+  let type = 0
+  const { shapeFlag } = vnode
+  // 省略不相干代码
+  if (typeof children === 'object') {
+    // 标示为SLOTS_CHILDREN
+    type = ShapeFlags.SLOTS_CHILDREN
+    const slotFlag = (children as RawSlots)._
+    if (!slotFlag && !isInternalObject(children)) {
+      ;(children as RawSlots)._ctx = currentRenderingInstance
+    }
+  }
+  // 省略不相干代码
+  vnode.children = children as VNodeNormalizedChildren
+  vnode.shapeFlag |= type
+}
+```
+
+然后就通过`mountComponent`挂载Child组件，在`mountComponent`函数中，又通过`setupComponent`初始化，
+这里我们只考虑`initSlots`
+
+```ts
+export function setupComponent(
+  instance: ComponentInternalInstance,
+  isSSR = false
+) {
+  // 省略不相干代码
+  // 这里我们只考虑`initSlots`
+  initSlots(instance, children)
+  // 省略不相干代码
+}
+
+export const initSlots = (
+  instance: ComponentInternalInstance,
+  children: VNodeNormalizedChildren
+) => {
+  const slots = (instance.slots = createInternalObject())
+  // normalizeChildren 已经标识为 SLOTS_CHILDREN
+  if (instance.vnode.shapeFlag & ShapeFlags.SLOTS_CHILDREN) {
+    // { default: () => h('div', null, 123) } 这个对象并没有 `_` 属性
+    const type = (children as RawSlots)._
+    if (type) {
+      extend(slots, children as InternalSlots)
+      // make compiler marker non-enumerable
+      def(slots, '_', type, true)
+    } else {
+      normalizeObjectSlots(children as RawSlots, slots, instance)
+    }
+  }
+}
+```
+
+在`initSlot`这个函数，我们知道会对children`{ default: () => h('div', null, 123) }`使用`normalizeObjectSlots和normalizeSlot`处理，
+通过initSlot处理后，这个组件实例instance.slot就填上了一个属性`default`值为`normalized`函数
+
+```ts
+const normalizeObjectSlots = (
+  rawSlots: RawSlots,
+  slots: InternalSlots,
+  instance: ComponentInternalInstance
+) => {
+  const ctx = rawSlots._ctx
+  for (const key in rawSlots) {
+    if (isInternalKey(key)) continue
+    const value = rawSlots[key]
+    if (isFunction(value)) {
+      slots[key] = normalizeSlot(key, value, ctx)
+    }
+    // 省略不相干代码
+  }
+}
+
+const normalizeSlot = (
+  key: string,
+  rawSlot: Function,
+  ctx: ComponentInternalInstance | null | undefined
+): Slot => {
+  const normalized = withCtx((...args: any[]) => {
+    return normalizeSlotValue(rawSlot(...args))
+  }, ctx) as Slot
+
+  return normalized
+}
+```
+
+接下来在`setupRenderEffect`函数中执行Child的setup返回的渲染函数`() => h('div', null, slots.default())`，
+现在已经通过`initSlot`后，slots也已经存放了default函数`() => h('div', null, 123)`，所以在Child组件中，
+就接收到了外部出来的元素了
