@@ -10,7 +10,7 @@
 </template>
 ```
 
-但传递元素时，就可以这样使用
+当传递元素时，就可以这样使用
 
 ```html filename="App.vue"
 <template>
@@ -21,21 +21,21 @@
 如果不考虑sfc的编译优化，可以将这上述组件转换为对应的[h函数版本](https://vuejs.org/guide/extras/render-function.html#passing-slots)版本,
 这里我们使用了单测来表示，并且通过断点调试这个单测，就可以知道slot的原理了
 
-```js
-  test('slot', async () => {
-    // 这个对应Child.vue
-    const Child = {
-      setup(props: any, { slots }: any) {
-        return () => h('div', null, slots.default())
-      },
-    }
-    // 对于main.js的createApp(App).mount('#app')
-    render(
-      // 这个对应App.vue
-      h(Child, null, { default: () => h('div', null, 123) }),
-      nodeOps.createElement('div'),
-    )
-  })
+```ts
+test('slot', async () => {
+  // 这个对应Child.vue
+  const Child = {
+    setup(props: any, { slots }: any) {
+      return () => h('div', null, slots.default())
+    },
+  }
+  // 对应main.js的createApp(App).mount('#app')
+  render(
+    // 这个对应App.vue
+    h(Child, null, { default: () => h('div', null, 123) }),
+    nodeOps.createElement('div')
+  )
+})
 ```
 
 通过调试可以知道在创建`Child`这个组件的过程中，会先执行`createBaseVNode`，在这个函数中会对第三个参数`{ default: () => h('div', null, 123) }`
@@ -95,7 +95,7 @@ export const initSlots = (
 ```
 
 在`initSlot`这个函数，我们知道会对children`{ default: () => h('div', null, 123) }`使用`normalizeObjectSlots和normalizeSlot`处理，
-通过initSlot处理后，这个组件实例instance.slot就填上了一个属性`default`值为`normalized`函数
+通过initSlot处理后，这个组件实例instance.slot就添加上了一个属性`default`值为`normalized`函数
 
 ```ts
 const normalizeObjectSlots = (
@@ -130,3 +130,43 @@ const normalizeSlot = (
 接下来在`setupRenderEffect`函数中执行Child的setup返回的渲染函数`() => h('div', null, slots.default())`，
 现在已经通过`initSlot`后，slots也已经存放了default函数`() => h('div', null, 123)`，所以在Child组件中，
 就接收到了外部出来的元素了
+
+```ts
+const mountComponent: MountComponentFn = (...) => {
+  // 省略不相干代码
+  setupComponent(instance)
+  // 省略不相干代码
+  setupRenderEffect(
+    instance,
+    initialVNode,
+    container,
+    anchor,
+    parentSuspense,
+    namespace,
+    optimized
+  )
+}
+
+  const setupRenderEffect: SetupRenderEffectFn = (...) => {
+    const componentUpdateFn = () => {
+      // 省略不相干代码
+      // 这里就会执行Child组件setup返回的render函数：() => h('div', null, slots.default())
+      instance.subTree = renderComponentRoot(instance)
+      // 省略不相干代码
+    }
+    // create reactive effect for rendering
+    const effect = (instance.effect = new ReactiveEffect(
+      componentUpdateFn,
+      NOOP,
+      () => queueJob(update),
+      instance.scope, // track it in component's effect scope
+    ))
+
+    const update: SchedulerJob = (instance.update = () => {
+      if (effect.dirty) {
+        effect.run()
+      }
+    })
+    update()
+  }
+```
