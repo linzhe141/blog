@@ -64,6 +64,21 @@ export function normalizeChildren(vnode: VNode, children: unknown) {
 这里我们只考虑`initSlots`
 
 ```ts
+const mountComponent: MountComponentFn = (...) => {
+  // 省略不相干代码
+  setupComponent(instance)
+  // 省略不相干代码
+  setupRenderEffect(
+    instance,
+    initialVNode,
+    container,
+    anchor,
+    parentSuspense,
+    namespace,
+    optimized
+  )
+}
+
 export function setupComponent(
   instance: ComponentInternalInstance,
   isSSR = false
@@ -132,41 +147,26 @@ const normalizeSlot = (
 就接收到了外部出来的元素了
 
 ```ts
-const mountComponent: MountComponentFn = (...) => {
-  // 省略不相干代码
-  setupComponent(instance)
-  // 省略不相干代码
-  setupRenderEffect(
-    instance,
-    initialVNode,
-    container,
-    anchor,
-    parentSuspense,
-    namespace,
-    optimized
-  )
-}
-
-  const setupRenderEffect: SetupRenderEffectFn = (...) => {
-    const componentUpdateFn = () => {
-      // 省略不相干代码
-      // 这里就会执行Child组件setup返回的render函数：() => h('div', null, slots.default())
-      instance.subTree = renderComponentRoot(instance)
-      // 省略不相干代码
-    }
-    // create reactive effect for rendering
-    const effect = (instance.effect = new ReactiveEffect(
-      componentUpdateFn,
-      NOOP,
-      () => queueJob(update),
-      instance.scope, // track it in component's effect scope
-    ))
-
-    const update: SchedulerJob = (instance.update = () => {
-      if (effect.dirty) {
-        effect.run()
-      }
-    })
-    update()
+const setupRenderEffect: SetupRenderEffectFn = (...) => {
+  const componentUpdateFn = () => {
+    // 省略不相干代码
+    // 这里就会执行Child组件setup返回的render函数：() => h('div', null, slots.default())
+    instance.subTree = renderComponentRoot(instance)
+    // 省略不相干代码
   }
+  // create reactive effect for rendering
+  const effect = (instance.effect = new ReactiveEffect(
+    componentUpdateFn,
+    NOOP,
+    () => queueJob(update),
+    instance.scope, // track it in component's effect scope
+  ))
+
+  const update: SchedulerJob = (instance.update = () => {
+    if (effect.dirty) {
+      effect.run()
+    }
+  })
+  update()
+}
 ```
