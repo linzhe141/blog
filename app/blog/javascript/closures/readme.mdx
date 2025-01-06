@@ -1,0 +1,98 @@
+# 从react重新学习闭包
+
+最近在学习 React `useEffect` 原理时，遇到了一个让我十分疑惑的问题：[为什么 useEffect 里面的 cleanup 函数里面的 props 是旧的](https://v2ex.com/t/1102355)
+(基于react@18.3.1)
+
+## 复现 Demo
+
+```jsx
+function App() {
+  const [num, setNum] = useState(100)
+  window.__setNum = setNum
+  return <Comp num={num}></Comp>
+}
+
+function Comp(props) {
+  console.log('render', props)
+  useEffect(() => {
+    console.log(props) // mount时{num: 100}, setNum(1000)后 {num:1000}
+    return () => {
+      console.log('cleanup', props) // setNum(1000)后  {num:100}
+    }
+  }, [props.num])
+  return (
+    <p>
+      <span>{props.num}</span>
+    </p>
+  )
+}
+
+setTimeout(() => {
+  // 忽略不是通过react内部触发的setState
+  __setNum(1000)
+  console.log('setNum(1000)')
+}, 1000)
+```
+
+当运行这段代码时，控制台会依次输出：
+
+```log
+render {num: 100}
+{num: 100}
+setNum(1000)
+render {num: 1000}
+cleanup {num: 100}
+{num: 1000}
+```
+
+## 基础的 useEffect 流程(针对当前这个 Demo 案例)
+
+在第一次mount时，会给当前的fiber节点打上`Passive`标签，后续react会从头分两次递归的找到打上`Passive`的fiber节点执行对应的副作用回调:
+
+- 第一次递归`commitPassiveUnmountEffects`(执行对应的cleanup)
+
+  并且react在mount时默认不会设置cleanup，所以第一次mount的cleanup不会执行，既`hook.memoizedState = pushEffect(HasEffect | hookFlags, create, undefined/*cleanup 为undefined*/, nextDeps);`
+
+- 第二次递归`commitPassiveMountEffects`
+
+  执行对应的副作用回调，并且更新cleanup，为了setState后的下次渲染时在`commitPassiveUnmountEffects`中执行对应的cleanup
+
+当`setNum(1000)`后，更新effect，同样会给当前的fiber节点打上`Passive`标签，因为`commitPassiveMountEffects`这次的cleanup就不是空的了，而是一个`() => {console.log('cleanup', props) }`函数了，
+后续react同样会从头分两次递归的找到打上`Passive`的fiber节点执行对应的副作用回调
+
+- 第一次递归`commitPassiveUnmountEffects`(执行对应的cleanup)
+
+  当执行这个cleanup函数`() => {console.log('cleanup', props) }`时，我发现这里的props是还是`{num:100}`，但是这里的effect的依赖已经是1000了，为什么这不是同一个props?
+
+  <Image
+    width={478}
+    height={353}
+    src={'/blog/closures-destory-effect1.jpg'}
+    alt='closures-destory-effect1'
+    unoptimized
+  />
+
+  并且从调试控制台看，发现这个确实是一个闭包，但为什么这个值是旧的`{num:100}`
+
+  <Image
+    width={861}
+    height={242}
+    src={'/blog/closures-destory-effect2.jpg'}
+    alt='closures-destory-effect1'
+    unoptimized
+  />
+
+> (参考 MDN) 闭包是由捆绑起来（封闭的）的函数和函数周围状态（词法环境）的引用组合而成。换言之，闭包让函数能访问它的外部作用域。在 JavaScript 中，闭包会随着`函数的创建`而同时创建。
+
+那么在这里，useEffect的参数函数和这个参数函数 return 的 cleanup 函数都构成了闭包。
+
+调试了很多次源码后，发现在第一次mount的`commitPassiveMountEffects`中，通过执行副作用回调更新cleanup`effect.destroy = create();`
+因为 useEffect 的回调函数和清理函数共享同一个词法环境，闭包捕获了第一次渲染时的 props。因此，cleanup 函数会访问到那个时刻的 props，所以闭包中的 props 仍然是初始值，
+所以这个阶段的props就是`{num: 100}`，所以就打印了100，并且这个cleanup函数对应关联的闭包里面的也是`{num: 100}`，
+那么setState后，既`Comp(props /*{num: 1000}*/)重新执行`，`commitPassiveUnmountEffects`执行的cleanup打印的当然也还是100，
+并且`commitPassiveMountEffects`又因为重新执行了useEffect回调函数，`这也是新创建的函数`，那么也会重新构成新的闭包，cleanup访问的props就是`{num:1000}`(始终是上一次的)，
+_如果再setNum(2000)，发现cleanup函数会打印1000_
+
+## 总结
+
+简单来说，useEffect 回调和清理函数共享同一个词法作用域，而这个作用域是在 useEffect 初次执行时被捕获的，因此 cleanup 中的 props 会是初次渲染时的值，而不是更新后的值。
