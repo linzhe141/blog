@@ -39,5 +39,5 @@ next-env.d.ts
 
 migrations
 
-pnpm-lock.yaml
+# pnpm-lock.yaml
 
