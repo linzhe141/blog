@@ -6,11 +6,12 @@ import { mdxOptions } from '@/components/mdx/mdxConfig'
 import { MdxDisplay } from '@/components/mdx/mdxDisplay'
 import { getHtmlString } from '@/utils'
 import { serialize } from 'next-mdx-remote/serialize'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Page() {
   const [error, setError] = useState(false)
-  const [srcDoc, setSrcDoc] = useState('')
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const [iframeContentHtml, setIframeContentHtml] = useState('')
   async function renderMdx(value: string | undefined) {
     try {
       const mdxSource = await serialize(value!, {
@@ -19,40 +20,37 @@ export default function Page() {
           development: process.env.NODE_ENV === 'development',
         },
       })
-
-      setSrcDoc(
-        getHtml(
-          getHtmlString(
-            <Blog>
-              <MdxDisplay source={mdxSource} />
-            </Blog>
-          )
-        )
+      const html = getHtmlString(
+        <Blog>
+          <MdxDisplay source={mdxSource} />
+        </Blog>
       )
+      setIframeContentHtml(html)
       setError(false)
     } catch (e) {
       console.error(e)
       setError(true)
     }
   }
+  useEffect(() => {
+    const iframe = iframeRef.current
+    if (!iframe) return
 
-  const getHtml = (srcDoc: string) => {
-    if (srcDoc) {
-      return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <link href="/output.css" rel="stylesheet" />
-          <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-        </head>
-        <body>
-          ${srcDoc}
-        </body>
-      </html>
-    `
+    const doc = iframe.contentDocument
+    if (!doc) return
+    if (doc.head.children.length === 0) {
+      const styleLink = doc.createElement('link')
+      styleLink.rel = 'stylesheet'
+      styleLink.href = '/output.css'
+      doc.head.appendChild(styleLink)
+
+      const script = doc.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4'
+      doc.head.appendChild(script)
     }
-    return ''
-  }
+    doc.body.innerHTML = iframeContentHtml
+  }, [iframeContentHtml])
+
   return (
     <div className='flex h-screen w-screen flex-col'>
       <Header></Header>
@@ -65,11 +63,7 @@ export default function Page() {
             </div>
           ) : (
             <div className='h-full'>
-              <iframe
-                srcDoc={srcDoc}
-                className='h-full w-full'
-                sandbox='allow-scripts'
-              ></iframe>
+              <iframe ref={iframeRef} className='h-full w-full'></iframe>
             </div>
           )}
         </div>
