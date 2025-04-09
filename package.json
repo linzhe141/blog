@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",
+    "build:tw": "tailwindcss -i ./app/globals.css -o ./public/output.css --config ./tailwind.cdn.config.mts",
     "dev": "dotenv -e .env.dev.local -- next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && next build && npm run build:tw",
     "start": "next start",
     "lint": "next lint",
     "prettier-lint": "prettier --write .",

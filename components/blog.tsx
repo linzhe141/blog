@@ -1,15 +1,17 @@
+import { forwardRef } from 'react'
 import { cn } from '@/lib/utils'
 
-export default function Blog({
-  children,
-  className,
-}: {
-  children: React.ReactNode
-  className?: string
-}) {
+const Blog = forwardRef<
+  HTMLDivElement,
+  { children: React.ReactNode; className?: string }
+>(({ children, className }, ref) => {
   return (
-    <div className={cn('prose max-w-full', className)}>
-      <div>{children}</div>
+    <div ref={ref} className={cn('prose max-w-full', className)}>
+      {children}
     </div>
   )
-}
+})
+
+Blog.displayName = 'Blog'
+
+export default Blog

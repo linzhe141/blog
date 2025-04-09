@@ -1,4 +1,7 @@
 import { type MenuData } from '@/types'
+import { flushSync } from 'react-dom'
+import { createRoot } from 'react-dom/client'
+
 export function getDefaultUrl(data: MenuData[]): string | null {
   if (data.length) {
     const target = data[0]
@@ -44,4 +47,13 @@ export function convertMd2Html(mdSource: string) {
   // 将 ~~xxx~~ 替换为 '<del>xxx</del>'
   mdSource = mdSource.replace(/~~(.*?)~~/g, '<del>$1</del>')
   return mdSource
+}
+
+export function getHtmlString(node: React.ReactNode) {
+  const div = document.createElement('div')
+  const root = createRoot(div)
+  flushSync(() => {
+    root.render(node)
+  })
+  return div.innerHTML
 }
