@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export default function Page() {
   const [error, setError] = useState(false)
+  const [blogContent, setBlogContent] = useState('')
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [iframeContentHtml, setIframeContentHtml] = useState('')
   async function renderMdx(value: string | undefined) {
@@ -32,6 +33,14 @@ export default function Page() {
       setError(true)
     }
   }
+
+  function onChangeCode(value: string) {
+    const base64 = btoa(unescape(encodeURIComponent(value)))
+    const url = 'editor#' + base64
+    history.replaceState({}, '', url)
+    setBlogContent(value)
+    renderMdx(value)
+  }
   useEffect(() => {
     const iframe = iframeRef.current
     if (!iframe) return
@@ -50,12 +59,35 @@ export default function Page() {
     }
     doc.body.innerHTML = iframeContentHtml
   }, [iframeContentHtml])
+  useEffect(() => {
+    async function init() {
+      const hash = location.hash
+      let data = ''
+      if (hash.indexOf('#') === 0) {
+        data = decodeURIComponent(escape(atob(hash.slice(1))))
+      } else {
+        const res = await fetch('/editor-starter.md')
+        data = await res.text()
+      }
+      // TODO useCallback
+      const base64 = btoa(unescape(encodeURIComponent(data)))
+      const url = 'editor#' + base64
+      history.replaceState({}, '', url)
+      setBlogContent(data)
+      renderMdx(data)
+    }
+    init()
+  }, [])
 
   return (
     <div className='flex h-screen w-screen flex-col'>
       <Header></Header>
       <div className='mt-[60px] flex h-0 flex-1'>
-        <BlogEditor width='50%' renderMdx={renderMdx} />
+        <BlogEditor
+          width='50%'
+          onChangeCode={onChangeCode}
+          code={blogContent}
+        />
         <div className='h-full flex-1 overflow-auto p-4'>
           {error ? (
             <div className='rounded bg-gray-200 p-4 text-red-500'>

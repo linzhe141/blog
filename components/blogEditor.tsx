@@ -10,24 +10,13 @@ type Monaco = typeof monacoInstance
 
 interface Props {
   width: string | number
-  renderMdx: (code: string) => void
+  onChangeCode: (code: string) => void
+  code: string
 }
-export function BlogEditor({ width, renderMdx }: Props) {
-  const [defaultValue, setDefaultValue] = useState('')
-  const [blogContent, setBlogContent] = useState('')
+export function BlogEditor({ width, onChangeCode, code }: Props) {
   const monacoRef = useRef<Monaco | null>(null)
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
   const { theme: mode } = useToggleTheme()
-
-  useEffect(() => {
-    const hash = location.hash
-    if (hash.indexOf('#') === 0) {
-      const code = decodeURIComponent(escape(atob(hash.slice(1))))
-      setDefaultValue(code)
-      renderMdx(code)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   function handleEditorWillMount(monaco: Monaco) {
     monaco.languages.registerDocumentFormattingEditProvider('markdown', {
@@ -73,11 +62,7 @@ export function BlogEditor({ width, renderMdx }: Props) {
   function formatConent(e: KeyboardEvent) {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       if (editorRef.current) {
-        editorRef.current.trigger(
-          blogContent,
-          'editor.action.formatDocument',
-          {}
-        )
+        editorRef.current.trigger(code, 'editor.action.formatDocument', {})
       }
       e.preventDefault()
     }
@@ -92,7 +77,7 @@ export function BlogEditor({ width, renderMdx }: Props) {
     <Editor
       width={width}
       defaultLanguage='markdown'
-      defaultValue={defaultValue}
+      defaultValue={code}
       beforeMount={handleEditorWillMount}
       onMount={handleEditorDidMount}
       options={{
@@ -102,11 +87,7 @@ export function BlogEditor({ width, renderMdx }: Props) {
       }}
       theme={mode === 'light' ? 'light' : 'vs-dark'}
       onChange={(value) => {
-        const base64 = btoa(unescape(encodeURIComponent(value!)))
-        const url = 'editor#' + base64
-        history.replaceState({}, '', url)
-        setBlogContent(value!)
-        renderMdx(value!)
+        onChangeCode(value!)
       }}
     />
   )
