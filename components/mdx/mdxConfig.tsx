@@ -5,6 +5,7 @@ import { MDXComponents } from 'mdx/types'
 import { type MDXRemoteProps } from 'next-mdx-remote/rsc'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeMdxCodeProps from 'rehype-mdx-code-props'
+import remarkGfm from 'remark-gfm'
 import langDockerfile from 'highlight.js/lib/languages/dockerfile'
 import langNginx from 'highlight.js/lib/languages/nginx'
 import { ZoomImage } from '@/components/zoomImage'
@@ -25,7 +26,7 @@ function generateId(children: React.ReactNode) {
 type MdxOptions = NonNullable<MDXRemoteProps['options']>['mdxOptions']
 
 export const mdxOptions: MdxOptions = {
-  // remarkPlugins: [],
+  remarkPlugins: [[remarkGfm]],
   rehypePlugins: [
     [
       rehypeHighlight,
