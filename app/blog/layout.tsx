@@ -69,7 +69,7 @@ export default function BlogLayout({
           </Underline>
         )}
       </Header>
-      <div className='mt-[57px] flex h-10 items-center justify-between overflow-hidden border-b-[1px] px-2 dark:border-gray-800 xl:h-0 xl:border-b-0'>
+      <div className='mt-[57px] flex h-10 items-center justify-between overflow-hidden border-b-[1px] px-2 dark:border-[#2f3336] xl:h-0 xl:border-b-0'>
         <div
           className='flex cursor-pointer items-center'
           onClick={() => setShowMenu(true)}
@@ -113,7 +113,7 @@ export default function BlogLayout({
       <div className='flex h-0 flex-1 overflow-auto'>
         <div
           className={cn(
-            'overflow-auto border-r-[1px] bg-white transition-[left] duration-300 dark:border-gray-800 dark:bg-black',
+            'overflow-auto border-r-[1px] bg-white transition-[left] duration-300 dark:border-[#2f3336] dark:bg-black',
             'fixed bottom-0 top-0 z-[100]',
             'xl:static xl:z-[0] xl:min-w-[380px] xl:px-[50px]',
             {
@@ -139,19 +139,21 @@ export default function BlogLayout({
             </div>
           )}
         </div>
-        <div className='flex-1 overflow-auto p-5 xl:pr-[300px]'>
-          <Content>{children}</Content>
-        </div>
-        <div
-          className={`hidden dark:border-gray-800 xl:fixed xl:bottom-0 xl:right-[20px] xl:top-[57px] xl:block xl:w-[270px] xl:border-l-[1px] xl:px-[50px]`}
-        >
-          <div className='mb-4 hidden xl:block'></div>
-          {dirStructure.length > 0 && <div className='mb-4'>On this page</div>}
-          {dirStructureLoading ? (
-            <Skeleton count={5} />
-          ) : (
-            <BlogDir data={dirStructure} />
-          )}
+        <div className='flex flex-1 overflow-auto p-5'>
+          <Content className='flex-1'>{children}</Content>
+          <div
+            className={`hidden dark:border-[#2f3336] xl:sticky xl:top-0 xl:block xl:w-[270px] xl:border-l-[1px] xl:px-[50px]`}
+          >
+            <div className='mb-4 hidden xl:block'></div>
+            {dirStructure.length > 0 && (
+              <div className='mb-4'>On this page</div>
+            )}
+            {dirStructureLoading ? (
+              <Skeleton count={5} />
+            ) : (
+              <BlogDir data={dirStructure} />
+            )}
+          </div>
         </div>
       </div>
     </main>

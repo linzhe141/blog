@@ -6,7 +6,10 @@ const Blog = forwardRef<
   { children: React.ReactNode; className?: string }
 >(({ children, className }, ref) => {
   return (
-    <div ref={ref} className={cn('prose max-w-full', className)}>
+    <div
+      ref={ref}
+      className={cn('prose max-w-full dark:prose-invert', className)}
+    >
       {children}
     </div>
   )

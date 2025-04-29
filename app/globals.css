@@ -1,29 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root {
-  --text: #213547;
-}
-.dark {
-  --text: #e2e8f0;
-}
-.dark .prose {
-  --tw-prose-headings: var(--text);
-  --tw-prose-body: var(--text);
-  --tw-prose-bold: var(--text);
-}
-.dark .prose p > code,
-.dark .prose h3 > code,
-.dark .prose li > code {
-  background-color: rgb(30 41 59);
-}
 
-body {
-  color: var(--text);
+:where(.dark .prose code):not(:where(.dark .prose pre code)) {
+  background-color: rgb(30 41 59) !important;
 }
-
 .medium-zoom-image--opened {
   z-index: 100;
+}
+
+#signaturePath {
+  stroke-dasharray: 2400;
+  stroke-dashoffset: 2400;
+  fill: transparent;
+  animation: 8s linear 0s infinite normal none running drawSignature;
+}
+
+@keyframes drawSignature {
+  0% {
+    stroke-dashoffset: 2400;
+  }
+
+  15% {
+    fill: transparent;
+  }
+
+  35%,
+  75% {
+    stroke-dashoffset: 0;
+  }
+
+  90%,
+  100% {
+    stroke-dashoffset: 2400;
+    fill: transparent;
+  }
 }
 
 @property --gradient-end {

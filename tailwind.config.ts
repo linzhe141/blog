@@ -24,7 +24,7 @@ const config: Config = {
       },
       colors: {
         // black: '#020420',
-        black: '#1a1a1a',
+        black: '#000',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

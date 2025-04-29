@@ -5,7 +5,7 @@ import CursorFollow from '@/components/cursorFollow'
 export default async function Page() {
   const { content } = await getReadmeContent()
   return (
-    <div className='prose'>
+    <div className='prose dark:prose-invert'>
       <CursorFollow color='rgba(134, 239, 172, 1)' />
       <MdxDisplayRsc content={content} />
     </div>

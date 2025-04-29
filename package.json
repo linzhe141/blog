@@ -11,14 +11,15 @@
     "lint": "next lint",
     "prettier-lint": "prettier --write .",
     "migrate:deploy": "dotenv -e .env.local -- prisma migrate deploy",
-    "migrate:dev": "dotenv -e .env.dev.local -- prisma migrate dev --name=dev"
+    "migrate:dev": "dotenv -e .env.dev.local -- prisma migrate dev --name=dev",
+    "migrate:reset": "dotenv -e .env.dev.local -- prisma migrate reset"
   },
   "dependencies": {
     "@mdx-js/loader": "^2.3.0",
     "@mdx-js/react": "^2.3.0",
     "@monaco-editor/react": "^4.6.0",
     "@next/mdx": "^13.5.4",
-    "@prisma/client": "^5.4.2",
+    "@prisma/client": "^6.6.0",
     "@radix-ui/react-slot": "^1.0.2",
     "@tailwindcss/typography": "^0.5.10",
     "@types/fs-extra": "^11.0.2",
@@ -48,7 +49,7 @@
     "postcss": "8.4.28",
     "prettier": "^3.0.3",
     "prettier-plugin-tailwindcss": "^0.5.6",
-    "prisma": "^5.4.2",
+    "prisma": "^6.6.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-loading-skeleton": "^3.3.1",
