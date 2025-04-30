@@ -15,6 +15,13 @@
   border-radius: 0;
   margin-top: 0px !important;
 }
+.highlight-wrapper .line {
+  width: 100%;
+  display: inline-block;
+}
+.highlight-wrapper .line:hover {
+  background-color: var(--ray-highlight-hover);
+}
 
 #signaturePath {
   stroke-dasharray: 2400;
