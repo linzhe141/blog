@@ -22,6 +22,12 @@
 .highlight-wrapper .line:hover {
   background-color: var(--ray-highlight-hover);
 }
+:root {
+  --ray-background: hsla(0, 0%, 9%, 1);
+}
+.dark:root {
+  --ray-background: #000;
+}
 
 #signaturePath {
   stroke-dasharray: 2400;

@@ -14,7 +14,7 @@ export const HighlightedCode: React.FC<PropTypes> = ({
   code,
 }) => {
   const [highlightedHtml, setHighlightedHtml] = useState(
-    `<pre class="preshiki css-variablesss" style="font-size: 15px">${code}</pre>`
+    `<pre class="preshiki css-variablesss" style="font-size: 15px; background-color: var(--ray-background);">${code}</pre>`
   )
   const highlighter = useHighlighter((state) => state.highlighter)
   const themeName = 'css-variables'

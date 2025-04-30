@@ -18,7 +18,6 @@ export const shikiTheme = createCssVariablesTheme({
 })
 
 type ShikiSyntaxObject = {
-  background: string
   /* foreground is also used as caret color */
   foreground: string
   /* rest is optional as syntax might come from a textmate source */
@@ -44,7 +43,7 @@ function convertToShikiTheme(syntaxObject: ShikiSyntaxObject): CSSProperties {
   }
 
   return {
-    '--ray-background': syntaxObject.background,
+    // '--ray-background': syntaxObject.background,
     '--ray-foreground': syntaxObject.foreground,
     '--ray-token-constant': syntaxObject.constant,
     '--ray-token-string': syntaxObject.string,
@@ -66,7 +65,7 @@ function convertToShikiTheme(syntaxObject: ShikiSyntaxObject): CSSProperties {
 export const THEME = {
   //TODO: 暂不使用light 主题
   light: convertToShikiTheme({
-    background: 'hsla(0, 0%, 93%,1)',
+    // background: 'hsla(0, 0%, 93%,1)',
     foreground: 'hsla(0, 0%, 9%,1)',
     constant: 'oklch(53.18% 0.2399 256.9900584162342)',
     string: 'oklch(51.75% 0.1453 147.65)',
@@ -84,7 +83,7 @@ export const THEME = {
     highlightBorder: 'oklch(53.18% 0.2399 256.9900584162342)',
   }),
   dark: convertToShikiTheme({
-    background: 'hsla(0, 0%, 9%,1)',
+    // background: 'hsla(0, 0%, 9%,1)',
     foreground: 'hsla(0, 0%, 93%,1)',
     constant: 'oklch(71.7% 0.1648 250.79360374054167)',
     string: 'oklch(73.1% 0.2158 148.29)',

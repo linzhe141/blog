@@ -19,7 +19,7 @@ export default function CodeBlock({ filename, code, language }: Props) {
     }, 2000)
   }
   return (
-    <div className='rounded bg-[#2f2f2f]'>
+    <div className='w-0 min-w-full rounded bg-[#2f2f2f]'>
       <div className='flex justify-between p-2 text-[#cdcdcd]'>
         <div>{language}</div>
         <div>{filename}</div>
@@ -29,9 +29,9 @@ export default function CodeBlock({ filename, code, language }: Props) {
           ) : (
             <div className='relative'>
               <div className='absolute -left-16 -top-1'>
-                <div className='rounded bg-white px-2 py-1 text-xs italic text-green-400'>
+                <pre className='rounded bg-[#f1f5f9] px-2 py-1 text-sm text-green-400 dark:bg-black'>
                   Copied!
-                </div>
+                </pre>
               </div>
               <Icon type='check' color='#cdcdcd' />
             </div>

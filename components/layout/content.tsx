@@ -9,7 +9,9 @@ export default function Content({
 }) {
   return (
     <div className={cn(className)}>
-      <div className='rounded bg-slate-100 p-4 dark:bg-black'>{children}</div>
+      <div className='rounded bg-slate-100 p-4 dark:bg-[#181818]'>
+        {children}
+      </div>
     </div>
   )
 }
