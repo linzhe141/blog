@@ -1,6 +1,6 @@
 # linzhe-blog
 
-这是一个使用 Next.js、Tailwind CSS、MDX 和 Prisma 构建的博客项目，用于记录个人学习笔记。
+这是一个使用 Next.js、Tailwind CSS、MDX: `shiki` 和 Prisma 构建的博客项目，用于记录个人学习笔记。
 
 ## mdx参考
 
@@ -27,3 +27,15 @@
 - `TRUNCATE "Menu" RESTART IDENTITY;` ：清空 "Menu" 表的数据，并将该表的自增长标识列的起始值重置为 1
 - `INSERT INTO "public"."RequsetKey" ("key") VALUES ('test');` : postgres新增数据
 - [Prettier code format take a long time to format](https://github.com/prettier/prettier-vscode/issues/2999),If you are using Auto Import - ES6, TS, JSX, TSX extension, try to uninstall it and replace it with Auto Import.卸载掉`Auto Import - ES6, TS, JSX, TSX`
+- `esm dirname filename`总是记不住。。。
+
+  ```ts
+  import { fileURLToPath } from 'url'
+  import { dirname } from 'path'
+
+  // 等价于 __filename
+  const __filename = fileURLToPath(import.meta.url)
+
+  // 等价于 __dirname
+  const __dirname = dirname(__filename)
+  ```

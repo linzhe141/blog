@@ -17,7 +17,7 @@ export default async function Page({ params }: { params: { name: string[] } }) {
   }
 
   return (
-    <Blog className='relative'>
+    <Blog className='blog-wrapper relative'>
       <Link
         className='absolute right-0 cursor-pointer text-xs no-underline'
         href={getBlogBase64Url()}

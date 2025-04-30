@@ -22,11 +22,28 @@
 .highlight-wrapper .line:hover {
   background-color: var(--ray-highlight-hover);
 }
-:root {
+.highlight-wrapper {
   --ray-background: hsla(0, 0%, 9%, 1);
 }
-.dark:root {
+.dark .blog-wrapper .highlight-wrapper {
   --ray-background: #000;
+}
+
+.medium-zoom-overlay {
+  z-index: 10;
+}
+.medium-zoom-image--opened {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.dark .medium-zoom-image--opened {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  border: 1px solid #fff;
+  background-color: #000;
 }
 
 #signaturePath {

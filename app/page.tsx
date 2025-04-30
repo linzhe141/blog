@@ -1,14 +1,9 @@
-import { cn, getDefaultUrl } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import Link from 'next/link'
-import { toUrl } from './api'
-import { type MenuData, type Result } from '@/types'
 import CursorFollow from '@/components/cursorFollow'
 import Icon from '@/components/icon/Icon'
 
 export default async function Home() {
-  const { data: menuList }: Result<MenuData[]> = await (
-    await fetch(toUrl('/api/menu'), { next: { revalidate: 0 } })
-  ).json()
   return (
     <div
       className={cn(
@@ -20,7 +15,7 @@ export default async function Home() {
     >
       <CursorFollow />
       <div className='flex flex-col items-center justify-center'>
-        <Link href={getDefaultUrl(menuList) ?? ''}>
+        <Link href='/readme'>
           <div className='text-content relative flex flex-col items-center justify-center'>
             <div className='click-icon absolute right-0 top-0'>
               <Icon type='click' color='#213547' />
