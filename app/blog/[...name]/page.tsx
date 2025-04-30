@@ -26,7 +26,7 @@ export default async function Page({ params }: { params: { name: string[] } }) {
           TODO:编辑
         </span>
       </Link>
-
+      <div className='h-6'></div>
       <MdxDisplayRsc content={content} />
     </Blog>
   )
