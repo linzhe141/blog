@@ -11,6 +11,7 @@
 - [react-server-components-rsc--nextjs-app-directory-support](https://github.com/hashicorp/next-mdx-remote/blob/main/README.md#react-server-components-rsc--nextjs-app-directory-support)
 - [monaco prettier plugin](https://prettier.io/lib/package-manifest.js)
 - [monaco prettier website](https://github.com/prettier/prettier/blob/41baabd62734a4b8f4065294cad873af3b46dbb3/website/static/worker.js#L169)
+- [shiki code highlight](<https://github.com/raycast/ray-so/blob/667bf02d704ce9454c0b58c01dae4d99ea1a7a86/app/(navigation)/(code)/components/HighlightedCode.tsx>)
 
 ## TODO
 
