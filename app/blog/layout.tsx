@@ -139,8 +139,8 @@ export default function BlogLayout({
             </div>
           )}
         </div>
-        <div className='flex flex-1 overflow-auto p-5'>
-          <Content className='flex-1'>{children}</Content>
+        <div className='flex flex-1 overflow-auto'>
+          <Content className='flex-1 p-5'>{children}</Content>
           <div
             className={`hidden dark:border-[#2f3336] xl:sticky xl:top-0 xl:block xl:w-[270px] xl:border-l-[1px] xl:px-[50px]`}
           >

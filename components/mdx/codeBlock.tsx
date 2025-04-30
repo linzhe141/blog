@@ -1,12 +1,14 @@
 'use client'
 import { useRef, useState } from 'react'
 import Icon from '../icon/Icon'
-
+import { HighlightedCode } from './highlighted-code'
+import { LANGUAGES } from '@/components/mdx/languages'
 type Props = {
   filename: string
-  children: React.ReactNode
+  language: string
+  code: string
 }
-export default function CodeBlock({ filename, children }: Props) {
+export default function CodeBlock({ filename, code, language }: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [copied, setCopied] = useState(false)
   function copyHandle() {
@@ -19,7 +21,7 @@ export default function CodeBlock({ filename, children }: Props) {
   return (
     <div className='rounded bg-[#2f2f2f]'>
       <div className='flex justify-between p-2 text-[#cdcdcd]'>
-        <div>{getCodeLanguage(children)}</div>
+        <div>{language}</div>
         <div>{filename}</div>
         <div className='cursor-pointer rounded p-1' onClick={copyHandle}>
           {!copied ? (
@@ -36,14 +38,12 @@ export default function CodeBlock({ filename, children }: Props) {
           )}
         </div>
       </div>
-      <pre className={'mt-0 rounded-none p-0'}>
-        <div ref={ref}>{children}</div>
-      </pre>
+      <div ref={ref} className={'mt-0 rounded-none p-0'}>
+        <HighlightedCode
+          code={code}
+          selectedLanguage={LANGUAGES[language] ?? LANGUAGES.javascript}
+        ></HighlightedCode>
+      </div>
     </div>
   )
-}
-function getCodeLanguage(children: any) {
-  if (!children.props.className) return ''
-  const [_, language] = children.props.className?.split('language-')
-  return language as string
 }

@@ -3,11 +3,8 @@ import Image, { type ImageProps } from 'next/image'
 import CodeBlock from '@/components/mdx/codeBlock'
 import { MDXComponents } from 'mdx/types'
 import { type MDXRemoteProps } from 'next-mdx-remote/rsc'
-import rehypeHighlight from 'rehype-highlight'
 import rehypeMdxCodeProps from 'rehype-mdx-code-props'
 import remarkGfm from 'remark-gfm'
-import langDockerfile from 'highlight.js/lib/languages/dockerfile'
-import langNginx from 'highlight.js/lib/languages/nginx'
 import { ZoomImage } from '@/components/zoomImage'
 export const components: MDXComponents = {
   Underline,
@@ -16,7 +13,14 @@ export const components: MDXComponents = {
   h2: ({ children }: any) => <h2 id={generateId(children)}>{children}</h2>,
   pre: (props: any) => {
     const { children, filename } = props as any
-    return <CodeBlock filename={filename}>{children}</CodeBlock>
+    const language = getCodeLanguage(children)
+    return (
+      <CodeBlock
+        filename={filename}
+        code={children.props.children}
+        language={language}
+      ></CodeBlock>
+    )
   },
 }
 
@@ -27,17 +31,11 @@ type MdxOptions = NonNullable<MDXRemoteProps['options']>['mdxOptions']
 
 export const mdxOptions: MdxOptions = {
   remarkPlugins: [[remarkGfm]],
-  rehypePlugins: [
-    [
-      rehypeHighlight,
-      {
-        ignoreMissing: true,
-        languages: {
-          nginx: langNginx,
-          dockerfile: langDockerfile,
-        },
-      },
-    ],
-    rehypeMdxCodeProps as any,
-  ],
+  rehypePlugins: [rehypeMdxCodeProps as any],
+}
+
+function getCodeLanguage(children: any) {
+  if (!children.props.className) return ''
+  const [_, language] = children.props.className?.split('language-')
+  return language as string
 }
