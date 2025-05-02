@@ -6,6 +6,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useShikiInit()
   return (
     <ThemeProvider
+      defaultTheme={'dark'}
       attribute='class'
       enableSystem={false}
       disableTransitionOnChange
