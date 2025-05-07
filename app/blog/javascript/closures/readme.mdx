@@ -82,8 +82,6 @@ cleanup {num: 100}
     unoptimized
   />
 
-> (参考 MDN) 闭包是由捆绑起来（封闭的）的函数和函数周围状态（词法环境）的引用组合而成。换言之，闭包让函数能访问它的外部作用域。在 JavaScript 中，闭包会随着`函数的创建`而同时创建。
-
 那么在这里，useEffect的参数函数和这个参数函数 return 的 cleanup 函数都构成了闭包。
 
 调试了很多次源码后，发现在第一次mount的`commitPassiveMountEffects`中，通过执行副作用回调更新cleanup`effect.destroy = create();`
@@ -96,3 +94,23 @@ _如果再setNum(2000)，发现cleanup函数会打印1000_
 ## 总结
 
 简单来说，useEffect 回调和清理函数共享同一个词法作用域，而这个作用域是在 useEffect 初次执行时被捕获的，因此 cleanup 中的 props 会是初次渲染时的值，而不是更新后的值。
+
+## tips
+
+> (参考 MDN) 闭包是由捆绑起来（封闭的）的函数和函数周围状态（词法环境）的引用组合而成。换言之，闭包让函数能访问它的外部作用域。在 JavaScript 中，闭包会随着`函数的创建`而同时创建。
+
+这就是一个闭包，不一定非得在函数调用后再返回一个函数
+
+```js
+foo()
+function foo() {
+  let x = 1
+  function bar() {
+    x
+    debugger
+  }
+  bar()
+}
+```
+
+![Image](https://github.com/user-attachments/assets/682a5c16-c346-474e-a1b4-1a6311ebadc0)
