@@ -13,6 +13,7 @@ type Props = {
 export default function MenuSetting({ setAuth }: Props) {
   const menuList = useMenuStore((state) => state.menuList)
   const setMenuList = useMenuStore((state) => state.setMenuList)
+  // cope 一份数据，防止修改到源数据
   const [treeData, setTreeData] = useImmer(menuList)
 
   const [disabled, setDisabled] = useState(false)
@@ -69,11 +70,10 @@ export default function MenuSetting({ setAuth }: Props) {
       setLabel(draft as unknown as TreeData[], id, value)
     })
   }
-
+  // 有点抽象了
   useEffect(() => {
     setTreeData(menuList)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [menuList])
+  }, [menuList, setTreeData])
   return (
     <div className='flex flex-col items-center justify-center'>
       <Header>

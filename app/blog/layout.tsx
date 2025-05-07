@@ -33,25 +33,30 @@ export default function BlogLayout({
       setShowMenu(false)
     }
   }
-  function resizeHandle() {
-    closeMenu()
-  }
+
   function beforeJumpHandle() {
     closeMenu()
   }
-  function keydownHandle(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-      closeMenu()
-    }
-  }
+
   useEffect(() => {
+    function resizeHandle() {
+      if (showMenu) {
+        setShowMenu(false)
+      }
+    }
+    function keydownHandle(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        if (showMenu) {
+          setShowMenu(false)
+        }
+      }
+    }
     window.addEventListener('resize', resizeHandle)
     window.addEventListener('keydown', keydownHandle)
     return () => {
       window.removeEventListener('resize', resizeHandle)
       window.removeEventListener('keydown', keydownHandle)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showMenu])
   return (
     <main className='flex h-screen flex-col'>

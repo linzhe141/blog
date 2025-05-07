@@ -59,20 +59,21 @@ export function BlogEditor({ width, onChangeCode, code }: Props) {
     monacoRef.current = monaco
     editorRef.current = editor
   }
-  function formatConent(e: KeyboardEvent) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-      if (editorRef.current) {
-        editorRef.current.trigger(code, 'editor.action.formatDocument', {})
-      }
-      e.preventDefault()
-    }
-  }
+
   useEffect(() => {
+    function formatConent(e: KeyboardEvent) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        if (editorRef.current) {
+          editorRef.current.trigger(code, 'editor.action.formatDocument', {})
+        }
+        e.preventDefault()
+      }
+    }
     window.addEventListener('keydown', formatConent)
     return () => {
       window.removeEventListener('keydown', formatConent)
     }
-  }, [])
+  }, [code])
   return (
     <Editor
       width={width}
