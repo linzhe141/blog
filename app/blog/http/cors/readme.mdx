@@ -47,7 +47,7 @@ app.options('/{*any}', (req, res) => {
 // 但如果只对真正的请求进行了cors设置，没有对options进行设置，这么也会导致发生跨域错误
 app.put('/foo', cors(), (req, res) => {
   res.send('Hello World!')
-})``
+})
 ```
 
 当服务器向上面这样处理后，发送跨域请求时options请求就会拉到如下的响应头
@@ -72,7 +72,7 @@ fetch('http://localhost:3000/foo', {
 
 这也是一种方案用于解决cors，本质是通过服务器去访问领一个源的请求，从而避免了cors，因为cors只在浏览器才会发生，如果是服务器去访问另一个服务器的请求是能够正常访问的，不存在cors
 
-```js filename=vite.config.js
+```js filename="vite.config.js"
 export default defineConfig({
   server: {
     proxy: {
