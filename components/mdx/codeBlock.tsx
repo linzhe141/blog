@@ -6,9 +6,15 @@ import { LANGUAGES } from '@/components/mdx/languages'
 type Props = {
   filename: string
   language: string
+  nowrapper: boolean
   code: string
 }
-export default function CodeBlock({ filename, code, language }: Props) {
+export default function CodeBlock({
+  filename,
+  code,
+  language,
+  nowrapper,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [copied, setCopied] = useState(false)
   function copyHandle() {
@@ -17,6 +23,16 @@ export default function CodeBlock({ filename, code, language }: Props) {
     window.setTimeout(() => {
       setCopied(false)
     }, 2000)
+  }
+  if (nowrapper) {
+    return (
+      <div className='pure-highling'>
+        <HighlightedCode
+          code={code}
+          selectedLanguage={LANGUAGES[language] ?? LANGUAGES.javascript}
+        ></HighlightedCode>
+      </div>
+    )
   }
   return (
     <div className='w-0 min-w-full rounded bg-[#2f2f2f]'>

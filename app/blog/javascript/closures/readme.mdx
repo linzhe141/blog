@@ -101,16 +101,19 @@ _如果再setNum(2000)，发现cleanup函数会打印1000_
 
 这就是一个闭包，不一定非得在函数调用后再返回一个函数
 
-```js
-foo()
-function foo() {
-  let x = 1
-  function bar() {
-    x
-    debugger
+<div className='flex'>
+  <div className='flex-1 mr-3'>
+  ```js nowrapper
+  foo()
+  function foo() {
+    let x = 1
+    function bar() {
+      x
+      debugger
+    }
+    bar()
   }
-  bar()
-}
-```
-
-![Image](https://github.com/user-attachments/assets/682a5c16-c346-474e-a1b4-1a6311ebadc0)
+  ```
+  </div>
+  <div className='flex-1 pure-img-wrapper'>![Image](https://github.com/user-attachments/assets/682a5c16-c346-474e-a1b4-1a6311ebadc0)</div>
+</div>

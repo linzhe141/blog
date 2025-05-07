@@ -32,8 +32,11 @@ export const HighlightedCode: React.FC<PropTypes> = ({
       }
 
       const lang = selectedLanguage.name.toLowerCase()
-
-      const html = highlighter.codeToHtml(code, {
+      let formatCode = code
+      if (code.at(-1) === '\n') {
+        formatCode = code.slice(0, code.length - 1)
+      }
+      const html = highlighter.codeToHtml(formatCode, {
         lang: lang,
         theme: themeName,
       })

@@ -12,10 +12,11 @@ export const components: MDXComponents = {
   h1: ({ children }: any) => <h1 id={generateId(children)}>{children}</h1>,
   h2: ({ children }: any) => <h2 id={generateId(children)}>{children}</h2>,
   pre: (props: any) => {
-    const { children, filename } = props as any
+    const { children, filename, nowrapper } = props as any
     const language = getCodeLanguage(children)
     return (
       <CodeBlock
+        nowrapper={!!nowrapper}
         filename={filename}
         code={children.props.children}
         language={language}

@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.pure-highling pre {
+  margin-bottom: 0px !important;
+}
+.pure-img-wrapper img {
+  margin: 0 !important;
+}
+
 :where(.dark .prose code):not(:where(.dark .prose pre code)) {
   background-color: rgb(30 41 59) !important;
 }
