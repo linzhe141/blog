@@ -5,7 +5,33 @@
 - 前端缓存([强缓存和协商缓存](https://github.com/linzhe141/cache-demo))
 - webpack gzip压缩(compression-webpack-plugin)，gzip有着比zip更优秀的压缩算法，可以有效的减少文件的大小。
 - 减少重排和重绘
+
+  - 假设初始布局发生在返回图像之前。由于我们没有声明图像的尺寸，因此一旦知道图像的尺寸，就会出现重排，`所以要给图片的width和height`
+
 - [script的async和defer](https://x.com/wulianwen1/status/1724699387300069380)
+
+  ```html
+  <script>
+    // 为什么要在最后添加script标签
+    // 避免js操作dom失效
+    const x = document.getElementById('x')
+    console.log(x) // null
+  </script>
+  <div id="x" style="background: #f00; width: 100px; height: 100px"></div>
+  <script>
+    // 在执行完js之前，整个页面都不会渲染，是“空白”的
+    let startTime = Date.now()
+    let endTime = startTime + 3000 // 3秒后结束
+
+    while (Date.now() < endTime) {
+      // 模拟一些操作
+    }
+
+    console.log('3秒已到，循环停止。')
+    // 就会渲染页面了
+  </script>
+  ```
+
 - 懒加载
 - 代码拆分，动态import
 
@@ -36,3 +62,8 @@ function say() {
 ## 4、浏览器工作原理
 
 [详情](https://developer.mozilla.org/zh-CN/docs/Web/Performance/Guides/How_browsers_work)
+
+- 在渲染到屏幕上面之前，HTML、CSS、JavaScript 必须被解析完成。
+- 当解析器发现非阻塞资源，例如一张图片，浏览器会请求这些资源并且继续解析。当遇到一个 CSS 文件时，解析也可以继续进行，
+  但是对于 `<script>` 标签（特别是没有 async 或者 defer 属性的）会阻塞渲染并停止 HTML 的解析。
+- 等待获取 CSS 不会阻塞 HTML 的解析或者下载，但是它确实会阻塞 JavaScript，因为 JavaScript 经常用于查询元素的 CSS 属性
