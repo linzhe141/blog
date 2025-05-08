@@ -59,7 +59,11 @@ export default function BlogLayout({
     }
   }, [showMenu])
   return (
-    <main className='flex h-screen flex-col'>
+    <main
+      className={cn('flex flex-col', {
+        'h-0 overflow-hidden': showMenu,
+      })}
+    >
       <Header>
         <Underline className=' ml-4'>
           <Link className='font-semibold' href='/readme'>
@@ -74,7 +78,7 @@ export default function BlogLayout({
           </Underline>
         )}
       </Header>
-      <div className='mt-[57px] flex h-10 items-center justify-between overflow-hidden border-b-[1px] px-2 dark:border-[#2f3336] xl:h-0 xl:border-b-0'>
+      <div className='sticky top-[57px] z-10 flex h-10 items-center justify-between overflow-hidden border-b-[1px] border-t-[1px] bg-white px-2 dark:border-[#2f3336] dark:bg-black xl:hidden xl:border-b-0'>
         <div
           className='flex cursor-pointer items-center'
           onClick={() => setShowMenu(true)}
@@ -115,40 +119,43 @@ export default function BlogLayout({
           ></div>
         </div>
       </div>
-      <div className='flex h-0 flex-1 overflow-auto'>
-        <div
+      <div className='mt-[60px] flex'>
+        <aside
           className={cn(
-            'overflow-auto border-r-[1px] bg-white transition-[left] duration-300 dark:border-[#2f3336] dark:bg-black',
+            'border-r-[1px] bg-white transition-[left] duration-300 dark:border-[#2f3336] dark:bg-black',
             'fixed bottom-0 top-0 z-[100]',
             'xl:static xl:z-[0] xl:min-w-[380px] xl:px-[50px]',
             {
-              'left-0 right-0': showMenu,
+              'left-0 right-0 overflow-auto': showMenu,
               'left-[-1000px]': !showMenu,
             }
           )}
         >
-          <div className='flex flex-row-reverse px-4 py-2 xl:hidden'>
-            <div
-              onClick={closeMenu}
-              className='cursor-pointer rounded-full p-1 transition-all duration-200 hover:rotate-180 hover:bg-green-100 hover:text-green-400'
-            >
-              <Icon type='close' />
+          <div className={`xl:sticky xl:top-[100px]`}>
+            <div className='flex flex-row-reverse px-4 py-2 xl:hidden'>
+              <div
+                onClick={closeMenu}
+                className='cursor-pointer rounded-full p-1 transition-all duration-200 hover:rotate-180 hover:bg-green-100 hover:text-green-400'
+              >
+                <Icon type='close' />
+              </div>
             </div>
+            <div className='mb-4 hidden xl:block'></div>
+            {menuList.length > 0 ? (
+              <Menu beforeJump={beforeJumpHandle} data={menuList} />
+            ) : (
+              <div className='p-4'>
+                <Skeleton style={{ height: '30px' }} count={10} />
+              </div>
+            )}
+            <div className='hidden h-10 xl:block'></div>
           </div>
-          <div className='mb-4 hidden xl:block'></div>
-          {menuList.length > 0 ? (
-            <Menu beforeJump={beforeJumpHandle} data={menuList} />
-          ) : (
-            <div className='p-4'>
-              <Skeleton style={{ height: '30px' }} count={10} />
-            </div>
-          )}
-        </div>
-        <div className='flex flex-1 overflow-auto'>
+        </aside>
+        <div className='min-h-screen flex-1'>
           <Content className='flex-1 p-5'>{children}</Content>
-          <div
-            className={`hidden dark:border-[#2f3336] xl:sticky xl:top-0 xl:block xl:w-[270px] xl:border-l-[1px] xl:px-[50px]`}
-          >
+        </div>
+        <aside className='hidden dark:border-[#2f3336]  xl:block xl:w-[270px] xl:border-l-[1px] xl:px-[50px] '>
+          <div className={`xl:sticky xl:top-[100px]`}>
             <div className='mb-4 hidden xl:block'></div>
             {dirStructure.length > 0 && (
               <div className='mb-4'>On this page</div>
@@ -159,7 +166,7 @@ export default function BlogLayout({
               <BlogDir data={dirStructure} />
             )}
           </div>
-        </div>
+        </aside>
       </div>
     </main>
   )
