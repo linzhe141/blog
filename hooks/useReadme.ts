@@ -10,9 +10,10 @@ export function useReadme({ url }: Props) {
   useEffect(() => {
     async function getDirStructure() {
       if (!url) return
+      const postPath = url.replace('blog', '')
       setLoading(true)
       const { data }: Result<string[]> = await (
-        await fetch(`/api/readme?url=${url}`)
+        await fetch(`/api/readme?url=${postPath}`)
       ).json()
       setDirStructure(data)
       setLoading(false)

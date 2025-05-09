@@ -17,7 +17,7 @@ export async function GET(request: Request) {
   const url = searchParams.get('url')
   const readmeName = `${url}/readme.mdx`
   try {
-    const readmePath = path.resolve(process.cwd(), 'app/' + readmeName)
+    const readmePath = path.resolve(process.cwd(), 'posts/' + readmeName)
     const fileContent = await fs.readFile(readmePath, 'utf-8')
     const { content } = matter(fileContent)
     const processor = remark().use(slug)

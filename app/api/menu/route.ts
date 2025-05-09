@@ -13,19 +13,18 @@ export const revalidate = 0
 
 //? vercel中使用fs读取不到page.tsx
 const markFileName = 'readme.mdx'
-const blogDirName = 'blog'
+const postsDirName = 'posts'
 async function getBlogUrlList(
   dir: string,
   result: MenuData[] = [],
   parent: MenuData | null = null
 ) {
   for (const name of await fs.readdir(dir)) {
-    if (name === '[...name]' || name === 'layout.tsx') continue
     const fileStat = await fs.stat(path.resolve(dir, name))
     const isDirectory = fileStat.isDirectory()
     const item = { label: name, name, url: name } as MenuData
-    if (item.url.indexOf(blogDirName) !== 1) {
-      item.url = `/${blogDirName}/${item.url}`
+    if (item.url.indexOf(postsDirName) !== 1) {
+      item.url = `/${postsDirName}/${item.url}`
     }
     if (parent) {
       item.url = parent.url + '/' + name
@@ -105,11 +104,11 @@ function formatMenu(data: Menu[], result: MenuData[] = [], map = new Map()) {
 }
 
 export async function GET(request: Request) {
-  const blogPath = path.resolve(process.cwd(), 'app/' + blogDirName)
-  const blogUrlList = await getBlogUrlList(blogPath)
+  const postsPath = path.resolve(process.cwd(), postsDirName)
+  const postsUrlList = await getBlogUrlList(postsPath)
   if (usePrisma) {
     // vercel pgsql 使用
-    const flatList = getFlatList(blogUrlList)
+    const flatList = getFlatList(postsUrlList)
     await add2DB(flatList)
     const menuList = await prisma.menu.findMany({
       orderBy: {
@@ -121,7 +120,7 @@ export async function GET(request: Request) {
   } else {
     const result: Result<MenuData[]> = {
       code: 200,
-      data: blogUrlList,
+      data: postsUrlList,
     }
     return NextResponse.json(result)
   }
