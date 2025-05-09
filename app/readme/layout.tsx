@@ -1,27 +1,21 @@
 import Link from 'next/link'
 import Underline from '@/components/underline'
 import Header from '@/components/layout/header'
-import { toUrl } from '@/app/api'
-import { type MenuData, type Result } from '@/types'
-import { getDefaultUrl } from '@/lib/utils'
 export default async function BlogLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const { data: menuList }: Result<MenuData[]> = await (
-    await fetch(toUrl('/api/menu'), { next: { revalidate: 0 } })
-  ).json()
   return (
     <main className='flex flex-col'>
       <Header>
         <Underline>
-          <Link className='font-semibold' href={getDefaultUrl(menuList) ?? ''}>
+          <Link className='font-semibold' href={'/blog'}>
             blog
           </Link>
         </Underline>
       </Header>
-      <div className='mx-auto mt-[90px] p-5'>{children}</div>
+      <div className='mx-auto mt-[90px] p-5 xl:w-[920px]'>{children}</div>
     </main>
   )
 }

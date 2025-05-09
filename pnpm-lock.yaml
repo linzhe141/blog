@@ -68,6 +68,9 @@ importers:
       eslint-config-prettier:
         specifier: ^9.0.0
         version: 9.1.0(eslint@8.47.0)
+      fast-glob:
+        specifier: ^3.3.3
+        version: 3.3.3
       framer-motion:
         specifier: ^10.16.4
         version: 10.18.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)

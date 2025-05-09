@@ -1,48 +1,13 @@
 'use client'
-import { useEffect } from 'react'
-import { useMenuStore } from '@/store/menuStore'
 import { Next13ProgressBar } from 'next13-progressbar'
-import { type Result, MenuData, MenuItemProps } from '@/types'
 import { useToggleTheme } from '@/hooks/useToggleTheme'
 import { SkeletonTheme } from 'react-loading-skeleton'
 import { usePathname } from 'next/navigation'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const setMenuList = useMenuStore((state) => state.setMenuList)
   const { theme: mode } = useToggleTheme()
   const pathname = usePathname()
-  useEffect(() => {
-    function setDefaultData(
-      data: MenuItemProps,
-      parentNode: MenuItemProps | null = null,
-      level: number = 1
-    ) {
-      data.expanded = false
-      data.level = level
-      //! 先进行递归，再从叶子节点一层层出来 类比 二叉树的后序遍历
-      if (data.children) {
-        data.children.forEach((item) =>
-          setDefaultData(item, data, data.level + 1)
-        )
-      }
-      if (data.url === location.pathname) {
-        if (parentNode) {
-          parentNode.expanded = true
-        }
-      }
-      if (data.children?.find((it) => it.expanded)) {
-        data.expanded = true
-      }
-      return data
-    }
-    async function init() {
-      const res: Result<MenuData[]> = await (await fetch('/api/menu')).json()
-      const data = res.data as unknown as MenuItemProps[]
-      const formatData = data.map((item) => setDefaultData(item)) as any
-      setMenuList(formatData)
-    }
-    init()
-  }, [setMenuList])
+
   let baseColor = 'transparent'
   let highlightColor = 'transparent'
   if (mode === 'dark') {
@@ -68,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <footer className='border-t border-border bg-background py-6'>
           <div className='container mx-auto flex flex-col items-center justify-between gap-4 px-4 md:flex-row'>
             <p className='text-center text-sm text-muted-foreground'>
-              © 2025 <span className='mx-2'>linzhe</span>. All rights reserved.
+              © 2025 <span className='mx-2'>linzhe. </span>All rights reserved.
             </p>
             <div className='flex items-center gap-4'></div>
           </div>

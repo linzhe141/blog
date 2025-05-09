@@ -1,6 +1,6 @@
 # linzhe-blog
 
-这是一个使用 Next.js、Tailwind CSS、MDX: `shiki` 和 Prisma 构建的博客项目，用于记录个人学习笔记。
+这是一个使用 Next.js、Tailwind CSS、MDX: `shiki`构建的博客项目，用于记录个人学习笔记。
 
 ## mdx参考
 
