@@ -12,7 +12,8 @@
     "prettier-lint": "prettier --write .",
     "migrate:deploy": "dotenv -e .env.local -- prisma migrate deploy",
     "migrate:dev": "dotenv -e .env.dev.local -- prisma migrate dev --name=dev",
-    "migrate:reset": "dotenv -e .env.dev.local -- prisma migrate reset"
+    "migrate:reset": "dotenv -e .env.dev.local -- prisma migrate reset",
+    "gen-posts-info": "node script/gen-posts-info.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^2.3.0",

@@ -1,31 +1,8 @@
 import Content from '@/components/layout/content'
-import fs from 'node:fs'
-import fg from 'fast-glob'
 import Underline from '@/components/underline'
 import Link from 'next/link'
-
+import filesInfo from '@/public/filesInfo.json'
 export default async function Page() {
-  const filesInfo = fg
-    .sync('posts/**/readme.mdx', {
-      cwd: process.cwd(),
-      absolute: true,
-    })
-    .map((filePath) => {
-      const stats = fs.statSync(filePath)
-      const fileText = fs.readFileSync(filePath, 'utf-8')
-      let title = ''
-      const titleTarget = fileText.split('\n').find((i) => i.startsWith('#'))
-      if (titleTarget) title = titleTarget
-      const [_, path] = filePath.split('posts/')
-
-      return {
-        path: path.replace('/readme.mdx', ''),
-        title: title,
-        createdAt: stats.birthtime,
-        updatedAt: stats.mtime,
-      }
-    })
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
   return (
     <Content className='flex-1 p-5 xl:mx-auto xl:w-1/2'>
       <div className='space-y-8'>

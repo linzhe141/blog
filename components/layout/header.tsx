@@ -19,7 +19,7 @@ export default function Header({ children }: Props) {
       className={cn(
         'fixed top-0 z-10',
         'flex w-full items-center justify-between',
-        'border-b-[1px] bg-white p-4 shadow-md shadow-gray-400',
+        'border-b bg-white p-4 shadow-md shadow-gray-400',
         'dark:border-[#2f3336] dark:bg-black dark:shadow-none'
       )}
     >
