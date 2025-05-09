@@ -40,13 +40,6 @@ export default function BlogLayout({
 
   return (
     <main className={cn('flex flex-col')}>
-      <Header>
-        <Underline className=' ml-4'>
-          <Link className='font-semibold' href='/readme'>
-            readme
-          </Link>
-        </Underline>
-      </Header>
       <div className='sticky top-[63px]  z-10 mb-4 flex h-[50px] items-center border-b bg-white shadow-md shadow-gray-400 dark:border-[#2f3336] dark:bg-black dark:shadow-none xl:hidden'>
         <Underline className=' ml-4 w-[120px]'>
           <Link className='inline-flex items-center' href='/blog'>

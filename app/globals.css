@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.text-stroke {
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: #aaa;
+}
+
 .pure-highling pre {
   margin-bottom: 0px !important;
 }

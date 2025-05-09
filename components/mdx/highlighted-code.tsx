@@ -8,13 +8,20 @@ type PropTypes = {
   selectedLanguage: Language
   code: string
 }
-
+function escapeHTML(str: string) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
 export const HighlightedCode: React.FC<PropTypes> = ({
   selectedLanguage,
   code,
 }) => {
   const [highlightedHtml, setHighlightedHtml] = useState(
-    `<pre class="preshiki css-variablesss" style="font-size: 15px; background-color: var(--ray-background);">${code}</pre>`
+    `<pre class="preshiki css-variablesss" style="font-size: 15px; background-color: var(--ray-background);">${escapeHTML(code)}</pre>`
   )
   const highlighter = useHighlighter((state) => state.highlighter)
   const themeName = 'css-variables'
