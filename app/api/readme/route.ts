@@ -5,12 +5,20 @@ import { NextResponse } from 'next/server'
 import { remark } from 'remark'
 import slug from 'remark-slug'
 import { type Result } from '@/types'
+function extractText(node: any): string {
+  if (node.value) {
+    return node.value
+  }
+
+  if (Array.isArray(node.children)) {
+    return node.children.map(extractText).join('')
+  }
+  return ''
+}
 function getDirStructure(root: any) {
   return root.children
     .filter((item: any) => item.type === 'heading' && item.depth === 2)
-    .map((item: any) =>
-      item.children.reduce((title: string, it: any) => (title += it.value), '')
-    ) as string[]
+    .map((item: any) => item.children.map(extractText).join('')) as string[]
 }
 export async function GET(request: Request) {
   const searchParams = new URLSearchParams(request.url.split('?')[1])

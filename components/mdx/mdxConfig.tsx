@@ -25,8 +25,24 @@ export const components: MDXComponents = {
   },
 }
 
+function extractText(node: React.ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') {
+    return node.toString()
+  }
+
+  if (Array.isArray(node)) {
+    return node.map(extractText).join('')
+  }
+
+  if (node && typeof node === 'object' && 'props' in node) {
+    // 是 React 元素
+    return extractText((node as any).props.children)
+  }
+
+  return ''
+}
 function generateId(children: React.ReactNode) {
-  return children as string
+  return extractText(children)
 }
 type MdxOptions = NonNullable<MDXRemoteProps['options']>['mdxOptions']
 

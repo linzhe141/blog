@@ -7,7 +7,11 @@ import Underline from '@/components/underline'
 export default function BlogDir({ data, beforeJump }: Props) {
   function clickHandle(url: string) {
     beforeJump && beforeJump()
-    document.getElementById(url)?.scrollIntoView({ behavior: 'smooth' })
+    const item = document.getElementById(url)
+    if (item) {
+      item.style.scrollMargin = '100px'
+      item.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
   }
   return (
     <div>
