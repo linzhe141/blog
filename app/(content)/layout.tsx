@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Underline from '@/components/underline'
 import Header from '@/components/layout/header'
-export default async function BlogLayout({
+export default function BlogLayout({
   children,
 }: {
   children: React.ReactNode
@@ -14,8 +14,13 @@ export default async function BlogLayout({
             blog
           </Link>
         </Underline>
+        <Underline className=' ml-4'>
+          <Link className='font-semibold' href='/readme'>
+            readme
+          </Link>
+        </Underline>
       </Header>
-      <div className='mx-auto mt-[90px] p-5 xl:w-[920px]'>{children}</div>
+      <div className='mt-[4rem]'>{children}</div>
     </main>
   )
 }

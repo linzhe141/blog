@@ -80,7 +80,7 @@ export default function Page() {
   }, [])
 
   return (
-    <div className='flex h-screen w-screen flex-col'>
+    <div className='-mt-[4rem] flex h-screen w-screen flex-col'>
       <Header></Header>
       <div className='mt-[60px] flex h-0 flex-1'>
         <BlogEditor
