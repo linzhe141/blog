@@ -97,7 +97,7 @@ const config: Config = {
               color: 'rgba(74, 222, 128,1)',
               '&:hover': {},
             },
-            'p > code, h3 > code, li > code': {
+            'p > code, h1 > code, h2 > code, h3 > code, li > code': {
               margin: '0px 4px',
               padding: '2px 4px',
               borderRadius: '6px',
