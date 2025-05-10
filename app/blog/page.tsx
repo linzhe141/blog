@@ -27,7 +27,7 @@ export default async function Page() {
     <div className='flex-1 p-5 xl:mx-auto xl:w-1/2'>
       {yearGroup.map((yearItem) => (
         <div key={yearItem[0].createdAt} className='relative space-y-[100px]'>
-          <span className='text-stroke absolute -top-[80px] text-[100px] font-bold italic text-[#1f2020] text-transparent opacity-10'>
+          <span className='text-stroke absolute -top-[80px] text-[100px] font-bold italic text-[#1f2020] text-transparent opacity-30'>
             {yearItem[0].year}
           </span>
           <div className='space-y-8 opacity-80'>
