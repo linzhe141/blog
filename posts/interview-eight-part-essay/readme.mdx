@@ -1,6 +1,6 @@
 # 面试八股文
 
-## 1、性能优化
+## 性能优化
 
 - 前端缓存([强缓存和协商缓存](https://github.com/linzhe141/cache-demo))
 - webpack gzip压缩(compression-webpack-plugin)，gzip有着比zip更优秀的压缩算法，可以有效的减少文件的大小。
@@ -35,11 +35,11 @@
 - 懒加载
 - 代码拆分，动态import
 
-## 2、webpack打包优化
+## webpack打包优化
 
 [详情](https://juejin.cn/post/7150204462257143822)
 
-## 3、声明提升
+## 声明提升
 
 function 关键字的声明和赋值都提升`函数写在后面也能调用`，var 关键字声明提升，赋值不提升。
 let, const, class 标识符提升，形成死区，声明和赋值都不提升。
@@ -59,7 +59,7 @@ function say() {
 }
 ```
 
-## 4、浏览器工作原理
+## 浏览器工作原理
 
 [详情](https://developer.mozilla.org/zh-CN/docs/Web/Performance/Guides/How_browsers_work)
 
@@ -67,3 +67,75 @@ function say() {
 - 当解析器发现非阻塞资源，例如一张图片，浏览器会请求这些资源并且继续解析。当遇到一个 CSS 文件时，解析也可以继续进行，
   但是对于 `<script>` 标签（特别是没有 async 或者 defer 属性的）会阻塞渲染并停止 HTML 的解析。
 - 等待获取 CSS 不会阻塞 HTML 的解析或者下载，但是它确实会阻塞 JavaScript，因为 JavaScript 经常用于查询元素的 CSS 属性
+
+## 项目亮点
+
+- 封装了业务组件库（vue + setup + private npm），主要提供基于elementui二次封装和vue的`v-bind、v-on指令并且属性配置就是类json schema`form、dialog、table、layout、scss
+  变量的theme主题[基于element官方的nodejs库](https://element.eleme.cn/#/zh-CN/component/custom-theme)。
+- 通过脚手架的cli，提供业务通用（crud）模板的最佳实践，用于快速创建一致性的页面。
+- 由于业务原因，使用vue的install注册全局组件，所以需要对组件名称进行检测，防止重名，所以我们提供了一个eslint的插件。
+- 对于破坏性的组件库升级，提供babel的脚本，用于快速migration，更加方便，减少业务开发人员的工作量，也减少出错。
+
+  就是利用babel parse对应的js文件的到ast，然后traverse这个ast对于的各个节点，进行rewrite。
+  比如一个简单的例子，一些替换函数名称，新增函数参数（这只是个思路，具体业务具体分析）
+
+  ```js
+  // => old
+  import { oldFunc } from 'your-lib'
+
+  const result = oldFunc('a', 'b')
+  // => to new
+  import { newFunc } from 'your-lib'
+
+  const result = newFunc('a', 'b', true)
+  ```
+
+  ```js
+  const fs = require('fs')
+  const path = require('path')
+  const parser = require('@babel/parser')
+  const traverse = require('@babel/traverse').default
+  const generate = require('@babel/generator').default
+  const t = require('@babel/types')
+
+  const sourceCode = fs.readFileSync('./example.js', 'utf-8')
+
+  const ast = parser.parse(sourceCode, {
+    sourceType: 'module',
+    plugins: ['jsx', 'typescript'],
+  })
+
+  traverse(ast, {
+    ImportDeclaration(path) {
+      if (path.node.source.value === 'your-lib') {
+        path.node.specifiers.forEach((spec) => {
+          if (t.isImportSpecifier(spec) && spec.imported.name === 'oldFunc') {
+            spec.imported.name = 'newFunc'
+            spec.local.name = 'newFunc'
+          }
+        })
+      }
+    },
+
+    CallExpression(path) {
+      const callee = path.node.callee
+      if (
+        t.isIdentifier(callee, { name: 'oldFunc' }) ||
+        t.isIdentifier(callee, { name: 'newFunc' }) // 已替换也处理
+      ) {
+        // 替换函数名
+        callee.name = 'newFunc'
+
+        // 添加一个布尔类型参数 true（如果没有）
+        if (path.node.arguments.length === 2) {
+          path.node.arguments.push(t.booleanLiteral(true))
+        }
+      }
+    },
+  })
+
+  const output = generate(ast, {}, sourceCode)
+  fs.writeFileSync('./example.migrated.js', output.code)
+
+  console.log('✅ Migration complete.')
+  ```
