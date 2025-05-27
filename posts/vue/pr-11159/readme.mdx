@@ -1,0 +1,89 @@
+# [vue] innerHTML patch edge case with h
+
+> 我看你提交了一些VUE相关的pr，能说说解决了什么问题吗？
+> 这是一个面试题，但我没准备,所以我要引导到这个pr，因为这个pr稍微有代表性一点，有一点复杂度
+
+[具体pr链接](https://github.com/vuejs/core/pull/11159)
+
+[bug playground](https://play.vuejs.org/#eNqVVMtu2zAQ/BWCF9mALblIT4ZtpC0CtEVfaH0re1Cklc2UogQ+FCOG/r3LpR+KmwStDxa1M7tczo6452/aNu088DlfOKhblTtYCc3Y4l1Tt6tFRg+hF9kAxVdbGNk6ZsH5AMu6bYxjgcwq09QsSSkzvbNJSI70FZ9wZ4tGV3KDSKNx133YTPACyVKB+do62Wgr+JwRErBcqeb+I8Wc8TA5xostFL+fiN/ZXYgJ/s2ABdOB4CfM5WYDLsI3P77ADtcnsG5Kr5D9AvgdbKN86DHS3npdYtsDHnX7gfSQerO2NzsH2h4PFRoNzJ74gqP0Qafnjn5u9yq9ojyhe1TxoC3qd1B+zwxUE7ZlfdSfKgsujNCot8VJOZwdWwbaqMqVhXHAcH5rWUPj3Wg0ZssV1iFi2uXKB3roF5tlr2azGWXEajToJfaJEeyT/g3oEsycHQrFIGOyYqNBzfEZCSnOG822o6SUXTJhP8MKFK60V2rCktv8IRn/oo0Dv2eAnb9UYc+k1mDerz9/msd01p/T4wK1xye9wI7UK6HKvYrHQnWjptM6DxoPXRqBxyMinYMVts61dp5lRakxDY8hO5NqcJlu6+waaZnx2qHa07Kpr3Ge6euslNYNwynYenprmnv0LRYZ2Crkk5nNNAodTPdv216kDbe+gP7a/tJyh5vi6a+fPHhpwOft97/mC9fO8SKhl8f3Fc6fdVNZLQWnKoJTPCCgVg+D3yILEUpCFbphOtnr5CAshQ7CQkfexT3I+z95CMA8)
+
+首先这是一个`edge case`就是用户在使用h函数才会发生， 如果是sfc是不会出现的，因为他会把这个分支创建不同的key，从而避免这个问题
+
+```ts
+// 复现
+import { ref, h } from 'vue'
+const state = ref(false)
+// state.value = true 后
+// expect(Comp domStr).toBe('<div><del>baz</del></div>')
+
+// 但是实际情况 Comp domStr = '<div></div>'
+setTimeout(() => {
+  state.value = true
+}, 1000)
+const Comp = {
+  render: () => {
+    if (state.value) {
+      return h('div', [h('del', null, 'baz')])
+    } else {
+      return h('div', { innerHTML: 'baz' })
+    }
+  },
+}
+export default Comp
+```
+
+需求：
+
+- 分支1通过innerHTML设置内容
+- 分支2通过h函数的children设置内容
+
+但这两个分支没有设置`key`，并且是同一个类型的标签，导致在patch时，vue认为这两个元素是同一个元素，vue只需要 patch element。
+
+`在没有修改这个bug之前` vue首先会patch 这两个vnode的children，因为n1没有children，而n2有children，所以他会挂载n2的children，
+也就是`<del>baz</del>`，接着再进行`patchProps`，但是由于n1的props是`{innerHTML: 'baz'}`, n2的props是`null`，所以vue会将n1的props清空，也就是把这个`divDomElement.innerHTML = ''`,
+但是这个时候已经patchChildren了，`<del>baz</del>`已经被挂载到`divDomElement`上了，所以最后的结果就是`<div></div>`，而不是预期的`<div><del>baz</del></div>`。
+
+```ts
+// n1 {type: 'div', props: {innerHTML: 'baz'}, children: null, el: divDomElement}
+// n2 {type: 'div', props: null, children: [{type: 'del', props: null, children: 'baz'}], el: divDomElement }
+patchChildren(n1, n2 /*...*/)
+
+patchProps(
+  el /*divDomElement*/,
+  n2,
+  oldProps /*{innerHTML: 'baz'}*/,
+  newProps /*null=>{}*/
+  /*...*/
+)
+```
+
+怎么解决这个问题呢？
+
+就是在 patch element 时，如果有这种情况。就先把dom的innerHTML清空，然后再进行patchChildren和patchProps。
+
+```ts
+// ADD: 在patchElement中处理innerHTML和textContent的情况
+if (
+  (oldProps.innerHTML && newProps.innerHTML == null) ||
+  (oldProps.textContent && newProps.textContent == null)
+) {
+  hostSetElementText(el, '')
+}
+...
+patchChildren()
+patchProps()
+```
+
+并且在`patchProps`时，不要直接设置`el.innerHTML = value`而是跳过，因为我们已经在patchChildren之前处理了。
+
+```ts
+// patchProps -> patchDOMProp
+if (key === 'innerHTML' || key === 'textContent') {
+  // 修改后
+  // null value case is handled in renderer patchElement before patching
+  // children
+  if (value == null) return
+  el[key] = value
+  return
+}
+```

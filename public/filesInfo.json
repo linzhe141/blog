@@ -1,5 +1,11 @@
 [
   {
+    "path": "vue/pr-11159",
+    "title": "# [vue] innerHTML patch edge case with h",
+    "createdAt": "2025-05-27T14:43:43.681Z",
+    "updatedAt": "2025-05-27T14:51:26.485Z"
+  },
+  {
     "path": "javascript/synthetic-event",
     "title": "# 从事件代理到 React 合成事件\r",
     "createdAt": "2025-05-08T03:31:03.291Z",

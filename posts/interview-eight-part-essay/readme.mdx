@@ -151,3 +151,37 @@ function say() {
 我的上一份薪资是??，当时是基于我当时的经验和岗位要求定的。而在这段时间里，我不仅独立承担了多个完整的模块开发，也逐步参与了系统架构优化、性能调优和一些跨团队协作的工作，整体的技术深度和广度都有明显提升。
 比如在某个项目中，我通过 XXX 的优化手段，把首页加载时间从 3.2s 优化到 1.8s，用户留存率提升了明显，这类工作也让我意识到，我的输出是可以给业务带来实在价值的。
 结合市场行情和我对岗位的理解，我认为 ?? 是一个比较合理的匹配，当然我也更看重的是未来的成长空间和团队氛围。
+
+## 我看你提交了一些VUE相关的pr，你能说说在这个过程中，你学到了什么吗？并落地到实际项目
+
+就那vue3.5来说，vue提供了一个新的`hook:useTemplateRef`，但公司有些项目还是vue2.7，所以我根据vue3.5的源码，实现了
+一个类似的功能，主要是为了方便在vue2.7中使用`ref`来获取组件实例或DOM元素。
+
+```js
+import { getCurrentInstance, shallowRef } from 'vue'
+
+export function useTemplateRef(key) {
+  const vm = getCurrentInstance().proxy
+  if (!vm) {
+    throw new Error(
+      `useTemplateRef() is called when there is no active component ` +
+        `instance to be associated with.`
+    )
+  }
+  const refs = vm.$refs
+  const r = shallowRef(null)
+  Object.defineProperty(refs, key, {
+    get() {
+      return r.value
+    },
+    set(newValue) {
+      r.value = newValue
+    },
+  })
+  return r
+}
+```
+
+## 我看你提交了一些VUE相关的pr，能说说解决了什么问题吗？
+
+[详情：](/blog/vue/pr-11159)
