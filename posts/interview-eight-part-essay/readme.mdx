@@ -32,6 +32,19 @@
   </script>
   ```
 
+  如果这个js内容的执行时机不重要，可以把这个耗时的操作`<script defer src="./foo.js"></script>`，用defer修饰下，让他不阻塞渲染和解析
+
+  ```js filename="foo.js"
+  let startTime = Date.now()
+  let endTime = startTime + 3000 // 3秒后结束
+
+  while (Date.now() < endTime) {
+    // 模拟一些操作
+  }
+
+  console.log('3秒已到，循环停止。')
+  ```
+
 - 懒加载
 - 代码拆分，动态import
 
@@ -65,7 +78,7 @@ function say() {
 
 - 在渲染到屏幕上面之前，HTML、CSS、JavaScript 必须被解析完成。
 - 当解析器发现非阻塞资源，例如一张图片，浏览器会请求这些资源并且继续解析。当遇到一个 CSS 文件时，解析也可以继续进行，
-  但是对于 `<script>` 标签（特别是没有 async 或者 defer 属性的）会阻塞渲染并停止 HTML 的解析。
+  但是对于 `<script>` 标签（特别是没有 async 或者 defer 属性的）`会阻塞渲染并停止 HTML 的解析`。
 - 等待获取 CSS 不会阻塞 HTML 的解析或者下载，但是它确实会阻塞 JavaScript，因为 JavaScript 经常用于查询元素的 CSS 属性
 
 ## 项目亮点/展开聊聊
