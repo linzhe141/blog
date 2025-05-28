@@ -1,0 +1,54 @@
+# vue3的diff流程
+
+[图片笔记](https://excalidraw.com/#json=NsplJamffjgvh_4DFA1Ot,vOCZhBaU5pS6Hr1_1oVCzQ)
+
+> 重点`newIndexToOldIndexMap（下标为新节点索引，值为旧节点索引+1）`
+
+```
+const old = (a) b c d (e)
+const new = (a) c d b (e)
+```
+
+[demo](https://play.vuejs.org/#eNqtkj1v2zAQhv/KgYtsQJBdtJPrpGiLDO3QFm22MoMsnWQlFCnww3Zi6L/nSFqyAyRxhggQeLz3IXlfe/a167KNQ7ZgS1PoprNg0Lruksum7ZS28F21HVRatZBkM79JPnNJzHXTonJ2MpnCxSXsuQQoceXqGrW3t40s1TZ7CF+2yYVDuIAqFwa57FP4MJ/Pp1wuZ/FVeo82FttO5BZpB7AML8/IXs5OBJYyawolq6bObo2SFHl4nLOC+Eag/t3ZRknD2SKG5bVcCLX9GXxWO0wHf7HG4u4Z/63ZeR9nfzQa1BvkbNRsrmu0Ub769wt3ZI9iq0oniH5F/ItGCedjjNg3J0sK+4QL0f4I9W9kfW2udhalGZLygXqyDzxn1D5fqpdSP4b7MfsUzlEDqIr+DFWQ6nfo9B7W0MdWh0s549TKUdRYPSP7H3cBKbHKnSDU+yDOEU3HYQtATTMWKpHXNAl028QnMh3UJwPjR4W4QdN0lZYwjNrBO/rXk6RsNkkazhxm7Qv8P3JwRPZwh/cLSPKE6ueXafoqt4rc6hxXRK44x5WRK89xGDl8wt3A4p3Seu9w31qmY1onWY12H42w9Kx/BCfiY4w=)
+
+调用栈大概如下`patchElement('divWrapper')->patchChildren->patchKeyedChildren`，重点就是`patchKeyedChildren`
+
+首先会两个children数组的头部方向开始比较
+
+如果的元素是相同的（key和type都相同），则只会`patchElement(c1,c2)`，并且继续对比下一个，如果遇到不是相同的元素，就break，这时也知道了对比了多少个相同的元素了。
+
+然后会两个children数组的尾部方向开始比较
+
+如果的元素是相同的（key和type都相同），则只会`patchElement(c1,c2)`，并且继续对比前一个，如果遇到不是相同的元素，就break，这时也知道了对比了多少个相同的元素了。
+
+![Image](https://github.com/user-attachments/assets/ac585b08-b81e-486c-97f1-fd3d76654290)
+
+> 字母是`key`，数字是所在children数组的`下标`
+
+接下来发现在 old 中还剩`b:1 c:2 d:3`, new 中还剩`c:1 d:2 b:3`，这也是diff的关键所在，首先我们记录在新的children中，各个key对应的下标，既`keyToNewIndexMap`。
+
+![Image](https://github.com/user-attachments/assets/78e94420-8411-48c5-95f1-ee81b5d3a66e)
+
+然后要处理剩余的old，在新的剩余项中`keyToNewIndexMap`，如果有对应的key，就patch(prevChild, c2)，否则就unmount(prevChild)，如果存在vue不仅要patch，还要处理位置是否移动，vue通过最长子序列来实现。所以我们需要知道在新数组中的元素他们原来在旧数组中所在的位置。
+
+```js
+// 为什么 newIndex - s2 这表示在剩余新增元素组成数组中的位置（下标）
+// 这个+1 是一个特殊处理，因为vue 内部0 表示这个元素需要挂载
+
+newIndexToOldIndexMap[newIndex - s2] = i + 1
+// 这里就算是加10也无所谓，重点是趋势
+// 我在fork的仓库中尝试了+10，单元测试是完全通过的
+```
+
+![Image](https://github.com/user-attachments/assets/01b679c8-681c-4ce0-bcce-91742b40e7b4)
+
+旧元素剩余数组`b:1 c:2 d:3`
+
+- 第一个元素`b:1`，在新剩余数组中的下标是`2`= `3(新数组中的下标)- s2`，newIndexToOldIndexMap中的b元素的值就是`2`=`1(旧完整数组所在的位置，也就是冒号后面的数字) + 1`
+- 第二个元素`c:2`，在新剩余数组中的下标是`0`=`1(新数组中的下标)- s2`，newIndexToOldIndexMap中的c元素的值就是`3`=`2(旧完整数组所在的位置，也就是冒号后面的数字) + 1`
+- 第二个元素`d:3`，在新剩余数组中的下标是`1`=`2(新数组中的下标)- s2`，newIndexToOldIndexMap中的d元素的值就是`4`=`3(旧完整数组所在的位置，也就是冒号后面的数字) + 1`
+
+![Image](https://github.com/user-attachments/assets/5dfe9e55-2871-419b-a03b-52a0fb306a3e)
+
+得到最新递增子序列[3,4]也就是`c,d`，那么就表示`c,d`不需要移动。
+最后在遍历`新的`剩余元素组成的数组，如果元素不在最长递增子序列中，并且又不是新增元素，那么就移动位置。

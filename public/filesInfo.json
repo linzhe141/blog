@@ -1,5 +1,11 @@
 [
   {
+    "path": "vue/diff",
+    "title": "# vue3的diff流程",
+    "createdAt": "2025-05-28T02:29:38.847Z",
+    "updatedAt": "2025-05-28T09:43:24.582Z"
+  },
+  {
     "path": "vue/pr-11159",
     "title": "# [vue] innerHTML patch edge case with h",
     "createdAt": "2025-05-27T14:43:43.681Z",

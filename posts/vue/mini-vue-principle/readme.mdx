@@ -79,3 +79,13 @@
     </Underline>
   </span>
 </div>
+
+## 比较重要的异步代码执行流程，不考虑异步组件
+
+- vue3中的运行时`runtime-core`，基本所有的逻辑都是同步执行的，和调度器相关的代码才是异步执行的
+- 比如 `组件渲染函数的` 副作用 `effect.scheduler = () =- queueJob(job)`
+- 比如 `组件mounted hook, updated hook` =- `queuePostRenderEffect(m/u, parentSuspense)`
+
+  其实这个生命周期的执行顺序还有个bug: https://github.com/vuejs/core/pull/12482#issue-2700674082
+
+- 比如 `watch 的 flush 参数`
