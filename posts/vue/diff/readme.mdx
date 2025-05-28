@@ -29,7 +29,7 @@ const new = (a) c d b (e)
 
 ![Image](https://github.com/user-attachments/assets/78e94420-8411-48c5-95f1-ee81b5d3a66e)
 
-然后要处理剩余的old，在新的剩余项中`keyToNewIndexMap`，如果有对应的key，就patch(prevChild, c2)，否则就unmount(prevChild)，如果存在vue不仅要patch，还要处理位置是否移动，vue通过最长子序列来实现。所以我们需要知道在新数组中的元素他们原来在旧数组中所在的位置。
+`然后要处理剩余的old`，在新的剩余项中`keyToNewIndexMap`，如果有对应的key，就patch(prevChild, c2)，否则就unmount(prevChild)，如果存在vue不仅要patch，还要处理位置是否移动，vue通过最长子序列来实现。所以我们需要知道在新数组中的元素他们原来在旧数组中所在的位置。
 
 ```js
 // 为什么 newIndex - s2 这表示在剩余新增元素组成数组中的位置（下标）
