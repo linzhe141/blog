@@ -1,5 +1,8 @@
 # Promise/A+ 笔记
 
+[我在debug这个vue suspense issue](https://github.com/vuejs/core/issues/13453)我发现还是对promise的执行顺序感到模糊，
+[这是我大概的最小复现](https://www.jsv9000.app/?code=IGZ1bmN0aW9uIGZvbygpIHsNCiAgY29uc29sZS5sb2coJ2ZvbyBzdGFydCcpDQogIGJhcigpDQogIGJhcigpDQogIHJldHVybiBQcm9taXNlLnJlc29sdmUoKQ0KfQ0KZnVuY3Rpb24gYmFyKCkgew0KICBQcm9taXNlLnJlc29sdmUoKQ0KICAgIC50aGVuKCgpPT57fSkNCiAgICAudGhlbigoKT0%2Be30pDQogICAgLnRoZW4oKCk9Pnt9KQ0KICAgIC50aGVuKCgpID0%2BIHsNCiAgICAgIGNvbnNvbGUubG9nKCdiYXIgdGhlbicpDQogICAgfSkNCn0NCiBmdW5jdGlvbiBtYWluKCkgew0KICBmb28oKQ0KICAgIC50aGVuKCgpPT57fSkNCiAgICAudGhlbigoKT0%2Be30pDQogICAgLnRoZW4oKCkgPT4gew0KICAgICAgY29uc29sZS5sb2coJ21haW4nKQ0KICAgIH0pDQogIC8vIGF3YWl0IFByb21pc2UucmVzb2x2ZSgpDQogIC8vIGF3YWl0IFByb21pc2UucmVzb2x2ZSgpDQp9DQptYWluKCkNCg%3D%3D)
+
 根据[Promises/A+中文官网](https://promisesaplus.com.cn)，进行了简单的总结，本文的 `promise` 没有特别强调的情况下，都是指代码演示中 `new Promise 的实例`
 
 ## 1、promise 流程
