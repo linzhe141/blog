@@ -17,7 +17,12 @@ const new = (a) c d b (e)
 
 ```ts
 // 第一个while循环
-while (i <= e1 && i <= e2)
+while (i <= e1 && i <= e2) {
+  const n1 = c1[i]
+  const n2 = c2[i]
+  //...
+  i++
+}
 ```
 
 如果的元素是相同的（key和type都相同），则只会`patchElement(c1,c2)`，并且继续对比下一个，如果遇到不是相同的元素，就break，这时也知道了对比了多少个相同的元素了。
@@ -26,7 +31,14 @@ while (i <= e1 && i <= e2)
 
 ```ts
 // 第二个while循环
-while (i <= e1 && i <= e2)
+while (i <= e1 && i <= e2) {
+  const n1 = c1[e1]
+  const n2 = c2[e2]
+  //...
+  i++
+  e1--
+  e2--
+}
 ```
 
 如果的元素是相同的（key和type都相同），则只会`patchElement(c1,c2)`，并且继续对比前一个，如果遇到不是相同的元素，就break，这时也知道了对比了多少个相同的元素了。
@@ -36,6 +48,7 @@ while (i <= e1 && i <= e2)
 > 字母是`key`，数字是所在children数组的`下标`
 
 ## 求最长递增子序列
+
 接下来发现在 old 中还剩`b:1 c:2 d:3`, new 中还剩`c:1 d:2 b:3`，这也是diff的关键所在，首先我们记录在新的children中，各个key对应的下标，既`keyToNewIndexMap`。
 
 ![Image](https://github.com/user-attachments/assets/78e94420-8411-48c5-95f1-ee81b5d3a66e)
