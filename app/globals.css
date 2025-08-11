@@ -20,6 +20,11 @@
 .medium-zoom-image--opened {
   z-index: 100;
 }
+.highlight-wrapper pre code {
+  display: block;
+  width: fit-content;
+}
+
 .highlight-wrapper code span {
   font-size: 15px !important;
 }

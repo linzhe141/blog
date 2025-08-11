@@ -18,6 +18,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     baseColor = ''
     highlightColor = ''
   }
+  const currentYear = new Date().getFullYear()
   return (
     <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>
       <div className='dark:bg-black'>
@@ -33,7 +34,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <footer className='border-t border-border bg-background py-6'>
           <div className='container mx-auto flex flex-col items-center justify-between gap-4 px-4 md:flex-row'>
             <p className='text-center text-sm text-muted-foreground'>
-              © 2025 <span className='mx-2'>linzhe. </span>All rights reserved.
+              © {currentYear} <span className='mx-2'>linzhe. </span>All rights
+              reserved.
             </p>
             <div className='flex items-center gap-4'></div>
           </div>
