@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes press {
+  0%,
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 4px 0 #213547;
+  }
+  50% {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #213547;
+  }
+}
+.spacebar {
+  animation: press 1.5s infinite ease-in-out;
+}
+
 .text-stroke {
   -webkit-text-stroke-width: 2px;
   -webkit-text-stroke-color: #aaa;

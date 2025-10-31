@@ -27,8 +27,9 @@
 - `TRUNCATE "Menu" RESTART IDENTITY;` ：清空 "Menu" 表的数据，并将该表的自增长标识列的起始值重置为 1
 - `INSERT INTO "public"."RequsetKey" ("key") VALUES ('test');` : postgres新增数据
 - [Prettier code format take a long time to format](https://github.com/prettier/prettier-vscode/issues/2999),If you are using Auto Import - ES6, TS, JSX, TSX extension, try to uninstall it and replace it with Auto Import.卸载掉`Auto Import - ES6, TS, JSX, TSX`
-- `esm dirname filename`总是记不住。。。
+- [Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
 
+ `esm dirname filename`总是记不住。。。  
   ```ts
   import { fileURLToPath } from 'url'
   import { dirname } from 'path'
