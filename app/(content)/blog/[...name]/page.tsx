@@ -18,14 +18,14 @@ export default async function Page({ params }: { params: { name: string[] } }) {
 
   return (
     <Blog className='blog-wrapper relative'>
-      <Link
+      {/* <Link
         className='absolute right-0 cursor-pointer text-xs no-underline'
         href={getBlogBase64Url()}
       >
         <span className='rounded bg-[#ffbd2a] px-2 py-1 text-white'>
           TODO:编辑
         </span>
-      </Link>
+      </Link> */}
       <div className='h-6'></div>
       <MdxDisplayRsc content={content} />
     </Blog>
