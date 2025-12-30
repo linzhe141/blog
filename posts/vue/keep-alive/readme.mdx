@@ -1,0 +1,200 @@
+# KeepAlive
+
+[KeepAlive](https://cn.vuejs.org/guide/built-ins/keep-alive) 是 Vue 3 的内置组件，用于缓存动态组件，避免重复创建和销毁组件实例。
+当组件被切换时，KeepAlive 会将组件实例存储在内存中，而不是完全销毁它，从而保留组件状态并提升性能。
+
+## 1. 挂载
+
+将子组件vnode进行缓存，并且设置`vnode.shapeFlag |= ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE`,供运行时在卸载时特殊处理
+
+## 2. 停用 `deactivate`
+
+当组件需要隐藏时, 根据`COMPONENT_SHOULD_KEEP_ALIVE 和 renderer`的逻辑
+
+1. 将组件移动到 `storageContainer`（一个不可见的 DOM 容器）
+2. 触发组件的 `deactivated` 生命周期钩子
+3. 组件实例和状态得以保留
+
+## 3. 激活 `activate`
+
+当组件再次激活时, 根据`COMPONENT_KEPT_ALIVE 和 renderer`的逻辑
+
+1. `新的 vnode.el 使用 cachedVNode.el`
+2. `新的 vnode.component 使用 cachedVNode.component`，这个是已经挂载的 组件了，里面的subTree都是有el的
+3. 将 vnode 移回目标容器
+4. 执行 patch 更新（处理 props 变化）
+5. 触发组件的 `activated` 生命周期钩子
+
+## 4. 相关源码（只保留关于KeepAlive相关的核心逻辑）
+
+```ts
+const KeepAliveImpl: ComponentOptions = {
+  name: `KeepAlive`,
+  __isKeepAlive: true,
+  setup(_, { slots }: SetupContext) {
+    const instance = getCurrentInstance()!
+    const sharedContext = instance.ctx as KeepAliveContext
+    const cache: Cache = new Map()
+    const keys: Keys = new Set()
+
+    const {
+      renderer: {
+        p: patch,
+        m: move,
+        um: _unmount,
+        o: { createElement },
+      },
+    } = sharedContext
+    const storageContainer = createElement('div')
+
+    // vnode 缓存的子组件, 结合runtime patch
+    sharedContext.activate = (
+      vnode,
+      container,
+      anchor,
+      namespace,
+      optimized
+    ) => {
+      // instance 是子组件实例
+      const instance = vnode.component!
+      // 移回来
+      move(vnode, container, anchor, MoveType.ENTER, parentSuspense)
+      // in case props have changed
+      patch(instance.vnode, vnode, container, anchor, instance,...)
+      queuePostRenderEffect(() => {
+        instance.isDeactivated = false
+        if (instance.a) {
+          invokeArrayFns(instance.a)
+        }
+      }, parentSuspense)
+    }
+
+    // vnode 缓存的子组件，里面的缓存的组件除了这两个钩子，其他都是常规流程
+    sharedContext.deactivate = (vnode: VNode) => {
+      const instance = vnode.component!
+      // 移到缓存容器
+      move(vnode, storageContainer, null, MoveType.LEAVE, parentSuspense)
+      queuePostRenderEffect(() => {
+        if (instance.da) {
+          invokeArrayFns(instance.da)
+        }
+      }, parentSuspense)
+    }
+
+    // 当缓存失效，就需要真正的卸载
+    function unmount(vnode: VNode) {
+      // reset the shapeFlag so it can be properly unmounted
+      resetShapeFlag(vnode)
+      _unmount(vnode, instance, parentSuspense, true)
+    }
+
+    let pendingCacheKey: CacheKey | null = null
+    const cacheSubtree = () => {
+      // fix #1621, the pendingCacheKey could be 0
+      if (pendingCacheKey != null) {
+        cache.set(pendingCacheKey, getInnerChild(instance.subTree))
+      }
+    }
+    onMounted(cacheSubtree)
+    onUpdated(cacheSubtree)
+
+    onBeforeUnmount(() => {
+      cache.forEach(unmount)
+    })
+
+    // 渲染函数
+    return () => {
+      pendingCacheKey = null
+
+      const children = slots.default()
+      const rawVNode = children[0]
+      const vnode = children[0]
+      // 这里的vnode 就是指 缓存的组件
+      // warn(`KeepAlive should contain exactly one component child.`)
+
+      const comp = vnode.type as ConcreteComponent
+
+      const name = getComponentName(comp)
+
+      const { include, exclude, max } = props
+
+      if (
+        (include && (!name || !matches(include, name))) ||
+        (exclude && name && matches(exclude, name))
+      ) {
+        // #11717 // 我写的pr!!!!
+        vnode.shapeFlag &= ~ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE
+        return rawVNode
+      }
+
+      const key = vnode.key == null ? comp : vnode.key
+      const cachedVNode = cache.get(key)
+
+      pendingCacheKey = key
+
+      if (cachedVNode) {
+        // 使用缓存的el，缓存的component tree，所以就不用走mount
+        // copy over mounted state
+        vnode.el = cachedVNode.el
+        vnode.component = cachedVNode.component
+        // 结合runtime patch 流程 当激活时就不走mount
+        vnode.shapeFlag |= ShapeFlags.COMPONENT_KEPT_ALIVE
+      } else {
+        keys.add(key)
+      }
+      // avoid vnode being unmounted
+      // 结合runtime patch 流程 当卸载时就不走unmount
+      vnode.shapeFlag |= ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE
+
+      return vnode
+    }
+  },
+}
+```
+
+```ts filename="renderer.ts"
+// renderer 中关于 KeepAlive的逻辑
+function baseCreateRenderer() {
+  const processComponent = (
+    n1: VNode | null,
+    n2: VNode,
+    container: RendererElement,
+    anchor: RendererNode | null,
+    parentComponent: ComponentInternalInstance | null
+  ) => {
+    // parentComponent 就是 keepalive
+    if (n1 == null) {
+      if (n2.shapeFlag & ShapeFlags.COMPONENT_KEPT_ALIVE) {
+        ;(parentComponent!.ctx as KeepAliveContext).activate(
+          n2,
+          container,
+          anchor,
+          namespace,
+          optimized
+        )
+      } else {
+        // 正常mount mountComponent
+      }
+    } else {
+      // 正常更新 updateComponent
+    }
+  }
+
+  const mountComponent: MountComponentFn = (initialVNode) => {
+    // initialVNode 是keepalive的vnode时，把对应的render传入进去，这逻辑其实不重要，只是为了封装复用
+    // inject renderer internals for keepAlive
+    if (isKeepAlive(initialVNode)) {
+      ;(instance.ctx as KeepAliveContext).renderer = internals
+    }
+  }
+
+  const unmount: UnmountFn = (vnode, parentComponent) => {
+    // parentComponent 就是 keepalive
+    const { shapeFlag } = vnode
+    if (shapeFlag & ShapeFlags.COMPONENT_SHOULD_KEEP_ALIVE) {
+      ;(parentComponent!.ctx as KeepAliveContext).deactivate(vnode)
+      return
+    }
+  }
+}
+```

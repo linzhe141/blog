@@ -37,7 +37,7 @@
 }
 .highlight-wrapper pre code {
   display: block;
-  width: fit-content;
+  /* width: fit-content; */
 }
 
 .highlight-wrapper code span {
