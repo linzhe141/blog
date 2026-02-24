@@ -1,5 +1,11 @@
 [
   {
+    "path": "javascript/prototype",
+    "title": "# 原型\r",
+    "createdAt": "2026-02-24T03:39:18.447Z",
+    "updatedAt": "2026-02-24T03:42:02.952Z"
+  },
+  {
     "path": "vue/keep-alive",
     "title": "# KeepAlive",
     "createdAt": "2025-12-30T07:05:20.004Z",

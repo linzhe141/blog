@@ -1,0 +1,31 @@
+# 原型
+
+## 构造函数
+
+在 JavaScript 中，构造函数是一种特殊的函数，用于创建对象实例。它们通常以大写字母开头，以区分普通函数。构造函数通过使用 `new` 关键字来调用，创建一个新的对象，并将 `this` 绑定到该对象上。
+原理如下：
+
+```js
+function MyNew(Func, ...args) {
+  // 创建一个新对象，并将其原型指向构造函数的原型
+  const obj = Object.create(Func.prototype)
+  Func.apply(obj, args)
+  return obj
+}
+
+function Foo(a, b) {
+  this.a = a
+  this.b = b
+}
+
+const foo = MyNew(Foo, 1, 2)
+console.log(foo.a)
+```
+
+## 原型链
+
+在 JavaScript 中，每个对象都有一个内部属性 `[[Prototype]]`，指向另一个对象，这个对象被称为原型。当访问一个对象的属性时，如果该属性不存在于对象本身，JavaScript 会沿着原型链向上查找，直到找到该属性或到达原型链的末尾（即 `null`）。
+
+- 在js中一个对象如果是由构造函数创建的，那么这个构造函数创建的对象有一个隐式原型指向构造函数的prototype属性
+- 当访问这个对象属性时，如果没有在自身找到，那么就会去原型中找，又因为原型本身也是一个对象，
+- 所以它也有一个隐式原型指向它的构造函数的prototype属性，这样就形成了一个原型链
