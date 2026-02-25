@@ -3,7 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import { NextResponse } from 'next/server'
 import { remark } from 'remark'
-import slug from 'remark-slug'
+import slug from 'rehype-slug'
 import { type Result } from '@/types'
 function extractText(node: any): string {
   if (node.value) {

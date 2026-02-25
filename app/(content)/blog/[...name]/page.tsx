@@ -6,8 +6,13 @@ import { notFound } from 'next/navigation'
 import MdxDisplayRsc from '@/components/mdx/mdxDisplayRsc'
 import Link from 'next/link'
 export const dynamic = 'force-dynamic'
-export default async function Page({ params }: { params: { name: string[] } }) {
-  const url = params.name.join('/')
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ name: string[] }>
+}) {
+  const { name } = await params
+  const url = name.join('/')
   const { content } = await getMdx(url)
   if (content === null) notFound()
   function getBlogBase64Url() {
