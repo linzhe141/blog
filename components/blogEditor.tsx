@@ -2,7 +2,7 @@
 import Editor from '@monaco-editor/react'
 import { useRef, useState, useEffect } from 'react'
 import { type editor } from 'monaco-editor'
-import * as monacoInstance from 'monaco-editor/esm/vs/editor/editor.api'
+import * as monacoInstance from 'monaco-editor'
 import prettier from 'prettier/standalone'
 import prettierrc from '../.prettierrc.json'
 import { useToggleTheme } from '@/hooks/useToggleTheme'

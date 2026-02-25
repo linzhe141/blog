@@ -126,7 +126,7 @@ export async function GET(request: Request) {
   }
 }
 export async function POST(request: Request) {
-  const headersList = headers()
+  const headersList = await headers()
   const requestKey = headersList.get('authorization') ?? ''
   const target = await prisma.requsetKey.findFirst({
     where: {
