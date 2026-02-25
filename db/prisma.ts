@@ -1,7 +1,11 @@
 import { PrismaClient } from '@prisma/client'
-
+import { PrismaPg } from '@prisma/adapter-pg'
 const prismaClientSingleton = () => {
-  return new PrismaClient()
+  const adapter = new PrismaPg({
+    connectionString: process.env.POSTGRES_PRISMA_URL,
+  })
+  const prisma = new PrismaClient({ adapter })
+  return prisma
 }
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
